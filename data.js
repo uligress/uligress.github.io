@@ -18,6 +18,8 @@ window.UNG = {
   },
   // Buzón de ideas: envía al Google Form "Buzón de ideas de simuladores · ung" (las respuestas caen en la hoja "Bandeja").
   buzon: {
+    // servicio propio (Apps Script): valida, filtra spam, guarda en la Bandeja vía el Form, avisa por correo y confirma
+    endpoint: '',
     action: 'https://docs.google.com/forms/d/e/1FAIpQLScchGZzSPC2K-Sx9YhpnD2bf3m71x_q3ySYR7zHDVH2xDcwaw/formResponse',
     entries: {    // nombre del campo en el sitio → pregunta del formulario
       titulo: 'entry.346673698', tema: 'entry.1464743382', problema: 'entry.388895883', simulador: 'entry.1535504990',
@@ -72,6 +74,30 @@ window.UNG = {
         { img: 'photos/neurocirugia/05.jpg?v=1791629793', caption: 'Microscopio quirúrgico', back: 'Aumento y visión estereoscópica. El campo se muestra como a través del microscopio.', date: '' },
         { img: 'photos/neurocirugia/06.jpg?v=1791629793', caption: 'Polígono de Willis', back: 'En rojo, la unión carótida interna–comunicante posterior, donde está el aneurisma simulado.', date: '' },
         { img: 'photos/neurocirugia/07.jpg?v=1791629793', caption: 'Clipaje del cuello', back: 'El clip excluye el aneurisma sin ocluir la arteria. Es el objetivo de las 6 etapas.', date: '' },
+      ],
+    },
+    {
+      number: 3,
+      name: 'Stent*Sim*',
+      status: 'En desarrollo',
+      kicker: 'Simulador endovascular · Angioplastia ilíaca',
+      description: 'Angioplastia y colocación de *stent en la arteria ilíaca* bajo fluoroscopia. Navegas la guía por la bifurcación, mides la lesión, eliges el tamaño y liberas un *stent de nitinol*; el simulador registra fluoroscopia, contraste y estenosis residual.',
+      facts: [
+        ['Tipo', 'Simulador web con fluoroscopia simulada'],
+        ['Contenido', '3 escenarios · 18 errores'],
+        ['Mide', 'Fluoroscopia, contraste y estenosis residual'],
+        ['Estado', 'En desarrollo'],
+      ],
+      tags: ['Endovascular', 'Nitinol', 'Fluoroscopia'],
+      teaser: false,
+      items: [
+        { img: 'photos/stentsim/01.jpg?v=1791634000', caption: 'Stent de nitinol', back: 'Se autoexpande a temperatura corporal; su fuerza radial abre la placa sin pasar del diámetro nominal.', date: '' },
+        { img: 'photos/stentsim/02.jpg?v=1791634000', caption: 'Bifurcación aortoilíaca', back: 'Lesión en la ilíaca y el stent que la cubre: el caso base del simulador.', date: '' },
+        { img: 'photos/stentsim/03.jpg?v=1791634000', caption: 'Guía de punta angulada', back: 'Girar la punta decide en qué rama entra. Es la base de la navegación.', date: '' },
+        { img: 'photos/stentsim/04.jpg?v=1791634000', caption: 'Superelasticidad', back: 'El nitinol carga y descarga por mesetas distintas: por eso empuja suave y constante.', date: '' },
+        { img: 'photos/stentsim/05.jpg?v=1791634000', caption: 'Arco en C', back: 'La angulación correcta evita el acortamiento aparente al medir la lesión.', date: '' },
+        { img: 'photos/stentsim/06.jpg?v=1791634000', caption: 'Dimensionamiento', back: 'Diámetro de referencia y margen por lado: de ahí sale el tamaño del stent.', date: '' },
+        { img: 'photos/stentsim/07.jpg?v=1791634000', caption: 'Balón de angioplastia', back: 'Predilata lesiones cerradas y posdilata el stent, con presión controlada.', date: '' },
       ],
     },
   ],
