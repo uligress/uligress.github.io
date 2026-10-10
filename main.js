@@ -194,6 +194,10 @@ if (bForm) {
   const msg = document.getElementById('buzon-msg');
   const cfg = DATA.buzon || {};
   const say = (text, kind) => { msg.textContent = text; msg.className = 'buzon-msg ' + (kind || ''); };
+  const openedAt = Date.now();
+  const lastKey = 'ung-buzon-last';
+  const getLast = () => { try { return +localStorage.getItem(lastKey) || 0; } catch { return 0; } };
+  const setLast = () => { try { localStorage.setItem(lastKey, String(Date.now())); } catch {} };
   bForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     // validación propia (mensajes en español, primer campo con error enfocado)
@@ -205,17 +209,23 @@ if (bForm) {
     });
     if (first) { first.focus(); say('Revisa los campos marcados con * (y que el correo sea válido).', 'err'); return; }
     if (!cfg.action) { say('El buzón aún se está conectando. Intenta de nuevo más tarde.', 'err'); return; }
+    // antispam: campo trampa lleno o envío demasiado rápido → se descarta en silencio
+    const bot = document.getElementById('b-sitio').value.trim() !== '' || Date.now() - openedAt < 4000;
+    if (Date.now() - getLast() < 60000) { say('Ya recibimos una idea desde este navegador hace un momento. Espera un minuto para mandar otra.', 'err'); return; }
     const body = new URLSearchParams();
     const fd = new FormData(bForm);
     for (const [k, v] of fd.entries()) { const id = cfg.entries[k]; if (id && String(v).trim()) body.append(id, String(v).trim()); }
+    if (bot) { bForm.reset(); say('Enviado.', 'ok'); return; }
     const btn = bForm.querySelector('.send');
     btn.disabled = true; say('Enviando…');
     try {
       // Google Forms no devuelve CORS: el envío se hace en modo no-cors (respuesta opaca)
+      // la respuesta es opaca: el navegador no deja saber si Google la aceptó, así que no se promete más de lo que se sabe
       await fetch(cfg.action, { method: 'POST', mode: 'no-cors', body });
+      setLast();
       bForm.reset();
       bForm.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-      say('¡Gracias! Tu idea llegó al buzón. Si avanza, te escribo al correo que dejaste.', 'ok');
+      say('Enviado. Si en unos días no tienes respuesta, escríbeme por Instagram (@uligress) para confirmar que llegó.', 'ok');
     } catch {
       say('No se pudo enviar. Revisa tu conexión e inténtalo otra vez.', 'err');
     } finally { btn.disabled = false; }
