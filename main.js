@@ -131,6 +131,15 @@ if (gsap && ScrollTrigger) {
   }
 }
 
+/* ---------- Touch screens: reveal a teaser photo when it is centered ---------- */
+if (window.matchMedia('(hover: none)').matches) {
+  document.querySelector('.lb-hint').textContent = 'Toca la foto para voltearla';
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((en) => en.target.classList.toggle('in-view', en.intersectionRatio > 0.75));
+  }, { threshold: [0, 0.75, 1] });
+  document.querySelectorAll('.pol[data-idx]').forEach((el) => io.observe(el));
+}
+
 /* ---------- Lightbox with flip ---------- */
 const lb = document.getElementById('lightbox');
 const card = document.getElementById('lb-card');
@@ -343,22 +352,37 @@ if (renderer) {
 
   const sac = new THREE.Mesh(new THREE.SphereGeometry(0.58, 64, 32), glass); // amniotic sac, pearl
 
-  const s = isMobile ? 0.55 : 1;
   const spec = [
-    // [object, x, y, z, rotX, rotY, rotZ]
-    [brain(),     4.3,  1.7, -1.2, 0.2, -0.6, 0.1],
-    [clip(),      2.8,  1.0,  0.4, 0.3, 0.4, -0.5],
-    [aneurysm(),  4.6, -1.6, -0.6, 0.2, 0.3, 0.2],
-    [needle(),    1.3, -0.5,  0.6, 0.2, 0.2, 0.85],
-    [probe(),    -0.6,  2.6, -1.8, 0.3, 0.5, 2.6],
-    [sac,         1.6,  0.6,  1.0, 0, 0, 0],
-    [dna(),       3.1, -1.8, -2.4, 0.4, 0, 1.1],
+    // [name, object, x, y, z, rotX, rotY, rotZ]
+    ['brain',    brain(),     4.3,  1.7, -1.2, 0.2, -0.6, 0.1],
+    ['clip',     clip(),      2.8,  1.0,  0.4, 0.3, 0.4, -0.5],
+    ['aneurysm', aneurysm(),  4.6, -1.6, -0.6, 0.2, 0.3, 0.2],
+    ['needle',   needle(),    1.3, -0.5,  0.6, 0.2, 0.2, 0.85],
+    ['probe',    probe(),    -0.6,  2.6, -1.8, 0.3, 0.5, 2.6],
+    ['sac',      sac,         1.6,  0.6,  1.0, 0, 0, 0],
+    ['dna',      dna(),       3.1, -1.8, -2.4, 0.4, 0, 1.1],
   ];
+  // Phones: a compact cluster in the top half, sized to the narrow view; text sits below
+  const mobileLayout = {
+    brain:    [-0.6, 1.7, -0.6, 0.5],
+    clip:     [0.85, 1.95, 0.2, 0.4],
+    sac:      [0.35, 1.2, 0.6, 0.5],
+    needle:   [-0.1, 0.8, 0.4, 0.4],
+    aneurysm: [0.85, 0.4, -0.4, 0.42],
+    probe:    [-0.9, 0.25, -0.9, 0.42],
+  };
+  const layout = spec
+    .filter(([name]) => !isMobile || mobileLayout[name])
+    .map(([name, obj, x, y, z, rx, ry, rz]) => {
+      if (!isMobile) return [obj, x, y, z, rx, ry, rz, 1];
+      const [mx, my, mz, ms] = mobileLayout[name];
+      return [obj, mx, my, mz, rx, ry, rz, ms];
+    });
 
-  const shapes = spec.map(([obj, x, y, z, rx, ry, rz], i) => {
-    obj.position.set(x * (isMobile ? 0.42 : 1), y * (isMobile ? 1.15 : 1), z);
+  const shapes = layout.map(([obj, x, y, z, rx, ry, rz, sc], i) => {
+    obj.position.set(x, y, z);
     obj.rotation.set(rx, ry, rz);
-    obj.scale.setScalar(s);
+    obj.scale.setScalar(sc);
     obj.userData = { base: obj.position.clone(), rot: obj.rotation.clone(), phase: i * 1.37, amp: 0.12 + (i % 3) * 0.05 };
     scene.add(obj);
     return obj;
