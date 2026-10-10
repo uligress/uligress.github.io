@@ -12,6 +12,7 @@
 */
 window.UNG = {
   site: {
+    headline: 'Construyendo *simuladores* para aprender *medicina*.',  // frase grande del inicio
     subtitle: '',   // frase corta debajo del logo
     about: '',      // texto de la sección "Acerca"
   },

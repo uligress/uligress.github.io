@@ -14,6 +14,10 @@ document.querySelectorAll('[data-text]').forEach((el) => {
   const value = el.dataset.text.split('.').reduce((o, k) => (o ? o[k] : ''), DATA);
   el.textContent = value || '';
 });
+document.querySelectorAll('[data-rich]').forEach((el) => {
+  const value = el.dataset.rich.split('.').reduce((o, k) => (o ? o[k] : ''), DATA);
+  el.innerHTML = value ? rich(value) : '';
+});
 document.getElementById('year').textContent = new Date().getFullYear();
 const clock = document.getElementById('clock');
 const tick = () => {
@@ -229,7 +233,7 @@ if (renderer) {
     [new THREE.Mesh(capsule(1.5), ceramic),    -3.9, -2.1, -0.4, 0.2, 0.0, 1.1],
     [new THREE.Mesh(capsule(0.7), graphite),   -1.2,  2.9, -3.0, 0.0, 0.3, -0.6],
     [new THREE.Mesh(new THREE.SphereGeometry(0.34, 64, 32), accent), 2.4, -2.6, 0.6, 0, 0, 0],
-    [new THREE.Mesh(new THREE.SphereGeometry(0.62, 64, 32), glass),  -2.3,  0.6,  1.2, 0, 0, 0],
+    [new THREE.Mesh(new THREE.SphereGeometry(0.62, 64, 32), glass),   1.5,  0.4,  1.0, 0, 0, 0],
     [new THREE.Mesh(new THREE.SphereGeometry(0.14, 32, 16), ceramic), 1.2,  2.6, -1.4, 0, 0, 0],
     [new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16), graphite), -0.6, -2.9, -0.8, 0, 0, 0],
   ];
