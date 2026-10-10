@@ -41,6 +41,7 @@ let pieceNo = 0;
 const root = document.getElementById('proyectos');
 root.innerHTML = DATA.projects.map((p, pi) => {
   const total = p.items.length;
+  pieceNo = 0; // every project starts its own count: N.º 001, 002…
   const cards = p.items.map((it, i) => {
     pieceNo += 1;
     flat.push({ ...it, project: p, n: pieceNo, i, total });
