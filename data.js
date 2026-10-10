@@ -18,8 +18,12 @@ window.UNG = {
   },
   // Buzón de ideas: envía al Google Form "Buzón de ideas de simuladores · ung" (las respuestas caen en la hoja "Bandeja").
   buzon: {
-    action: '',   // https://docs.google.com/forms/d/e/<id>/formResponse
-    entries: {},  // nombre del campo → 'entry.123456'
+    action: 'https://docs.google.com/forms/d/e/1FAIpQLScchGZzSPC2K-Sx9YhpnD2bf3m71x_q3ySYR7zHDVH2xDcwaw/formResponse',
+    entries: {    // nombre del campo en el sitio → pregunta del formulario
+      titulo: 'entry.346673698', tema: 'entry.1464743382', problema: 'entry.388895883', simulador: 'entry.1535504990',
+      publico: 'entry.386402910', referencias: 'entry.191798921', nombre: 'entry.80540622', correo: 'entry.413961433',
+      telefono: 'entry.397228987', institucion: 'entry.664746345', colaborar: 'entry.1694082772', privacidad: 'entry.430006936',
+    },
   },
   projects: [
     {
