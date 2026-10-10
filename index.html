@@ -3,161 +3,83 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ulises Naranjo — Medicina materno-fetal, investigación y tecnología</title>
-  <meta name="description" content="Ulises Naranjo Gress, estudiante de Medicina en la UANL. Medicina materno-fetal, investigación y tecnología aplicada a la educación médica. Creador de AmnioSim.">
-  <meta property="og:title" content="Ulises Naranjo — uligress">
-  <meta property="og:description" content="Medicina materno-fetal, investigación y tecnología.">
+  <title>ung — proyectos y proceso</title>
+  <meta name="description" content="ung · proyectos y proceso.">
+  <meta property="og:title" content="ung">
   <meta property="og:url" content="https://uligress.me/">
   <meta name="theme-color" content="#f2f1ee">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='26' fill='%23111'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23e5383b'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/png" href="assets/ung-180.png">
+  <link rel="apple-touch-icon" href="assets/ung-180.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script>
     document.documentElement.classList.add('js');
-    // If the animation scripts fail to load, show the content anyway.
     setTimeout(function () { if (!window.__revealReady) document.documentElement.classList.remove('js'); }, 3000);
   </script>
 </head>
 <body>
-  <canvas id="gl" aria-hidden="true"></canvas>
-
+  <div class="grain" aria-hidden="true"></div>
   <div class="grid-lines" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
   <header class="nav">
-    <a href="#top" class="brand"><span class="dot"></span>ULISES NARANJO<sup>®</sup></a>
+    <a href="#top" class="brand" aria-label="ung — inicio"><span class="logo-mask"></span></a>
     <nav class="nav-links" aria-label="Secciones">
-      <a href="#sobre">Sobre mí</a>
       <a href="#proyectos">Proyectos</a>
-      <a href="#formacion">Formación</a>
-      <a href="#contacto">Contacto</a>
+      <a href="#acerca">Acerca</a>
     </nav>
     <span class="nav-status mono">MTY · <span id="clock">--:--</span></span>
   </header>
 
   <main id="top">
-    <!-- HERO -->
     <section class="hero">
-      <p class="label mono reveal">[ UNG®—PORTAFOLIO / <span class="muted">medicina · investigación · tecnología</span> ]</p>
-      <h1 class="hero-title">
-        <span class="line"><span>Medicina</span></span>
-        <span class="line"><span>materno-fetal,</span></span>
-        <span class="line"><span class="muted">investigación</span></span>
-        <span class="line"><span class="muted">y tecnología.</span></span>
-      </h1>
+      <canvas id="gl" aria-hidden="true"></canvas>
+      <p class="label mono reveal">[ UNG®—PROCESO / <em class="serif">teasers</em> ]</p>
+      <h1 class="hero-logo"><span class="sr-only">ung</span><span class="logo-mask big"></span></h1>
       <div class="hero-foot">
-        <p class="hero-copy reveal">Estudiante de 9.º semestre de Médico Cirujano y Partero en la Facultad de Medicina de la UANL. Construyo herramientas para aprender medicina mejor.</p>
+        <p class="hero-copy reveal" data-text="site.subtitle"></p>
         <p class="mono small reveal scroll-hint">↓ Scroll</p>
       </div>
-      <p class="mono small hero-meta reveal"><span class="pulse"></span> 140 lpm — frecuencia cardiaca fetal</p>
     </section>
 
-    <!-- MARQUEE -->
     <div class="marquee" aria-hidden="true">
-      <div class="marquee-track">
-        <span>Materno-fetal</span><span>✦</span><span>Simulación clínica</span><span>✦</span><span>Ultrasonido obstétrico</span><span>✦</span><span>Investigación</span><span>✦</span><span>Educación médica</span><span>✦</span>
-        <span>Materno-fetal</span><span>✦</span><span>Simulación clínica</span><span>✦</span><span>Ultrasonido obstétrico</span><span>✦</span><span>Investigación</span><span>✦</span><span>Educación médica</span><span>✦</span>
-      </div>
+      <div class="marquee-track" id="marquee"></div>
     </div>
 
-    <!-- SOBRE MÍ -->
-    <section id="sobre" class="section cols">
-      <div class="col-label">
-        <p class="label mono reveal">001. / <span class="muted">sobre mí</span></p>
-      </div>
-      <div class="col-main">
-        <h2 class="big reveal">Me interesa la medicina materno-fetal desde los primeros años de la carrera.</h2>
-        <p class="lead reveal">Junto con la clínica, me mueven la investigación y la tecnología aplicada a la educación médica. Por iniciativa propia desarrollé <strong>AmnioSim</strong>, un simulador web de amniocentesis guiada por ultrasonido.</p>
-        <div class="tags reveal">
-          <span>Materno-fetal</span><span>Ultrasonido</span><span>Simulación</span><span>Investigación clínica</span><span>Educación médica</span>
-        </div>
-      </div>
-      <div class="col-side">
-        <dl class="facts reveal">
-          <div><dt class="mono">Universidad</dt><dd>UANL · Facultad de Medicina</dd></div>
-          <div><dt class="mono">Carrera</dt><dd>Médico Cirujano y Partero</dd></div>
-          <div><dt class="mono">Semestre</dt><dd>9.º</dd></div>
-          <div><dt class="mono">Idiomas</dt><dd>Español · Inglés (EXCI)</dd></div>
-        </dl>
-      </div>
-    </section>
+    <div id="proyectos"></div>
 
-    <!-- PROYECTOS -->
-    <section id="proyectos" class="section dark">
-      <div class="section-head">
-        <p class="label mono reveal">002. / <span class="muted">lo que construyo</span></p>
-        <h2 class="huge reveal">Proyectos</h2>
-      </div>
-
-      <article class="project reveal">
-        <div class="project-index mono">01</div>
-        <div class="project-body">
-          <h3>AmnioSim</h3>
-          <p>Simulador web educativo de amniocentesis ecoguiada. Ecografía simulada con sombra acústica, aguja especular y <em>tenting</em> de membranas; 7 escenarios, 4 modos y retroalimentación de 15 errores con su evidencia.</p>
-          <div class="tags light"><span>Simulación</span><span>Ultrasonido</span><span>Web</span><span>2026</span></div>
-        </div>
-        <div class="project-meta">
-          <span class="mono small">Estado</span>
-          <span>MVP funcional</span>
-          <a class="btn" href="https://amniosim.uligress.tech" aria-disabled="true" onclick="return false">Próximamente →</a>
-        </div>
-      </article>
-
-      <article class="project reveal">
-        <div class="project-index mono">02</div>
-        <div class="project-body">
-          <h3>uligress.tech</h3>
-          <p>Mi laboratorio: un lugar para publicar herramientas de estudio y simulación, cada una en su propio subdominio.</p>
-          <div class="tags light"><span>Laboratorio</span><span>Herramientas</span></div>
-        </div>
-        <div class="project-meta">
-          <span class="mono small">Estado</span>
-          <span>En construcción</span>
-        </div>
-      </article>
-    </section>
-
-    <!-- FORMACIÓN -->
-    <section id="formacion" class="section cols">
-      <div class="col-label">
-        <p class="label mono reveal">003. / <span class="muted">formación</span></p>
-        <h2 class="big reveal">Cursos y congresos</h2>
-      </div>
-      <ol class="timeline col-wide">
-        <li class="reveal"><span class="year mono">2026</span><div><h4>Soporte Vital Básico (BLS)</h4><p>American Heart Association · vigente hasta 2028</p></div></li>
-        <li class="reveal"><span class="year mono">2026</span><div><h4>Simposio de Medicina Materno Fetal</h4><p>TecSalud · asistente</p></div></li>
-        <li class="reveal"><span class="year mono">2026</span><div><h4>Certificado de defunción · Brote epidemiológico</h4><p>RELACSIS · AFI</p></div></li>
-        <li class="reveal"><span class="year mono">2025</span><div><h4>Seminario de Introducción a la Práctica Clínica Profesional</h4><p>Facultad de Medicina, UANL</p></div></li>
-        <li class="reveal"><span class="year mono">2025</span><div><h4>Certificación de inglés EXCI</h4><p>Universidad Autónoma de Nuevo León</p></div></li>
-        <li class="reveal"><span class="year mono">2024</span><div><h4>Grupo de Investigación en Anatomía (GIA General I y II)</h4><p>Facultad de Medicina, UANL</p></div></li>
-        <li class="reveal"><span class="year mono">2023</span><div><h4>32 Congreso Nacional de Investigación e Innovación en Medicina</h4><p>Facultad de Medicina, UANL · asistente y 5 simposios</p></div></li>
-        <li class="reveal"><span class="year mono">2022</span><div><h4>1er Simposio de Medicina y Cirugía Fetal</h4><p>Centro Médico ABC, Ciudad de México</p></div></li>
-      </ol>
-    </section>
-
-    <!-- CONTACTO -->
-    <section id="contacto" class="section contact">
-      <p class="label mono reveal">004. / <span class="muted">contacto</span></p>
-      <h2 class="huge reveal">Hablemos.</h2>
-      <div class="contact-links reveal">
-        <a href="mailto:ulises.naranjog@uanl.edu.mx" class="contact-link"><span class="mono small">Correo</span>ulises.naranjog@uanl.edu.mx <span class="arrow">↗</span></a>
-        <a href="https://github.com/uligress" class="contact-link" target="_blank" rel="noopener"><span class="mono small">GitHub</span>@uligress <span class="arrow">↗</span></a>
-      </div>
+    <section id="acerca" class="section about">
+      <p class="label mono reveal">[ ACERCA / <em class="serif">quién hay detrás</em> ]</p>
+      <p class="about-text reveal" data-text="site.about"></p>
+      <span class="logo-mask about-logo reveal" aria-hidden="true"></span>
     </section>
   </main>
 
   <footer class="footer">
-    <span class="mono small">© <span id="year">2026</span> Ulises Naranjo Gress</span>
-    <span class="mono small">Monterrey, N.L., México</span>
+    <span class="mono small">© <span id="year">2026</span> ung</span>
+    <a href="https://github.com/uligress" class="mono small" target="_blank" rel="noopener">@uligress ↗</a>
     <a href="#top" class="mono small">Volver arriba ↑</a>
   </footer>
 
+  <!-- Lightbox: the polaroid flips to show the back -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+    <button class="lb-close mono" type="button" aria-label="Cerrar">Cerrar ✕</button>
+    <button class="lb-nav lb-prev mono" type="button" aria-label="Anterior">←</button>
+    <div class="lb-card" id="lb-card">
+      <div class="lb-face lb-front"><div class="pol-img" id="lb-img"></div><p class="pol-caption" id="lb-caption"></p></div>
+      <div class="lb-face lb-back"><p class="mono small" id="lb-num"></p><p class="back-text" id="lb-back"></p><p class="mono small muted" id="lb-date"></p></div>
+    </div>
+    <button class="lb-nav lb-next mono" type="button" aria-label="Siguiente">→</button>
+    <p class="lb-hint mono small">Clic en la foto para voltearla</p>
+  </div>
+
+  <script src="data.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script type="importmap">
-    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
   </script>
   <script type="module" src="main.js"></script>
 </body>
