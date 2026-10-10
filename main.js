@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 
 const DATA = window.UNG || { site: {}, projects: [] };
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -8,6 +9,9 @@ const pad3 = (n) => String(n).padStart(3, '0');
 const rich = (s) => esc(s).replace(/\*(.+?)\*/g, '<em class="serif">$1</em>');
 const plain = (s) => String(s ?? '').replace(/\*/g, '');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
 
 /* ---------- Texts from data.js ---------- */
 document.querySelectorAll('[data-text]').forEach((el) => {
@@ -123,7 +127,7 @@ if (gsap && ScrollTrigger) {
       });
     }
     document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
-    window.addEventListener('load', () => ScrollTrigger.refresh());
+    window.addEventListener('load', () => { if (!location.hash) { window.scrollTo(0, 0); lenis && lenis.scrollTo(0, { immediate: true }); } ScrollTrigger.refresh(); });
   }
 }
 
@@ -208,34 +212,147 @@ if (renderer) {
   const accent = new THREE.MeshPhysicalMaterial({ color: 0xe5383b, roughness: 0.28, clearcoat: 1, clearcoatRoughness: 0.15 });
   const glass = new THREE.MeshPhysicalMaterial({ color: 0xece8f1, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08, iridescence: 1, iridescenceIOR: 1.4, iridescenceThicknessRange: [180, 520] }); // pearl
 
-  const T = 0.17; // stroke thickness, like the logo
+  const metal = new THREE.MeshPhysicalMaterial({ color: 0xc9ccd1, metalness: 1, roughness: 0.22 });
+  const brainMat = new THREE.MeshPhysicalMaterial({ color: 0xeedcd6, roughness: 0.5, clearcoat: 0.35, clearcoatRoughness: 0.4 });
   const seg = isMobile ? 48 : 96;
-  const arc = (r, a) => new THREE.TorusGeometry(r, T, 32, seg, a);
-  const capsule = (len) => new THREE.CapsuleGeometry(T, len, 16, 32);
 
-  // Rounded end caps so arcs read as one continuous stroke
-  const strokeArc = (r, a, mat) => {
+  /* AmnioSim: spinal needle with its hub */
+  const needle = () => {
     const g = new THREE.Group();
-    g.add(new THREE.Mesh(arc(r, a), mat));
-    const cap = new THREE.SphereGeometry(T, 32, 16);
-    const c1 = new THREE.Mesh(cap, mat); c1.position.set(r, 0, 0);
-    const c2 = new THREE.Mesh(cap, mat); c2.position.set(Math.cos(a) * r, Math.sin(a) * r, 0);
-    g.add(c1, c2);
+    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 3.0, 16), metal);
+    const tip = new THREE.Mesh(new THREE.ConeGeometry(0.022, 0.12, 16), metal);
+    tip.position.y = -1.56;
+    tip.rotation.x = Math.PI;
+    const hub = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.32, 12, 24), ceramic);
+    hub.position.y = 1.62;
+    const wing = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.05, 32), graphite);
+    wing.position.y = 1.4;
+    g.add(shaft, tip, hub, wing);
     return g;
   };
+
+  /* AmnioSim: convex ultrasound probe */
+  const probe = () => {
+    const g = new THREE.Group();
+    const shape = new THREE.Shape();
+    shape.moveTo(-0.22, 0.9);
+    shape.lineTo(0.22, 0.9);
+    shape.lineTo(0.36, 0.05);
+    shape.absarc(0, 0.05, 0.36, 0, Math.PI, true); // convex footprint
+    shape.lineTo(-0.22, 0.9);
+    const body = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, {
+      depth: 0.22, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.06, bevelSegments: 6, curveSegments: 32,
+    }), ceramic);
+    body.position.z = -0.11;
+    const lens = new THREE.Mesh(new THREE.CylinderGeometry(0.37, 0.37, 0.26, 48, 1, false, Math.PI / 2, Math.PI), graphite);
+    lens.rotation.x = Math.PI / 2;
+    lens.position.y = 0.05;
+    const cable = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0.95, 0), new THREE.Vector3(0.05, 1.4, 0.1), new THREE.Vector3(-0.25, 1.8, 0.05), new THREE.Vector3(-0.1, 2.3, -0.2),
+    ]), 48, 0.045, 12), graphite);
+    g.add(body, lens, cable);
+    return g;
+  };
+
+  /* Neurosurgery: stylized brain (two hemispheres with gyri) */
+  const brain = () => {
+    const g = new THREE.Group();
+    const geo = mergeVertices(new THREE.IcosahedronGeometry(0.62, isMobile ? 5 : 6)); // shared vertices → smooth shading
+    const p = geo.attributes.position;
+    const v = new THREE.Vector3();
+    for (let i = 0; i < p.count; i++) {
+      v.fromBufferAttribute(p, i).normalize();
+      const folds = Math.sin(v.x * 11 + Math.sin(v.y * 7) * 2.2) * Math.cos(v.z * 9 + v.y * 4);
+      const r = 0.62 * (1 + folds * 0.045);
+      p.setXYZ(i, v.x * r * 0.82, v.y * r * 0.9, v.z * r * 1.15);
+    }
+    geo.computeVertexNormals();
+    const left = new THREE.Mesh(geo, brainMat);
+    left.position.x = -0.27;
+    const right = left.clone();
+    right.position.x = 0.27;
+    right.scale.x = -1;
+    const stem = new THREE.Mesh(new THREE.CapsuleGeometry(0.11, 0.3, 8, 16), brainMat);
+    stem.position.set(0, -0.62, -0.2);
+    stem.rotation.x = 0.4;
+    g.add(left, right, stem);
+    return g;
+  };
+
+  /* Neurosurgery: Yasargil-style aneurysm clip */
+  const clip = () => {
+    const g = new THREE.Group();
+    const blade = new THREE.CapsuleGeometry(0.05, 1.0, 8, 16);
+    const b1 = new THREE.Mesh(blade, metal); b1.position.x = -0.07;
+    const b2 = new THREE.Mesh(blade, metal); b2.position.x = 0.07;
+    b1.scale.z = b2.scale.z = 0.45;
+    const pts = [];
+    for (let i = 0; i <= 120; i++) {
+      const a = (i / 120) * Math.PI * 2 * 2.5;
+      pts.push(new THREE.Vector3(Math.cos(a) * 0.17, 0.62 + (i / 120) * 0.22, Math.sin(a) * 0.17));
+    }
+    const coil = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 160, 0.03, 10), metal);
+    const arm1 = new THREE.Mesh(new THREE.CapsuleGeometry(0.035, 0.32, 6, 12), metal);
+    arm1.position.set(-0.12, 0.98, 0); arm1.rotation.z = 0.35;
+    const arm2 = arm1.clone(); arm2.position.x = 0.12; arm2.rotation.z = -0.35;
+    g.add(b1, b2, coil, arm1, arm2);
+    return g;
+  };
+
+  /* Neurosurgery: artery bifurcation with an aneurysm dome, the red accent */
+  const aneurysm = () => {
+    const g = new THREE.Group();
+    const vessel = (pts, r) => new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 64, r, 20), accent);
+    g.add(vessel([new THREE.Vector3(0, -1.0, 0), new THREE.Vector3(0.05, -0.4, 0.1), new THREE.Vector3(0, 0, 0)], 0.1));
+    g.add(vessel([new THREE.Vector3(0, 0, 0), new THREE.Vector3(-0.35, 0.3, 0), new THREE.Vector3(-0.8, 0.45, -0.1)], 0.075));
+    g.add(vessel([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0.4, 0.25, 0.05), new THREE.Vector3(0.85, 0.55, 0)], 0.075));
+    const joint = new THREE.Mesh(new THREE.SphereGeometry(0.1, 24, 16), accent);
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(0.2, 48, 32), accent);
+    dome.position.set(0.04, 0.24, 0.06);
+    const caps = [[-0.8, 0.45, -0.1, 0.075], [0.85, 0.55, 0, 0.075], [0, -1.0, 0, 0.1]].map(([x, y, z, r]) => {
+      const c = new THREE.Mesh(new THREE.SphereGeometry(r, 20, 12), accent); c.position.set(x, y, z); return c;
+    });
+    g.add(joint, dome, ...caps);
+    return g;
+  };
+
+  /* Medicine: DNA double helix */
+  const dna = () => {
+    const g = new THREE.Group();
+    const turns = 2.2, h = 2.4, r = 0.32, n = 140;
+    const strand = (off, mat) => {
+      const pts = [];
+      for (let i = 0; i <= n; i++) {
+        const t = i / n, a = t * Math.PI * 2 * turns + off;
+        pts.push(new THREE.Vector3(Math.cos(a) * r, t * h - h / 2, Math.sin(a) * r));
+      }
+      return new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 200, 0.045, 12), mat);
+    };
+    g.add(strand(0, ceramic), strand(Math.PI, graphite));
+    const rung = new THREE.CylinderGeometry(0.018, 0.018, r * 2, 8);
+    for (let i = 1; i < 18; i++) {
+      const t = i / 18, a = t * Math.PI * 2 * turns;
+      const m = new THREE.Mesh(rung, i % 3 ? ceramic : accent);
+      m.position.y = t * h - h / 2;
+      m.rotation.z = Math.PI / 2;
+      m.rotation.y = -a;
+      g.add(m);
+    }
+    return g;
+  };
+
+  const sac = new THREE.Mesh(new THREE.SphereGeometry(0.58, 64, 32), glass); // amniotic sac, pearl
 
   const s = isMobile ? 0.55 : 1;
   const spec = [
     // [object, x, y, z, rotX, rotY, rotZ]
-    [strokeArc(0.75, Math.PI, ceramic),        -4.6,  1.9, -1.0, 0.3, 0.4, 0.2],
-    [strokeArc(0.6, Math.PI, graphite),         4.7, -1.8, -0.5, -0.4, 0.2, 3.3],
-    [strokeArc(0.62, Math.PI * 1.5, ceramic),   4.3,  2.2, -2.2, 0.5, -0.5, 0.8],
-    [new THREE.Mesh(capsule(1.5), ceramic),    -3.9, -2.1, -0.4, 0.2, 0.0, 1.1],
-    [new THREE.Mesh(capsule(0.7), graphite),   -1.2,  2.9, -3.0, 0.0, 0.3, -0.6],
-    [new THREE.Mesh(new THREE.SphereGeometry(0.34, 64, 32), accent), 2.4, -2.6, 0.6, 0, 0, 0],
-    [new THREE.Mesh(new THREE.SphereGeometry(0.62, 64, 32), glass),   1.5,  0.4,  1.0, 0, 0, 0],
-    [new THREE.Mesh(new THREE.SphereGeometry(0.14, 32, 16), ceramic), 1.2,  2.6, -1.4, 0, 0, 0],
-    [new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16), graphite), -0.6, -2.9, -0.8, 0, 0, 0],
+    [brain(),     4.3,  1.7, -1.2, 0.2, -0.6, 0.1],
+    [clip(),      2.8,  1.0,  0.4, 0.3, 0.4, -0.5],
+    [aneurysm(),  4.6, -1.6, -0.6, 0.2, 0.3, 0.2],
+    [needle(),    1.3, -0.5,  0.6, 0.2, 0.2, 0.85],
+    [probe(),    -0.6,  2.6, -1.8, 0.3, 0.5, 2.6],
+    [sac,         1.6,  0.6,  1.0, 0, 0, 0],
+    [dna(),       3.1, -1.8, -2.4, 0.4, 0, 1.1],
   ];
 
   const shapes = spec.map(([obj, x, y, z, rx, ry, rz], i) => {
