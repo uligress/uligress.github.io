@@ -9,6 +9,8 @@
   --font: "Inter Tight", system-ui, -apple-system, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, monospace;
   --hand: "Caveat", "Bradley Hand", cursive;
+  --marker: "Permanent Marker", "Marker Felt", "Comic Sans MS", cursive;
+  --ink: #17181c;
   --serif: "Instrument Serif", "Times New Roman", serif;
 }
 
@@ -150,7 +152,15 @@ body.pinned .viewport { overflow: visible; }
 .pol:nth-child(3n+3) { margin-top: 2vh; }
 .pol-img { position: relative; aspect-ratio: 1 / 1; overflow: hidden; background: #ddd; }
 .pol-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .8s, transform .8s; }
-.pol-caption { font-family: var(--hand); font-size: 24px; line-height: 1.1; min-height: 64px; margin: 0; padding: 12px 4px 14px; color: #2a2a28; }
+/* título escrito con plumón: invade un poco la foto, como en una polaroid real */
+.pol-caption {
+  position: relative; z-index: 3; font-family: var(--marker); font-size: 21px; line-height: 1.05; min-height: 58px;
+  margin: -0.62em 0 0; padding: 0 6px 16px; color: var(--ink); opacity: .92;
+  transform: rotate(-2.2deg); transform-origin: left center; filter: url(#ink);
+}
+.pol:nth-child(2n) .pol-caption { transform: rotate(1.6deg) translateX(10px); }
+.pol:nth-child(3n) .pol-caption { transform: rotate(-0.8deg) translateX(4px); }
+.pol-caption:empty { margin: 0; min-height: 58px; }
 .pol-meta { position: absolute; left: 14px; right: 14px; bottom: 10px; display: flex; justify-content: space-between; color: var(--muted); pointer-events: none; }
 
 /* Empty polaroid: film-like gradient */
@@ -194,12 +204,12 @@ body.pinned .viewport { overflow: visible; }
 .lb-card { position: relative; width: min(78vw, 480px); transform-style: preserve-3d; transition: transform .9s cubic-bezier(.2,.8,.2,1); cursor: pointer; }
 .lb-card.flipped { transform: rotateY(180deg); }
 .lb-face { background: var(--paper); padding: 18px 18px 0; box-shadow: 0 40px 80px -30px rgba(0,0,0,.45); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-.lb-front .pol-caption { font-size: 28px; }
+.lb-front .pol-caption { font-size: 26px; }
 .lb-back {
   position: absolute; inset: 0; transform: rotateY(180deg); padding: 28px; display: flex; flex-direction: column; justify-content: space-between;
   background: #f4f1ea repeating-linear-gradient(0deg, transparent 0 31px, rgba(17,17,17,.06) 31px 32px);
 }
-.back-text { font-family: var(--hand); font-size: 30px; line-height: 1.07; margin: 0; flex: 1; padding-top: 16px; color: #2a2a28; }
+.back-text { font-family: var(--marker); font-size: 26px; line-height: 1.2; margin: 0; flex: 1; padding-top: 16px; color: var(--ink); opacity: .9; transform: rotate(-1.2deg); filter: url(#ink); }
 .lb-close { position: absolute; top: 18px; right: var(--pad); }
 .lb-nav { font-size: 22px; padding: 12px; }
 .lb-hint { position: absolute; bottom: 20px; left: 0; right: 0; text-align: center; color: var(--muted); margin: 0; }
@@ -237,7 +247,7 @@ body.pinned .viewport { overflow: visible; }
   .track { padding: 16px var(--pad) 28px; gap: 16px; }
   .pol { width: 76vw; }
   .pol:nth-child(n) { margin-top: 0; }
-  .pol-caption { font-size: 22px; min-height: 54px; }
+  .pol-caption { font-size: 19px; min-height: 52px; }
   .pol.end { width: 50vw; }
 
   .about { min-height: auto; padding: 72px var(--pad); }
