@@ -30,7 +30,7 @@ window.UNG = {
         ['Estado', 'MVP funcional · 2026'],
       ],
       tags: ['Ultrasonido', 'Simulación', 'Three.js'],
-      teaser: true,
+      teaser: false,
       items: [
         { img: 'photos/amniosim/01.jpg?v=1791629793', caption: '', back: '', date: '' },
         { img: 'photos/amniosim/02.jpg?v=1791629793', caption: '', back: '', date: '' },
@@ -43,7 +43,7 @@ window.UNG = {
     },
     {
       number: 2,
-      name: 'Neuro*cirugía*',
+      name: 'Clip*Sim*',
       status: 'En desarrollo',
       kicker: 'Simulador microquirúrgico · Demo educativa',
       description: 'Clipaje microquirúrgico de un *aneurisma de la unión carótida interna–comunicante posterior* por abordaje pterional transilviano, visto como a través del *microscopio quirúrgico*. Avanzas por las etapas con tus instrumentos mientras un mentor te guía y el monitor reacciona a cada movimiento.',
@@ -54,7 +54,7 @@ window.UNG = {
         ['Estado', 'En desarrollo'],
       ],
       tags: ['Neurocirugía', 'Microscopio', 'Three.js'],
-      teaser: true,
+      teaser: false,
       items: [
         { img: 'photos/neurocirugia/01.jpg?v=1791629793', caption: '', back: '', date: '' },
         { img: 'photos/neurocirugia/02.jpg?v=1791629793', caption: '', back: '', date: '' },
