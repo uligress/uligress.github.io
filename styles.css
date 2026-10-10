@@ -130,7 +130,7 @@ main { position: relative; z-index: 2; }
 .project-note { margin: 0; max-width: 340px; color: #3a3a38; }
 .counter { color: var(--muted); }
 
-.viewport { position: relative; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; }
+.viewport { position: relative; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
 .viewport::-webkit-scrollbar { display: none; }
 body.pinned .viewport { overflow: visible; }
 .pol { scroll-snap-align: center; }

@@ -5,6 +5,7 @@ import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 const DATA = window.UNG || { site: {}, projects: [] };
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isMobile = window.matchMedia('(max-width: 860px)').matches;
+const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches; // mouse/trackpad, not touch
 const pad3 = (n) => String(n).padStart(3, '0');
 const rich = (s) => esc(s).replace(/\*(.+?)\*/g, '<em class="serif">$1</em>');
 const plain = (s) => String(s ?? '').replace(/\*/g, '');
@@ -109,8 +110,9 @@ if (gsap && ScrollTrigger) {
       onEnter: (els) => gsap.to(els, { opacity: 1, filter: 'blur(0px)', y: 0, duration: 1.2, stagger: 0.08, ease: 'power3.out' }),
     });
 
-    // Desktop: vertical scroll moves each carousel sideways while the section is pinned
-    if (!isMobile) {
+    // Desktop with a mouse: vertical scroll moves each carousel sideways while the section is pinned.
+    // Touch screens (phones, iPad) keep both separate: scroll down normally, swipe the carousel sideways.
+    if (!isMobile && finePointer) {
       document.body.classList.add('pinned');
       document.querySelectorAll('.project-sec').forEach((sec) => {
         const track = sec.querySelector('.track');
