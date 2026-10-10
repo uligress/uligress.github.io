@@ -16,6 +16,11 @@ window.UNG = {
     subtitle: '',   // frase corta debajo del logo
     about: '',      // texto de la sección "Acerca"
   },
+  // Buzón de ideas: envía al Google Form "Buzón de ideas de simuladores · ung" (las respuestas caen en la hoja "Bandeja").
+  buzon: {
+    action: '',   // https://docs.google.com/forms/d/e/<id>/formResponse
+    entries: {},  // nombre del campo → 'entry.123456'
+  },
   projects: [
     {
       number: 1,

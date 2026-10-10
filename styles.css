@@ -191,6 +191,38 @@ body.pinned .viewport { overflow: visible; }
 .about-text { max-width: 760px; margin: 0; font-size: clamp(24px, 3vw, 42px); line-height: 1.12; letter-spacing: -0.03em; }
 .about-logo { width: min(40vw, 360px); color: var(--accent); }
 
+/* Buzón de ideas */
+.buzon { padding: clamp(72px, 12vh, 140px) var(--pad); border-top: 1px solid var(--line); display: grid; gap: 28px; }
+.buzon-head { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px 48px; align-items: end; }
+.buzon-title { margin: 0; font-size: clamp(32px, 4.4vw, 64px); line-height: 1; letter-spacing: -0.035em; font-weight: 500; text-wrap: balance; }
+.buzon-title .serif { color: var(--accent); }
+.buzon-intro { margin: 0; max-width: 46ch; font-size: 17px; color: #3a3a37; }
+.buzon-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px 48px; }
+.buzon-form fieldset { margin: 0; padding: 0; border: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 20px; align-content: start; }
+.buzon-form legend { padding: 0 0 12px; color: var(--muted); }
+.f { display: grid; gap: 6px; min-width: 0; }
+.f.wide, .check.wide { grid-column: 1 / -1; }
+.f > span { font-size: 13px; color: #3a3a37; }
+.f input, .f textarea {
+  width: 100%; font: inherit; font-size: 15px; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line); border-radius: 2px; padding: 10px 12px; resize: vertical;
+}
+.f input:focus, .f textarea:focus, .chips input:focus-visible + *, .send:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.f [aria-invalid="true"] { border-color: var(--accent); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); cursor: pointer; }
+.chips label:has(input:checked) { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.f .chips input, .check input { width: auto; padding: 0; border: 0; background: none; }
+.chips input { accent-color: var(--accent); margin: 0; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: #3a3a37; }
+.check input { margin-top: 3px; accent-color: var(--accent); }
+.buzon-send { grid-column: 1 / -1; display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.send { padding: 14px 22px; background: var(--ink); color: var(--bg); border-radius: 999px; font-size: 13px; transition: background .3s; }
+.send:hover { background: var(--accent); }
+.send[disabled] { opacity: .5; cursor: progress; }
+.buzon-msg { margin: 0; font-size: 15px; }
+.buzon-msg.ok { color: #2f7d4f; } .buzon-msg.err { color: var(--accent); }
+
 .footer { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 16px; padding: 24px var(--pad); border-top: 1px solid var(--line); background: var(--bg); }
 
 /* Lightbox */
@@ -253,6 +285,7 @@ body.pinned .viewport { overflow: visible; }
   .about-logo { width: 46vw; }
 
   .footer { flex-direction: column; gap: 8px; }
+  .buzon-head, .buzon-form, .buzon-form fieldset { grid-template-columns: minmax(0, 1fr); }
 
   .lb-card { width: 84vw; }
   .lb-nav { position: absolute; bottom: 64px; font-size: 26px; }

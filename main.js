@@ -188,6 +188,40 @@ window.addEventListener('keydown', (e) => {
   if (e.key === ' ') { e.preventDefault(); card.classList.toggle('flipped'); }
 });
 
+/* ---------- Buzón de ideas → Google Form ---------- */
+const bForm = document.getElementById('buzon-form');
+if (bForm) {
+  const msg = document.getElementById('buzon-msg');
+  const cfg = DATA.buzon || {};
+  const say = (text, kind) => { msg.textContent = text; msg.className = 'buzon-msg ' + (kind || ''); };
+  bForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // validación propia (mensajes en español, primer campo con error enfocado)
+    let first = null;
+    bForm.querySelectorAll('[required]').forEach((el) => {
+      const bad = el.type === 'radio' ? !bForm.querySelector(`[name="${el.name}"]:checked`) : el.type === 'checkbox' ? !el.checked : !el.value.trim() || !el.checkValidity();
+      el.setAttribute('aria-invalid', bad ? 'true' : 'false');
+      if (bad && !first) first = el;
+    });
+    if (first) { first.focus(); say('Revisa los campos marcados con * (y que el correo sea válido).', 'err'); return; }
+    if (!cfg.action) { say('El buzón aún se está conectando. Intenta de nuevo más tarde.', 'err'); return; }
+    const body = new URLSearchParams();
+    const fd = new FormData(bForm);
+    for (const [k, v] of fd.entries()) { const id = cfg.entries[k]; if (id && String(v).trim()) body.append(id, String(v).trim()); }
+    const btn = bForm.querySelector('.send');
+    btn.disabled = true; say('Enviando…');
+    try {
+      // Google Forms no devuelve CORS: el envío se hace en modo no-cors (respuesta opaca)
+      await fetch(cfg.action, { method: 'POST', mode: 'no-cors', body });
+      bForm.reset();
+      bForm.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+      say('¡Gracias! Tu idea llegó al buzón. Si avanza, te escribo al correo que dejaste.', 'ok');
+    } catch {
+      say('No se pudo enviar. Revisa tu conexión e inténtalo otra vez.', 'err');
+    } finally { btn.disabled = false; }
+  });
+}
+
 /* ---------- WebGL: sculptural shapes in the ung stroke language ---------- */
 const canvas = document.getElementById('gl');
 let renderer;
