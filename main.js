@@ -208,24 +208,43 @@ if (bForm) {
       if (bad && !first) first = el;
     });
     if (first) { first.focus(); say('Revisa los campos marcados con * (y que el correo sea válido).', 'err'); return; }
-    if (!cfg.action) { say('El buzón aún se está conectando. Intenta de nuevo más tarde.', 'err'); return; }
+    if (!cfg.endpoint && !cfg.action) { say('El buzón aún se está conectando. Intenta de nuevo más tarde.', 'err'); return; }
     // antispam: campo trampa lleno o envío demasiado rápido → se descarta en silencio
     const bot = document.getElementById('b-sitio').value.trim() !== '' || Date.now() - openedAt < 4000;
     if (Date.now() - getLast() < 60000) { say('Ya recibimos una idea desde este navegador hace un momento. Espera un minuto para mandar otra.', 'err'); return; }
-    const body = new URLSearchParams();
     const fd = new FormData(bForm);
-    for (const [k, v] of fd.entries()) { const id = cfg.entries[k]; if (id && String(v).trim()) body.append(id, String(v).trim()); }
     if (bot) { bForm.reset(); say('Enviado.', 'ok'); return; }
     const btn = bForm.querySelector('.send');
     btn.disabled = true; say('Enviando…');
-    try {
-      // Google Forms no devuelve CORS: el envío se hace en modo no-cors (respuesta opaca)
-      // la respuesta es opaca: el navegador no deja saber si Google la aceptó, así que no se promete más de lo que se sabe
-      await fetch(cfg.action, { method: 'POST', mode: 'no-cors', body });
+    const done = (text) => {
       setLast();
       bForm.reset();
       bForm.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
-      say('Enviado. Si en unos días no tienes respuesta, escríbeme por Instagram (@uligress) para confirmar que llegó.', 'ok');
+      say(text, 'ok');
+    };
+    // respaldo: Google Forms directo. No devuelve CORS (respuesta opaca), así que no se promete más de lo que se sabe
+    const viaForm = async () => {
+      const body = new URLSearchParams();
+      for (const [k, v] of fd.entries()) { const id = cfg.entries[k]; if (id && String(v).trim()) body.append(id, String(v).trim()); }
+      await fetch(cfg.action, { method: 'POST', mode: 'no-cors', body });
+      done('Enviado. Si en unos días no tienes respuesta, escríbeme por Instagram (@uligress) para confirmar que llegó.');
+    };
+    try {
+      if (cfg.endpoint) {
+        // servicio propio: valida, guarda en la Bandeja, avisa por correo y confirma de verdad.
+        // text/plain evita la petición previa de CORS; el script lee el JSON del cuerpo
+        const data = { abiertoMs: Date.now() - openedAt, publico: fd.getAll('publico') };
+        for (const [k, v] of fd.entries()) if (k !== 'publico') data[k] = String(v).trim();
+        let r = null;
+        try {
+          const res = await fetch(cfg.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+          r = await res.json();
+        } catch { r = null; }
+        if (r && r.ok) { done('¡Listo, tu idea llegó! Te escribiré al correo que dejaste.'); return; }
+        if (r && r.mensaje) { say(r.mensaje, 'err'); return; }
+        if (!cfg.action) throw new Error('sin respaldo');
+      }
+      await viaForm();
     } catch {
       say('No se pudo enviar. Revisa tu conexión e inténtalo otra vez.', 'err');
     } finally { btn.disabled = false; }

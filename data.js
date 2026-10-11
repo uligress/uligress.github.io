@@ -19,7 +19,7 @@ window.UNG = {
   // Buzón de ideas: envía al Google Form "Buzón de ideas de simuladores · ung" (las respuestas caen en la hoja "Bandeja").
   buzon: {
     // servicio propio (Apps Script): valida, filtra spam, guarda en la Bandeja vía el Form, avisa por correo y confirma
-    endpoint: '',
+    endpoint: 'https://script.google.com/macros/s/AKfycbzALUeGcXdZ_50fFCLkqjbDK4L75E2HF4yFKmPrNq3tkP1eVVUXT6qboQXsINhKuWzJ/exec',
     action: 'https://docs.google.com/forms/d/e/1FAIpQLScchGZzSPC2K-Sx9YhpnD2bf3m71x_q3ySYR7zHDVH2xDcwaw/formResponse',
     entries: {    // nombre del campo en el sitio → pregunta del formulario
       titulo: 'entry.346673698', tema: 'entry.1464743382', problema: 'entry.388895883', simulador: 'entry.1535504990',
