@@ -69,6 +69,7 @@ root.innerHTML = DATA.projects.map((p, pi) => {
           <span class="chip mono small"><span class="dot"></span>${esc(p.status)}</span>
           ${p.description ? `<p class="project-desc">${rich(p.description)}</p>` : ''}
           ${p.note ? `<p class="project-note">${rich(p.note)}</p>` : ''}
+          ${p.link ? `<a class="sim-btn" href="${esc(p.link)}" target="_blank" rel="noopener">Probar ${plain(p.name)} <span aria-hidden="true">↗</span></a>` : ''}
         </div>
         <div class="project-info reveal">
           ${(p.facts || []).length ? `<dl class="facts">${p.facts.map(([k, v]) => `<div><dt class="mono small">${esc(k)}</dt><dd>${rich(v)}</dd></div>`).join('')}</dl>` : ''}
@@ -77,7 +78,7 @@ root.innerHTML = DATA.projects.map((p, pi) => {
         </div>
       </div>
       <div class="viewport"><div class="track">${cards}
-        <div class="pol end" style="--r:2deg"><span class="mono small muted">Continuará →</span></div>
+        ${p.link ? `<a class="pol end go" style="--r:2deg" href="${esc(p.link)}" target="_blank" rel="noopener"><span class="go-k mono small">Simulador</span><span class="go-t">Probar ${plain(p.name)}</span><span class="go-a" aria-hidden="true">↗</span></a>` : ''}
       </div></div>
     </section>`;
 }).join('');
@@ -449,15 +450,88 @@ if (renderer) {
     obj.position.set(x, y, z);
     obj.rotation.set(rx, ry, rz);
     obj.scale.setScalar(sc);
-    obj.userData = { base: obj.position.clone(), rot: obj.rotation.clone(), phase: i * 1.37, amp: 0.12 + (i % 3) * 0.05 };
+    obj.userData = { base: obj.position.clone(), rot: obj.rotation.clone(), phase: i * 1.37, amp: 0.12 + (i % 3) * 0.05, sc, spin: 0, spinAngle: 0, lift: 0 };
+    obj.userData.radius = new THREE.Box3().setFromObject(obj).getBoundingSphere(new THREE.Sphere()).radius;
     scene.add(obj);
     return obj;
   });
 
+  /* ---------- Easter egg: grab any shape and move it (mouse only), kept inside the hero ---------- */
+  const drag = { obj: null, plane: new THREE.Plane(), offset: new THREE.Vector3(), hit: new THREE.Vector3(), lastX: 0, vx: 0 };
+  const ray = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const pointAt = (e) => {
+    const r = canvas.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+  };
+  const shapeAt = (e) => {
+    pointAt(e);
+    const hit = ray.intersectObjects(shapes, true)[0];
+    let o = hit?.object;
+    while (o && !shapes.includes(o)) o = o.parent;
+    return o || null;
+  };
+  // Keep the shape's resting point inside the visible frustum at its depth, with room for its size,
+  // the float and the parallax, so it can never be dragged off the page.
+  const keepInside = (o) => {
+    const u = o.userData;
+    const d = camera.position.z - u.base.z;
+    const hh = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * d;
+    const hw = hh * camera.aspect;
+    const m = u.radius * 0.85 + 0.8;
+    u.base.x = clamp(u.base.x, -hw + m, hw - m);
+    u.base.y = clamp(u.base.y, -hh + m, hh - m);
+  };
+  if (finePointer) {
+    let hoverQueued = false;
+    hero.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || e.target.closest('a, button, input, textarea')) return;
+      const o = shapeAt(e);
+      if (!o) return;
+      e.preventDefault();
+      drag.obj = o;
+      o.userData.moved = true;
+      drag.plane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(new THREE.Vector3()).negate(), o.position);
+      ray.ray.intersectPlane(drag.plane, drag.hit);
+      drag.offset.copy(o.userData.base).sub(drag.hit);
+      drag.lastX = e.clientX; drag.vx = 0;
+      hero.classList.add('grabbing');
+      hero.setPointerCapture?.(e.pointerId);
+    });
+    hero.addEventListener('pointermove', (e) => {
+      if (drag.obj) {
+        pointAt(e);
+        if (ray.ray.intersectPlane(drag.plane, drag.hit)) {
+          const u = drag.obj.userData;
+          u.base.x = drag.hit.x + drag.offset.x;
+          u.base.y = drag.hit.y + drag.offset.y;
+          keepInside(drag.obj);
+        }
+        drag.vx = e.clientX - drag.lastX; drag.lastX = e.clientX;
+        return;
+      }
+      if (hoverQueued) return;
+      hoverQueued = true;
+      requestAnimationFrame(() => { hoverQueued = false; hero.classList.toggle('grab-hover', Boolean(shapeAt(e)) && !e.target.closest('a, button')); });
+    });
+    const release = () => {
+      if (!drag.obj) return;
+      drag.obj.userData.spin += clamp(drag.vx * 0.25, -6, 6) || 2.5; // a little toss on release
+      drag.obj = null;
+      hero.classList.remove('grabbing');
+    };
+    hero.addEventListener('pointerup', release);
+    hero.addEventListener('pointercancel', release);
+    hero.addEventListener('pointerleave', () => hero.classList.remove('grab-hover'));
+  }
+
   const mouse = new THREE.Vector2();
   const eased = new THREE.Vector2();
   window.addEventListener('pointermove', (e) => {
-    mouse.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
+    // clamped: with pointer capture (dragging a shape) the pointer can report positions outside the window
+    mouse.set(Math.max(-1, Math.min(1, (e.clientX / window.innerWidth) * 2 - 1)), Math.max(-1, Math.min(1, -(e.clientY / window.innerHeight) * 2 + 1)));
   }, { passive: true });
 
   const clockT = new THREE.Clock();
@@ -465,10 +539,12 @@ if (renderer) {
   new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(hero);
   const calm = reduceMotion ? 0.35 : 1; // slower, smaller motion when the OS asks for less
 
+  let lastT = 0;
   const render = () => {
     requestAnimationFrame(render);
     if (!visible) return;
     const t = clockT.getElapsedTime() * calm;
+    const dt = Math.min(0.05, t - lastT); lastT = t;
     const sp = Math.min(window.scrollY / Math.max(h, 1), 1.2);
     eased.lerp(mouse, 0.04);
     shapes.forEach((o, i) => {
@@ -477,8 +553,11 @@ if (renderer) {
       o.position.x = u.base.x + eased.x * 0.35 * depth;
       o.position.y = u.base.y + Math.sin(t * 0.5 + u.phase) * u.amp + eased.y * 0.25 * depth + sp * (1.5 + (i % 3) * 0.7);
       o.rotation.x = u.rot.x + Math.sin(t * 0.3 + u.phase) * 0.25 + sp * 0.6;
-      o.rotation.y = u.rot.y + t * 0.12 * (i % 2 ? 1 : -1);
+      u.spinAngle += u.spin * dt; u.spin *= Math.pow(0.15, dt); // tossed shapes spin and settle
+      o.rotation.y = u.rot.y + t * 0.12 * (i % 2 ? 1 : -1) + u.spinAngle;
       o.rotation.z = u.rot.z + Math.cos(t * 0.25 + u.phase) * 0.15;
+      u.lift += ((drag.obj === o ? 1 : 0) - u.lift) * 0.15; // grabbed shape grows a touch
+      o.scale.setScalar(u.sc * (1 + u.lift * 0.08));
     });
     canvas.style.opacity = String(Math.max(0, 1 - sp * 0.8));
     renderer.render(scene, camera);
@@ -490,5 +569,6 @@ if (renderer) {
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+    shapes.forEach((o) => { if (o.userData.moved) keepInside(o); });
   });
 }
