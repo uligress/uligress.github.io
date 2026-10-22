@@ -136,6 +136,21 @@ main { position: relative; z-index: 2; }
 .viewport::-webkit-scrollbar { display: none; }
 body.pinned .viewport { overflow: visible; }
 .pol { scroll-snap-align: center; }
+/* Mouse without pinning: drag the carousel + arrows in the head */
+.viewport.can-drag { cursor: grab; }
+.viewport.grabbing, .viewport.grabbing * { cursor: grabbing !important; user-select: none; }
+.viewport.grabbing { scroll-snap-type: none; }
+.project-info.has-nav { align-self: stretch; }
+.car-nav { display: flex; gap: 8px; margin-top: auto; align-self: flex-end; }
+.car-nav[hidden] { display: none; }
+.car-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--ink); background: transparent; color: var(--ink);
+  display: inline-flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 16px; line-height: 1;
+  transition: background .15s, color .15s;
+}
+.car-btn:hover:not([aria-disabled="true"]) { background: var(--ink); color: var(--paper); }
+.car-btn[aria-disabled="true"] { opacity: .3; cursor: default; }
+.car-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .track { display: flex; gap: clamp(20px, 3vw, 48px); padding: 24px var(--pad) 40px; width: max-content; align-items: flex-start; }
 
 /* Polaroid */
@@ -319,5 +334,6 @@ body.pinned .viewport { overflow: visible; }
 
 @media (prefers-reduced-motion: reduce) {
   .grain, .scroll-hint { animation: none; }
+  .car-btn { transition: none; }
   .marquee-track { animation-duration: 80s; }
 }

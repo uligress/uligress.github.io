@@ -135,6 +135,81 @@ if (gsap && ScrollTrigger) {
   }
 }
 
+/* ---------- Mouse without pinning (reduced motion, narrow window): arrows + drag ---------- */
+// Touch keeps native swipe; the vertical wheel keeps scrolling the page.
+if (finePointer && !document.body.classList.contains('pinned')) {
+  document.querySelectorAll('.project-sec').forEach((sec) => {
+    const vp = sec.querySelector('.viewport');
+    const info = sec.querySelector('.project-info');
+    const nav = document.createElement('div');
+    nav.className = 'car-nav';
+    nav.innerHTML = '<button class="car-btn" type="button" aria-label="Anterior"><span aria-hidden="true">←</span></button>'
+      + '<button class="car-btn" type="button" aria-label="Siguiente"><span aria-hidden="true">→</span></button>';
+    info.appendChild(nav);
+    info.classList.add('has-nav');
+    const [prev, next] = nav.children;
+
+    const update = () => {
+      const max = vp.scrollWidth - vp.clientWidth;
+      nav.hidden = max <= 1;
+      prev.setAttribute('aria-disabled', String(vp.scrollLeft <= 1));
+      next.setAttribute('aria-disabled', String(vp.scrollLeft >= max - 1));
+    };
+    // One viewport width minus one card, so the last visible card stays as context
+    const step = () => {
+      const pol = vp.querySelector('.pol');
+      return Math.max(vp.clientWidth - (pol ? pol.offsetWidth : 0), 120);
+    };
+    const go = (dir) => {
+      const max = vp.scrollWidth - vp.clientWidth;
+      if (dir < 0 ? vp.scrollLeft <= 1 : vp.scrollLeft >= max - 1) return; // already at the edge
+      vp.scrollBy({ left: dir * step(), behavior: reduceMotion ? 'auto' : 'smooth' });
+    };
+    prev.addEventListener('click', () => go(-1));
+    next.addEventListener('click', () => go(1));
+    vp.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    window.addEventListener('load', update);
+    update();
+
+    // Drag with the mouse; a drag over 5px swallows the click that ends it
+    vp.classList.add('can-drag');
+    let startX = 0, startLeft = 0, down = false, dragging = false, swallow = false;
+    vp.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      down = true; dragging = false; startX = e.clientX; startLeft = vp.scrollLeft;
+    });
+    vp.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (!dragging && Math.abs(dx) > 5) {
+        dragging = true;
+        vp.setPointerCapture(e.pointerId);
+        vp.classList.add('grabbing'); // also turns off snap while dragging
+        window.getSelection()?.removeAllRanges();
+      }
+      if (dragging) vp.scrollLeft = startLeft - dx;
+    });
+    const end = (e) => {
+      if (!down) return;
+      down = false;
+      if (!dragging) return;
+      dragging = false;
+      swallow = true;
+      setTimeout(() => { swallow = false; }, 0); // if no click follows, forget it
+      if (vp.hasPointerCapture(e.pointerId)) vp.releasePointerCapture(e.pointerId);
+      vp.classList.remove('grabbing');
+    };
+    vp.addEventListener('pointerup', end);
+    vp.addEventListener('pointercancel', end);
+    vp.addEventListener('click', (e) => {
+      if (!swallow) return;
+      e.preventDefault(); e.stopPropagation(); swallow = false;
+    }, true);
+    vp.addEventListener('dragstart', (e) => e.preventDefault()); // no native image/link drag
+  });
+}
+
 /* ---------- Touch screens: reveal a teaser photo when it is centered ---------- */
 if (window.matchMedia('(hover: none)').matches) {
   document.querySelector('.lb-hint').textContent = 'Toca la foto para voltearla';
