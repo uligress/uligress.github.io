@@ -7,31 +7,21 @@
   <meta name="description" content="ung · proyectos y proceso.">
   <meta property="og:title" content="ung">
   <meta property="og:url" content="https://uligress.me/">
-  <meta name="theme-color" content="#f2f1ee">
+  <meta name="theme-color" content="#05080c">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="48x48" href="assets/icon-48.png?v=2">
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=2">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=1791674885">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=1792640000">
   <script>
     document.documentElement.classList.add('js');
     setTimeout(function () { if (!window.__revealReady) document.documentElement.classList.remove('js'); }, 3000);
   </script>
 </head>
 <body>
-  <div class="grain" aria-hidden="true"></div>
-  <!-- tinta de plumón: bordes irregulares y algo de sangrado -->
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <filter id="ink" x="-5%" y="-20%" width="110%" height="140%">
-      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="0.8" xChannelSelector="R" yChannelSelector="G" result="d"/>
-      <feGaussianBlur in="d" stdDeviation="0.25"/>
-    </filter>
-  </svg>
-  <div class="grid-lines" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
 
   <header class="nav">
     <a href="#top" class="brand" aria-label="ung — inicio"><span class="logo-mask"></span></a>
@@ -41,18 +31,18 @@
       <a href="#buzon">Buzón</a>
       <a href="https://uligress.me/lab/">Lab ↗</a>
     </nav>
-    <span class="nav-status mono">MTY · <span id="clock">--:--</span></span>
+    <span class="nav-status mono">Monterrey, MX · <span id="clock">--:--</span></span>
   </header>
 
   <main id="top">
     <section class="hero">
       <canvas id="gl" aria-hidden="true"></canvas>
-      <p class="label mono reveal">[ UNG®—PROCESO / <em class="serif">teasers</em> ]</p>
+      <p class="label reveal"><span class="spark" aria-hidden="true">✦</span> Simuladores para aprender medicina</p>
       <h1 class="hero-logo"><span class="sr-only">ung</span><span class="logo-mask big"></span></h1>
       <h2 class="hero-title reveal" data-rich="site.headline"></h2>
       <div class="hero-foot">
         <p class="hero-copy reveal" data-text="site.subtitle"></p>
-        <p class="mono small reveal scroll-hint">↓ Scroll</p>
+        <ol class="hero-list reveal" id="hero-list"></ol>
       </div>
     </section>
 
@@ -63,15 +53,15 @@
     <div id="proyectos"></div>
 
     <section id="acerca" class="section about">
-      <p class="label mono reveal">[ ACERCA / <em class="serif">quién hay detrás</em> ]</p>
+      <p class="label reveal"><span class="spark" aria-hidden="true">✦</span> Acerca</p>
       <p class="about-text reveal" data-text="site.about"></p>
       <span class="logo-mask about-logo reveal" aria-hidden="true"></span>
     </section>
 
     <section id="buzon" class="section buzon">
-      <p class="label mono">[ BUZÓN / <em class="serif">ideas de simuladores</em> ]</p>
+      <p class="label"><span class="spark" aria-hidden="true">✦</span> Buzón de ideas</p>
       <div class="buzon-head">
-        <h2 class="buzon-title">¿Qué simulador te gustaría que <em class="serif">existiera</em>?</h2>
+        <h2 class="buzon-title">¿Qué simulador te gustaría que <em class="script">existiera</em>?</h2>
         <p class="buzon-intro">Cuéntame qué procedimiento cuesta aprender y cómo te imaginas practicarlo. Desarrolla la idea lo más que puedas y deja tus datos: si avanza, te escribo.</p>
       </div>
       <form id="buzon-form" class="buzon-form" novalidate>
@@ -109,7 +99,7 @@
         <!-- campo trampa: invisible para personas; si un bot lo llena, el envío se descarta -->
         <label class="hp" aria-hidden="true">Sitio web <input id="b-sitio" name="sitio" tabindex="-1" autocomplete="off"></label>
         <div class="buzon-send">
-          <button type="submit" class="send mono">Enviar idea →</button>
+          <button type="submit" class="send">Enviar idea <span class="arrow" aria-hidden="true">→</span></button>
           <p id="buzon-msg" class="buzon-msg" role="status" aria-live="polite"></p>
         </div>
       </form>
@@ -117,10 +107,22 @@
   </main>
 
   <footer class="footer">
-    <span class="mono small">© <span id="year">2026</span> ung</span>
-    <a href="https://github.com/uligress" class="mono small" target="_blank" rel="noopener">GitHub ↗</a>
-    <a href="https://instagram.com/uligress" class="mono small" target="_blank" rel="noopener">Instagram @uligress ↗</a>
-    <a href="#top" class="mono small">Volver arriba ↑</a>
+    <div class="footer-cols">
+      <div>
+        <p class="footer-k">Secciones</p>
+        <a href="#proyectos">Proyectos</a><a href="#acerca">Acerca</a><a href="#buzon">Buzón</a><a href="https://uligress.me/lab/">Lab ↗</a>
+      </div>
+      <div>
+        <p class="footer-k">Sígueme</p>
+        <a href="https://instagram.com/uligress" target="_blank" rel="noopener">Instagram @uligress ↗</a>
+        <a href="https://github.com/uligress" target="_blank" rel="noopener">GitHub ↗</a>
+      </div>
+      <div class="footer-end">
+        <a href="#top" class="send">Volver arriba <span class="arrow" aria-hidden="true">↑</span></a>
+      </div>
+    </div>
+    <span class="logo-mask footer-logo" aria-hidden="true"></span>
+    <p class="footer-legal mono"><span>© <span id="year">2026</span> ung</span><span>Hecho en Monterrey</span></p>
   </footer>
 
   <!-- Lightbox: the polaroid flips to show the back -->
@@ -135,13 +137,13 @@
     <p class="lb-hint mono small">Clic en la foto para voltearla</p>
   </div>
 
-  <script src="data.js?v=1791674884"></script>
+  <script src="data.js?v=1792641000"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
   </script>
-  <script type="module" src="main.js?v=1791674885"></script>
+  <script type="module" src="main.js?v=1792640000"></script>
 </body>
 </html>

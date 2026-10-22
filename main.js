@@ -6,8 +6,7 @@ const DATA = window.UNG || { site: {}, projects: [] };
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isMobile = window.matchMedia('(max-width: 860px)').matches;
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches; // mouse/trackpad, not touch
-const pad3 = (n) => String(n).padStart(3, '0');
-const rich = (s) => esc(s).replace(/\*(.+?)\*/g, '<em class="serif">$1</em>');
+const rich = (s) => esc(s).replace(/\*(.+?)\*/g, '<em class="script">$1</em>');
 const plain = (s) => String(s ?? '').replace(/\*/g, '');
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -33,6 +32,7 @@ setInterval(tick, 20000);
 
 /* ---------- Marquee ---------- */
 const words = ['Proceso', ...DATA.projects.map((p) => plain(p.name)).filter(Boolean), 'Teasers', 'Próximamente'];
+document.getElementById('hero-list').innerHTML = DATA.projects.map((p) => `<li><a href="#project-${p.number}"><span class="script">(${String(p.number).padStart(2, '0')})</span> ${esc(plain(p.name))}</a></li>`).join('');
 document.getElementById('marquee').innerHTML = [...words, ...words].map((w) => `<span>${esc(w)}</span><span>✦</span>`).join('');
 
 /* ---------- Project carousels ---------- */
@@ -45,31 +45,30 @@ root.innerHTML = DATA.projects.map((p, pi) => {
   const cards = p.items.map((it, i) => {
     pieceNo += 1;
     flat.push({ ...it, project: p, n: pieceNo, i, total });
-    const rot = ((i * 37) % 7) - 3; // a little hand-placed tilt
     const hue = (pi * 60 + i * 47) % 360;
     const img = it.img
       ? `<img src="${esc(it.img)}" alt="${esc(it.caption || `${plain(p.name)} — proceso ${i + 1}`)}" loading="lazy">`
       : '';
     const stamp = p.teaser ? `<span class="stamp">${it.img ? 'Teaser' : 'Pronto'}</span>` : '';
     return `
-      <button class="pol" type="button" style="--r:${rot}deg" data-idx="${flat.length - 1}">
+      <button class="pol" type="button" data-idx="${flat.length - 1}">
         <div class="pol-img${it.img ? '' : ' empty'}" style="--h:${hue}">${img}${stamp}</div>
         <p class="pol-caption">${esc(it.caption)}</p>
-        <span class="pol-meta mono small"><span>N.º ${pad3(pieceNo)}</span><span>${esc(it.date)}</span></span>
+        <span class="pol-meta"><span class="script">(${String(pieceNo).padStart(2, '0')})</span><span class="mono small">${esc(it.date)}</span></span>
       </button>`;
   }).join('');
   return `
     <section class="project-sec${p.teaser ? ' teaser' : ''}" id="project-${p.number}">
       <div class="project-head">
         <div class="project-title">
-          <p class="label mono project-num reveal">Project #${p.number}${p.kicker ? ` <span class="muted">/ ${esc(p.kicker)}</span>` : ''}</p>
+          <p class="label project-num reveal"><span class="script">(${String(p.number).padStart(2, '0')})</span>${p.kicker ? ` <span class="muted">${esc(p.kicker)}</span>` : ''}</p>
           <h2 class="project-name reveal">${rich(p.name)}</h2>
         </div>
         <div class="project-side reveal">
-          <span class="chip mono small"><span class="dot"></span>${esc(p.status)}</span>
+          <span class="chip"><span class="dot"></span>${esc(p.status)}</span>
           ${p.description ? `<p class="project-desc">${rich(p.description)}</p>` : ''}
           ${p.note ? `<p class="project-note">${rich(p.note)}</p>` : ''}
-          ${p.link ? `<a class="sim-btn" href="${esc(p.link)}" target="_blank" rel="noopener">Probar ${plain(p.name)} <span aria-hidden="true">↗</span></a>` : ''}
+          ${p.link ? `<a class="sim-btn" href="${esc(p.link)}" target="_blank" rel="noopener">Probar ${plain(p.name)} <span class="arrow" aria-hidden="true">→</span></a>` : ''}
         </div>
         <div class="project-info reveal">
           ${(p.facts || []).length ? `<dl class="facts">${p.facts.map(([k, v]) => `<div><dt class="mono small">${esc(k)}</dt><dd>${rich(v)}</dd></div>`).join('')}</dl>` : ''}
@@ -78,7 +77,7 @@ root.innerHTML = DATA.projects.map((p, pi) => {
         </div>
       </div>
       <div class="viewport"><div class="track">${cards}
-        ${p.link ? `<a class="pol end go" style="--r:2deg" href="${esc(p.link)}" target="_blank" rel="noopener"><span class="go-k mono small">Simulador</span><span class="go-t">Probar ${plain(p.name)}</span><span class="go-a" aria-hidden="true">↗</span></a>` : ''}
+        ${p.link ? `<a class="pol end go" href="${esc(p.link)}" target="_blank" rel="noopener"><span class="go-k mono small">Simulador</span><span class="go-t">Probar <em class="script">${plain(p.name)}</em></span><span class="go-a" aria-hidden="true">→</span></a>` : ''}
       </div></div>
     </section>`;
 }).join('');
@@ -125,7 +124,7 @@ if (gsap && ScrollTrigger) {
           scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + distance(), pin: true, scrub: 1, invalidateOnRefresh: true },
         });
         gsap.from(sec.querySelectorAll('.pol'), {
-          y: 80, opacity: 0, rotate: (i) => (i % 2 ? 8 : -8), stagger: 0.07, duration: 1.2, ease: 'power3.out',
+          y: 80, opacity: 0, stagger: 0.07, duration: 1.2, ease: 'power3.out',
           scrollTrigger: { trigger: sec, start: 'top 70%' },
         });
       });
@@ -231,7 +230,7 @@ const show = (idx) => {
   imgBox.style.setProperty('--h', (current * 47) % 360);
   imgBox.innerHTML = it.img ? `<img src="${esc(it.img)}" alt="${esc(it.caption)}">` : '';
   document.getElementById('lb-caption').textContent = it.caption || '';
-  document.getElementById('lb-num').textContent = `N.º ${pad3(it.n)} · Project #${it.project.number} ${plain(it.project.name)} · ${it.i + 1}/${it.total}`;
+  document.getElementById('lb-num').textContent = `${plain(it.project.name)} · ${String(it.i + 1).padStart(2, '0')} / ${String(it.total).padStart(2, '0')}`;
   document.getElementById('lb-back').textContent = it.back || '';
   document.getElementById('lb-date').textContent = it.date || '';
   card.classList.remove('flipped');
@@ -343,7 +342,7 @@ if (renderer) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
   renderer.setSize(w, h, false);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.15;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
@@ -357,14 +356,14 @@ if (renderer) {
   key.position.set(4, 6, 6);
   scene.add(key, new THREE.AmbientLight(0xffffff, 0.25));
 
-  // Materials: matte ceramic, graphite, one red accent, frosted glass
-  const ceramic = new THREE.MeshPhysicalMaterial({ color: 0xf1eee8, roughness: 0.42, clearcoat: 0.5, clearcoatRoughness: 0.3 });
-  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x1b1b1b, roughness: 0.32, clearcoat: 0.8, clearcoatRoughness: 0.2 });
-  const accent = new THREE.MeshPhysicalMaterial({ color: 0xe5383b, roughness: 0.28, clearcoat: 1, clearcoatRoughness: 0.15 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0xece8f1, roughness: 0.18, clearcoat: 1, clearcoatRoughness: 0.08, iridescence: 1, iridescenceIOR: 1.4, iridescenceThicknessRange: [180, 520] }); // pearl
+  // Materials (estilo Ignitex): obsidian, chrome and clear glass — monochrome, no color accent
+  const ceramic = new THREE.MeshPhysicalMaterial({ color: 0x2a2e35, roughness: 0.22, metalness: 0.2, clearcoat: 1, clearcoatRoughness: 0.08 });
+  const graphite = new THREE.MeshPhysicalMaterial({ color: 0x0b0e12, roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.1 });
+  const accent = new THREE.MeshPhysicalMaterial({ color: 0xe9ebef, metalness: 1, roughness: 0.1 });
+  const glass = new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.04, transmission: 1, thickness: 0.9, ior: 1.5, clearcoat: 1 });
 
-  const metal = new THREE.MeshPhysicalMaterial({ color: 0xc9ccd1, metalness: 1, roughness: 0.22 });
-  const brainMat = new THREE.MeshPhysicalMaterial({ color: 0xeedcd6, roughness: 0.5, clearcoat: 0.35, clearcoatRoughness: 0.4 });
+  const metal = new THREE.MeshPhysicalMaterial({ color: 0xd9dce1, metalness: 1, roughness: 0.14 });
+  const brainMat = new THREE.MeshPhysicalMaterial({ color: 0xdfe3ea, roughness: 0.22, transmission: 0.9, thickness: 1.2, ior: 1.45, clearcoat: 1 });
   const seg = isMobile ? 48 : 96;
 
   /* AmnioSim: spinal needle with its hub */
