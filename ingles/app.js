@@ -5,8 +5,23 @@
 
   const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
   const API = LOCAL ? 'http://127.0.0.1:8788/api' : 'https://ung-ingles-api.bloque-ingenieria.workers.dev/api';
+  // Cada idioma (inglés, alemán, francés) carga su config.js; la cuenta es la misma.
+  const CFG = Object.assign({
+    prefix: '', lang: 'en-US', langName: 'inglés', heroA: 'Medical', heroB: 'English',
+    lead: 'Inglés médico rápido y útil: hablar con pacientes, presentar en el pase de visita y leer artículos. Clases de 15 minutos, con tu progreso guardado.',
+  }, window.COURSE_CONFIG || {});
   const KEY_SESSION = 'ung-ingles-session';
-  const KEY_GUEST = 'ung-ingles-guest';
+  const KEY_GUEST = 'ung-ingles-guest' + (CFG.prefix ? '-' + CFG.prefix : '');
+  const pid = (id) => (CFG.prefix ? CFG.prefix + '-' + id : id);
+  // Del progreso de la cuenta solo se toma el de este curso, sin prefijo.
+  function ownProgress(all) {
+    const out = {};
+    for (const [k, v] of Object.entries(all || {})) {
+      const m = k.match(/^(?:([a-z]{2})-)?(m\d+l\d+)$/);
+      if (m && (m[1] || '') === CFG.prefix) out[m[2]] = v;
+    }
+    return out;
+  }
   const DAY = 86400000;
   const BOX_DAYS = [0, 1, 3, 7, 16, 35];
 
@@ -68,7 +83,7 @@
     const data = lp(id);
     data.at = Date.now();
     if (state.guest) { store.set(KEY_GUEST, state.progress); return; }
-    try { await api('/progress/' + id, { method: 'PUT', body: data }); }
+    try { await api('/progress/' + pid(id), { method: 'PUT', body: data }); }
     catch (e) { toast('No se guardó: ' + e.message); }
   }
 
@@ -103,17 +118,39 @@
   let voices = [];
   function loadVoices() {
     if (!('speechSynthesis' in window)) return;
-    const all = speechSynthesis.getVoices().filter((v) => /^en[-_]US/i.test(v.lang));
+    const all = speechSynthesis.getVoices().filter((v) => v.lang.replace('_', '-').toLowerCase().startsWith(CFG.lang.toLowerCase()));
     const rank = (v) => (/samantha|google us|aria|jenny|ava|allison/i.test(v.name) ? 0 : v.localService ? 1 : 2);
     voices = all.sort((a, b) => rank(a) - rank(b));
   }
   if ('speechSynthesis' in window) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
 
+  // Audio grabado con ElevenLabs (audio/index.js); si falta, voz del dispositivo.
+  const AUDIO = window.COURSE_AUDIO || {};
+  let current = null;
+  function stopAll() {
+    if (current) { current.pause(); current.onended = current.onerror = null; current = null; }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+  }
+
   function speak(text, opts = {}) {
-    if (!('speechSynthesis' in window)) { toast('Tu navegador no tiene voz en inglés.'); return Promise.resolve(); }
+    const file = AUDIO[text];
+    if (file) {
+      return new Promise((resolve) => {
+        const a = new Audio('audio/' + file);
+        current = a;
+        a.onended = () => { if (current === a) current = null; resolve(); };
+        a.onerror = () => { if (current === a) current = null; speakDevice(text, opts).then(resolve); };
+        a.play().catch(() => a.onerror());
+      });
+    }
+    return speakDevice(text, opts);
+  }
+
+  function speakDevice(text, opts = {}) {
+    if (!('speechSynthesis' in window)) { toast('Tu navegador no tiene voz en ' + CFG.langName + '.'); return Promise.resolve(); }
     return new Promise((resolve) => {
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-US'; u.rate = opts.rate || 0.92;
+      u.lang = CFG.lang; u.rate = opts.rate || 0.92;
       const v = voices[opts.voice || 0] || voices[0];
       if (v) u.voice = v;
       u.onend = u.onerror = () => resolve();
@@ -125,7 +162,7 @@
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-say]');
     if (!b) return;
-    speechSynthesis.cancel();
+    stopAll();
     b.classList.add('on');
     speak(b.dataset.say).then(() => b.classList.remove('on'));
   });
@@ -167,7 +204,7 @@
   // ---------- vistas ----------
   function render() {
     renderNav();
-    speechSynthesis && speechSynthesis.cancel && speechSynthesis.cancel();
+    stopAll();
     const h = location.hash.replace(/^#\/?/, '');
     const signed = state.user || state.guest;
     if (!signed) return viewAuth(h === 'recuperar' ? 'recover' : 'login');
@@ -188,11 +225,11 @@
       '<section class="grid-2 in">' +
         '<div>' +
           '<p class="label">Curso para estudiantes de Medicina</p>' +
-          '<h1 class="hero-title">Medical <span class="script">English</span></h1>' +
-          '<p class="lead">Inglés médico rápido y útil: hablar con pacientes, presentar en el pase de visita y leer artículos. Clases de 15 minutos, con tu progreso guardado.</p>' +
+          '<h1 class="hero-title">' + esc(CFG.heroA) + ' <span class="script">' + esc(CFG.heroB) + '</span></h1>' +
+          '<p class="lead">' + esc(CFG.lead) + '</p>' +
           '<ul class="features">' +
             '<li><span class="num">(01)</span><span><b>6 módulos, ' + LESSONS.length + ' clases.</b> De la base funcional a la lectura crítica de artículos.</span></li>' +
-            '<li><span class="num">(02)</span><span><b>Vocabulario con audio.</b> Pronunciación con IPA y la voz en inglés de tu dispositivo.</span></li>' +
+            '<li><span class="num">(02)</span><span><b>Vocabulario con audio.</b> Pronunciación con IPA y voces naturales en ' + esc(CFG.langName) + '.</span></li>' +
             '<li><span class="num">(03)</span><span><b>Ejercicios y tarjetas.</b> Repaso espaciado de lo que vas aprendiendo.</span></li>' +
           '</ul>' +
         '</div>' +
@@ -277,7 +314,7 @@
   async function afterLogin() {
     const guest = store.get(KEY_GUEST);
     const data = await api('/progress');
-    state.progress = data.progress || {};
+    state.progress = ownProgress(data.progress);
     // Si venía de probar sin cuenta, sube lo que hizo como invitado.
     if (guest && Object.keys(guest).length) {
       for (const [id, p] of Object.entries(guest)) {
@@ -354,7 +391,7 @@
         '<div class="dialogue">' + (t.lines || []).map((x) => '<div class="line"><span class="who">' + esc(x.who) + '</span><span>' + esc(x.en) + '</span>' + sayBtn(x.en) + '</div>').join('') + '</div>';
     } else if (t.type === 'reading') {
       textHtml =
-        '<div class="btn-row" style="margin-bottom:14px"><button class="btn-2" type="button" id="play-all">▶ Escuchar todo</button></div>' +
+        (t.listen === false ? '' : '<div class="btn-row" style="margin-bottom:14px"><button class="btn-2" type="button" id="play-all">▶ Escuchar todo</button></div>') +
         '<div class="reading">' + (t.paragraphs || []).map((x) => '<p>' + esc(x) + '</p>').join('') + '</div>';
     }
     mount(
@@ -392,7 +429,7 @@
     if (playAll) {
       let playing = false;
       playAll.addEventListener('click', async () => {
-        if (playing) { speechSynthesis.cancel(); playing = false; playAll.textContent = '▶ Escuchar todo'; return; }
+        if (playing) { stopAll(); playing = false; playAll.textContent = '▶ Escuchar todo'; return; }
         playing = true; playAll.textContent = '■ Detener';
         const items = t.type === 'dialogue' ? t.lines.map((x) => ({ text: x.en, who: x.who })) : t.paragraphs.map((x) => ({ text: x }));
         const speakers = [...new Set(items.map((x) => x.who))];
@@ -604,7 +641,7 @@
       state.token = s.token; state.user = s.user;
       try {
         const data = await api('/progress');
-        state.progress = data.progress || {};
+        state.progress = ownProgress(data.progress);
       } catch (e) {
         if (state.token) toast(e.message);
       }
