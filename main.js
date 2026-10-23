@@ -35,6 +35,36 @@ const words = ['Proceso', ...DATA.projects.map((p) => plain(p.name)).filter(Bool
 document.getElementById('hero-list').innerHTML = DATA.projects.map((p) => `<li><a href="#project-${p.number}"><span class="script">(${String(p.number).padStart(2, '0')})</span> ${esc(plain(p.name))}</a></li>`).join('');
 document.getElementById('marquee').innerHTML = [...words, ...words].map((w) => `<span>${esc(w)}</span><span>✦</span>`).join('');
 
+/* ---------- Todo lo disponible ---------- */
+const cat = DATA.catalog;
+const catRoot = document.getElementById('disponible');
+if (cat && catRoot) {
+  let n = 0;
+  catRoot.innerHTML = `
+    <div class="cat-head">
+      <p class="label reveal"><span class="spark" aria-hidden="true">✦</span> Disponible hoy</p>
+      <h2 class="cat-title reveal">${rich(cat.title)}</h2>
+      ${cat.intro ? `<p class="cat-intro reveal">${esc(cat.intro)}</p>` : ''}
+    </div>
+    ${cat.groups.map((g) => `
+      <div class="cat-group">
+        <p class="cat-label mono reveal">${esc(g.label)} <span class="muted">· ${g.items.length}</span></p>
+        <div class="cat-grid${g.items.some((it) => it.img) ? '' : ' text-only'}">
+          ${g.items.map((it) => `
+            <a class="cat-card reveal" href="${esc(it.link)}">
+              ${it.img ? `<span class="cat-img"><img src="${esc(it.img)}" alt="" loading="lazy"></span>` : ''}
+              <span class="cat-body">
+                <span class="cat-top"><span class="script cat-no">(${String(++n).padStart(2, '0')})</span><span class="cat-status mono">${esc(it.status)}</span></span>
+                <span class="cat-name">${rich(it.name)}</span>
+                <span class="cat-area mono">${esc(it.area)}</span>
+                <span class="cat-text">${esc(it.text)}</span>
+                <span class="cat-open">Abrir <span class="arrow" aria-hidden="true">→</span></span>
+              </span>
+            </a>`).join('')}
+        </div>
+      </div>`).join('')}`;
+}
+
 /* ---------- Project carousels ---------- */
 const flat = []; // every polaroid, for the lightbox
 let pieceNo = 0;

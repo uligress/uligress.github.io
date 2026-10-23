@@ -27,6 +27,30 @@ window.UNG = {
       telefono: 'entry.397228987', institucion: 'entry.664746345', colaborar: 'entry.1694082772', privacidad: 'entry.430006936',
     },
   },
+  // Todo lo disponible (sección del inicio): simuladores del lab y cursos de idiomas.
+  catalog: {
+    title: 'Todo lo *disponible*',
+    intro: 'Simuladores para practicar procedimientos y cursos para ejercer en otro idioma. Todo funciona en el navegador.',
+    groups: [
+      {
+        label: 'Simuladores',
+        items: [
+          { name: 'Amnio*Sim*', area: 'Medicina materno-fetal', text: 'Amniocentesis guiada por ultrasonido, con la punta de la aguja siempre visible.', status: 'Disponible', img: 'https://uligress.me/lab/img/amniosim.jpg', link: 'https://uligress.me/lab/amniosim/' },
+          { name: 'Clip*Sim*', area: 'Neurocirugía', text: 'Clipaje microquirúrgico de un aneurisma, visto a través del microscopio.', status: 'Disponible', img: 'https://uligress.me/lab/img/neurocirugia.jpg', link: 'https://uligress.me/lab/clipsim/' },
+          { name: 'Stent*Sim*', area: 'Endovascular', text: 'Angioplastia y stent ilíaco bajo fluoroscopia simulada.', status: 'Beta', img: 'https://uligress.me/lab/img/stentsim.jpg', link: 'https://uligress.me/lab/stentsim/' },
+          { name: 'Hernio*Sim*', area: 'Cirugía general', text: 'Hernioplastia inguinal laparoscópica (TAPP) con malla y grapas.', status: 'Disponible', img: 'https://uligress.me/lab/img/herniosim.jpg', link: 'https://uligress.me/lab/herniosim/' },
+        ],
+      },
+      {
+        label: 'Cursos de idiomas',
+        items: [
+          { name: 'Medical *English*', area: 'Inglés médico', text: 'Consulta, hospital y artículos: 24 clases de 15 minutos con audio de voces naturales.', status: 'Disponible', link: 'https://uligress.me/ingles/' },
+          { name: 'Medizinisches *Deutsch*', area: 'Alemán médico', text: 'Anamnesis, Klinikalltag y artículos para rotar o trabajar en Alemania: 24 clases.', status: 'Disponible', link: 'https://uligress.me/aleman/' },
+          { name: 'Français *médical*', area: 'Francés médico', text: 'Interrogatorio, hospital y artículos para rotar o trabajar en Francia: 24 clases.', status: 'Disponible', link: 'https://uligress.me/frances/' },
+        ],
+      },
+    ],
+  },
   projects: [
     {
       number: 1,
