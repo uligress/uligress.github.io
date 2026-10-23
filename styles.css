@@ -299,7 +299,7 @@ body.pinned .viewport { overflow: visible; }
 
 @media (max-width: 860px) {
   .nav { grid-template-columns: auto 1fr; padding: 14px var(--pad); }
-  .nav-links { grid-column: 2; gap: 18px; font-size: 13px; }
+  .nav-links { grid-column: 2; gap: 14px; font-size: 13px; }
   .brand .logo-mask { width: 54px; }
   .nav-status { display: none; }
 
