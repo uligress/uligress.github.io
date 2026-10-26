@@ -226,5 +226,31 @@
 .tool-btn.active, .st-tool.active, .st-tool[aria-pressed=true], .tool.active { box-shadow: inset 0 0 0 1px var(--hud-accent) !important; color: var(--hud-text) !important; }
 /* Tipografía BroncoSim (sans) en todo el HUD; cifras tabulares */
 .st-panel, .st-hud, .st-readout, .st-tool, .st-tip, .st-status, .g-list, .g-mentor, .checklist, .mentor, .vitals,
-.hud-case, .hud-scope, .hud-controls, .tool-hint, .tool-row button, .toast, .probe { font-family: var(--font-sans) !important; }
+.hud-case, .hud-scope, .hud-controls, .tool-hint, .tool-row button, .toast, .probe, .viewlabel, .legend, .top-actions button { font-family: var(--font-sans) !important; }
 .num, .val, .g-num, .g-pct, .g-c, .stage-count, .v-big, .st-big { font-variant-numeric: tabular-nums; }
+/* SIM SHELL — móvil (≤700 px): mismo patrón en los 5. Como ya hacían Amnio/Stent/Hernio:
+   se ocultan la lista de etapas (el mentor muestra ETAPA n/6), la ayuda de teclado y los paneles auxiliares;
+   monitor compacto arriba-der., mentor como hoja inferior, herramientas en una fila desplazable. */
+@media (max-width: 700px) {
+  .hud-title, .st-title, .hud-case {
+    max-width: calc(100vw - 150px) !important; white-space: nowrap !important; overflow: hidden !important;
+    text-overflow: ellipsis !important; font-size: 9.5px !important;
+  }
+  .hud-top { top: 8px !important; left: 12px !important; right: 12px !important; flex-wrap: nowrap !important; }
+  .checklist, .g-list, .st-hud, .hud-controls, .mag, .clip-panel, #tray { display: none !important; }
+  .vitals, #vitals { zoom: .62; top: 72px !important; right: 20px !important; }
+  .mentor, .g-mentor {
+    left: 12px !important; right: 12px !important; width: auto !important; bottom: 96px !important;
+    max-height: 30vh !important; overflow-y: auto !important;
+  }
+  .toolbar-wrap, .st-toolwrap, .toolbar {
+    left: 8px !important; right: 8px !important; transform: none !important; bottom: 8px !important;
+    max-width: none !important; width: auto !important; min-width: 0 !important;
+  }
+  .toolbar-wrap .toolbar { position: static !important; }
+  .toolbar:not(:has(.tool-row)), .st-toolbar, .tool-row { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; scrollbar-width: none; }
+  .tool-readout, .st-readout, .tool-hint { max-width: calc(100vw - 24px) !important; white-space: normal !important; font-size: 11px !important; }
+  .pip { zoom: .7; }
+  .hud-actions { gap: 6px !important; flex-shrink: 0; }
+  .hud-actions button, .top-actions button { white-space: nowrap !important; padding: 4px 10px !important; min-height: 30px !important; font-size: 11px !important; }
+}
