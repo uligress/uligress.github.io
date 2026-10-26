@@ -35,6 +35,7 @@ window.UNG = {
       {
         label: 'Simuladores',
         items: [
+          { name: 'Bronco*Sim*', area: 'Neumología', text: 'Árbol bronquial 3D y navegación endoscópica por segmentos. Rotación, flexión y orientación anatómica.', status: 'Beta educativa', img: 'https://uligress.me/lab/broncosim/cover.svg?v=20261025-ung', link: 'https://uligress.me/lab/broncosim/' },
           { name: 'Amnio*Sim*', area: 'Medicina materno-fetal', text: 'Amniocentesis guiada por ultrasonido, con la punta de la aguja siempre visible.', status: 'Disponible', img: 'https://uligress.me/lab/img/amniosim.jpg', link: 'https://uligress.me/lab/amniosim/' },
           { name: 'Clip*Sim*', area: 'Neurocirugía', text: 'Clipaje microquirúrgico de un aneurisma, visto a través del microscopio.', status: 'Disponible', img: 'https://uligress.me/lab/img/neurocirugia.jpg', link: 'https://uligress.me/lab/clipsim/' },
           { name: 'Stent*Sim*', area: 'Endovascular', text: 'Angioplastia y stent ilíaco bajo fluoroscopia simulada.', status: 'Beta', img: 'https://uligress.me/lab/img/stentsim.jpg', link: 'https://uligress.me/lab/stentsim/' },
