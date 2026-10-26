@@ -251,6 +251,9 @@
   .toolbar:not(:has(.tool-row)), .st-toolbar, .tool-row { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; scrollbar-width: none; }
   .tool-readout, .st-readout, .tool-hint { max-width: calc(100vw - 24px) !important; white-space: normal !important; font-size: 11px !important; }
   .pip { zoom: .7; }
+  html, body { overflow: hidden !important; }
+  body .us-console { position: fixed !important; top: 40px !important; left: 12px !important; bottom: auto !important; transform: none !important;
+    max-width: calc(100vw - 225px) !important; flex-wrap: wrap !important; white-space: normal !important; gap: 4px 10px !important; border-radius: 14px !important; z-index: 7; }
   .hud-actions { gap: 6px !important; flex-shrink: 0; }
   .hud-actions button, .top-actions button { white-space: nowrap !important; padding: 4px 10px !important; min-height: 30px !important; font-size: 11px !important; }
 }
