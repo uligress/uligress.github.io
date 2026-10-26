@@ -7,15 +7,18 @@
   <meta name="description" content="ung · proyectos y proceso.">
   <meta property="og:title" content="ung">
   <meta property="og:url" content="https://uligress.me/">
-  <meta name="theme-color" content="#05080c">
+  <meta name="theme-color" content="#eef0f5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#07090d" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png?v=2">
   <link rel="icon" type="image/png" sizes="48x48" href="assets/icon-48.png?v=2">
   <link rel="icon" type="image/png" sizes="512x512" href="assets/icon-512.png?v=2">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png?v=2">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/glass.css">
   <link rel="stylesheet" href="styles.css?v=1792730001">
+  <link rel="stylesheet" href="home-glass.css">
   <script>
     document.documentElement.classList.add('js');
     setTimeout(function () { if (!window.__revealReady) document.documentElement.classList.remove('js'); }, 3000);
@@ -28,9 +31,8 @@
     <nav class="nav-links" aria-label="Secciones">
       <a href="#disponible">Disponible</a>
       <a href="#proyectos">Proyectos</a>
-      <a href="#acerca">Acerca</a>
       <a href="#buzon">Buzón</a>
-      <a href="https://uligress.me/lab/">Lab ↗</a>
+      <a class="nav-cta" href="lab/">Labs</a>
     </nav>
     <span class="nav-status mono">Monterrey, MX · <span id="clock">--:--</span></span>
   </header>
@@ -43,6 +45,7 @@
       <h2 class="hero-title reveal" data-rich="site.headline"></h2>
       <div class="hero-foot">
         <p class="hero-copy reveal" data-text="site.subtitle"></p>
+        <div class="hero-cta reveal"><a class="g-btn g-btn--primary" href="lab/">Abrir Labs <span aria-hidden="true">→</span></a><a class="g-btn" href="#disponible">Todo lo disponible</a></div>
         <ol class="hero-list reveal" id="hero-list"></ol>
       </div>
     </section>
@@ -53,13 +56,14 @@
 
     <section id="disponible" class="section catalog" aria-label="Todo lo disponible"></section>
 
-    <div id="proyectos"></div>
-
     <section id="acerca" class="section about">
       <p class="label reveal"><span class="spark" aria-hidden="true">✦</span> Acerca</p>
       <p class="about-text reveal" data-text="site.about"></p>
       <span class="logo-mask about-logo reveal" aria-hidden="true"></span>
     </section>
+
+    <div id="proyectos"></div>
+
 
     <section id="buzon" class="section buzon">
       <p class="label"><span class="spark" aria-hidden="true">✦</span> Buzón de ideas</p>
@@ -113,7 +117,7 @@
     <div class="footer-cols">
       <div>
         <p class="footer-k">Secciones</p>
-        <a href="#disponible">Disponible</a><a href="#proyectos">Proyectos</a><a href="#acerca">Acerca</a><a href="#buzon">Buzón</a><a href="https://uligress.me/lab/">Lab ↗</a><a href="https://uligress.me/ingles/">Inglés ↗</a><a href="https://uligress.me/aleman/">Alemán ↗</a><a href="https://uligress.me/frances/">Francés ↗</a>
+        <a href="#disponible">Disponible</a><a href="#proyectos">Proyectos</a><a href="#buzon">Buzón</a><a href="lab/">Labs</a><a href="https://uligress.me/ingles/">Inglés ↗</a><a href="https://uligress.me/aleman/">Alemán ↗</a><a href="https://uligress.me/frances/">Francés ↗</a>
       </div>
       <div>
         <p class="footer-k">Sígueme</p>
@@ -140,10 +144,10 @@
     <p class="lb-hint mono small">Clic en la foto para voltearla</p>
   </div>
 
-  <script src="data.js?v=20261025-broncosim"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script defer src="data.js?v=20261025-broncosim"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
   </script>

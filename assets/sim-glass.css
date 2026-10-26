@@ -1,0 +1,109 @@
+/* ==========================================================================
+   sim-glass.css — capa visual común para los simuladores Vite del lab
+   (AmnioSim, ClipSim, HernioSim, StentSim). Se carga DESPUÉS del CSS del build.
+   Regla: el HUD sobre la imagen clínica = vidrio oscuro (--hud-*); las tarjetas,
+   menús y modales = vidrio según el esquema claro/oscuro. Sin tocar JS ni IDs.
+   ========================================================================== */
+:root {
+  /* variables propias de los builds → HUD */
+  --panel-bg: var(--hud-bg); --panel-border: var(--hud-border);
+  --text: var(--hud-text); --text-dim: var(--hud-dim);
+  --ink: var(--hud-text); --muted: var(--hud-dim);
+  --panel: var(--hud-bg-strong); --panel2: rgba(255,255,255,.06); --line: var(--hud-border);
+  --font: var(--font-sans);
+  --mono: var(--font-mono);
+}
+html, body { font-family: var(--font-sans) !important; -webkit-font-smoothing: antialiased; }
+
+/* Superficies HUD (todas las que existen en los 4 builds) */
+.st-panel, .us-console, .pip, body.swap #monitor, .top-actions button,
+.checklist, .mentor, .vitals, .clip-panel, .toolbar, .tool-readout, .tool-tooltip, .hud:has(.mag),
+.endo-head, .endo-foot, .hud-case, .hud-scope, .hud-controls, .tool-hint, .toast,
+.hud-actions button, .tool-row button, #replaybar {
+  -webkit-backdrop-filter: var(--blur) !important; backdrop-filter: var(--blur) !important;
+  background-color: var(--hud-bg) !important;
+  border: 1px solid var(--hud-border) !important;
+  border-radius: var(--r-sm) !important;
+  box-shadow: inset 0 1px 0 var(--hud-highlight), var(--hud-shadow);
+}
+.us-console { border-radius: var(--r-pill) !important; padding: 6px 16px !important; }
+.pip, .endo-pip { border-radius: var(--r-md) !important; overflow: hidden; }
+.top-actions button, .hud-actions button { border-radius: var(--r-pill) !important; padding: 6px 14px !important; min-height: 32px; color: var(--hud-text) !important; font-family: var(--font-sans) !important; font-weight: 600; }
+.toolbar { border-radius: var(--r-md) !important; padding: 6px !important; }
+.tool-btn { border-radius: var(--r-xs) !important; }
+.tool-btn.active, .tool.active { background: rgba(125,184,255,.16) !important; }
+.tool-row button { min-height: 36px; }
+
+/* Botones genéricos de los builds */
+button { border-radius: var(--r-pill); transition: background .2s, border-color .2s, filter .2s; }
+button:focus-visible, select:focus-visible, input:focus-visible, .opt:focus-visible, .case:focus-visible { outline: none !important; box-shadow: var(--focus) !important; }
+select { border-radius: var(--r-xs) !important; }
+
+/* ---------- Pantallas de inicio, menús, modales e informes: vidrio según esquema ---------- */
+#modal, .start-screen, .report-screen, .report-overlay {
+  background: color-mix(in srgb, var(--scrim) 70%, transparent) !important;
+  -webkit-backdrop-filter: saturate(140%) blur(10px) !important; backdrop-filter: saturate(140%) blur(10px) !important;
+}
+.card, .start-card, .report-card, #tutorial {
+  /* reasigna las variables del build dentro de la tarjeta → tokens del esquema */
+  --panel: var(--glass-bg-strong); --panel2: var(--glass-bg); --panel-bg: var(--glass-bg-strong);
+  --line: var(--glass-border); --panel-border: var(--glass-border);
+  --text: var(--text-main, inherit); --ink: inherit;
+  --muted: var(--text-sub); --text-dim: var(--text-sub);
+  --acc: var(--accent-main); --accent: var(--accent-main);
+  --ok: var(--ok-main); --warn: var(--warn-main); --bad: var(--bad-main); --danger: var(--bad-main);
+  color: var(--text-main) !important;
+  background: var(--glass-bg-strong) !important;
+  -webkit-backdrop-filter: var(--blur-strong); backdrop-filter: var(--blur-strong);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-lg) !important;
+}
+#tutorial { border-radius: var(--r-md) !important; }
+.card button, .start-card button, .report-card button, #tutorial button,
+.card select, .report-card select {
+  color: var(--text-main) !important; background: var(--glass-bg) !important; border: 1px solid var(--glass-border) !important;
+  min-height: 40px; padding: 8px 16px; font-family: var(--font-sans) !important; font-weight: 600;
+}
+.card button.primary, .report-card button.primary, .ractions button.primary, .start-card button, .start-card .enter {
+  background: var(--accent-main) !important; color: var(--accent-ink) !important; border-color: transparent !important;
+}
+.start-card .case { background: var(--glass-bg) !important; color: var(--text-main) !important; border-radius: var(--r-sm) !important; }
+.start-card .case[aria-checked=true], .opt.sel, .opt:hover { border-color: var(--accent-main) !important; box-shadow: 0 0 0 1px var(--accent-main) inset; background: var(--accent-soft) !important; }
+.opt, .err, .mastery, .rgrid section, .metrics div { background: var(--glass-bg) !important; border-color: var(--glass-border) !important; border-radius: var(--r-sm) !important; color: var(--text-main); }
+.card h2, .report-card h2, .start-card .sub, .choose, .opt .d, .case-summary, .rnote, .report-card .note,
+.report-card .sub, .goals .why, .metrics span, .stage-times li span, #tutorial .why, .err details, .report-card details { color: var(--text-sub) !important; }
+.card h2 { color: var(--text-sub) !important; }
+.case-title, .report-card h1, .report-card .score, .goals .pts, #tutorial h3, .err summary, .score .big { color: var(--accent-main) !important; }
+.disclaimer {
+  color: var(--warn-main) !important; background: color-mix(in srgb, var(--warn-main) 10%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--warn-main) 35%, transparent) !important; border-left-width: 1px !important; border-radius: var(--r-sm) !important;
+}
+.sev.crítico { color: var(--bad-main) !important; background: color-mix(in srgb, var(--bad-main) 14%, transparent) !important; }
+.sev.mayor { color: var(--warn-main) !important; background: color-mix(in srgb, var(--warn-main) 14%, transparent) !important; }
+.sev.menor { color: var(--accent-main) !important; background: var(--accent-soft) !important; }
+.card kbd, .report-card kbd, #tutorial kbd { background: var(--glass-bg) !important; color: var(--text-main) !important; border-color: var(--glass-border) !important; }
+.card .meter, .card .timeline, .card .phasebar, .report-card .bar { background: var(--glass-border) !important; }
+table.hist td, table.hist th { border-bottom-color: var(--glass-border) !important; }
+.card a, .report-card a, .start-card a { color: var(--accent-main); }
+
+/* Alias: los tokens del esquema se guardan con nombre propio porque el build
+   reutiliza --text/--accent/--ok para el HUD. */
+:root { --text-main: #0d0f14; --text-sub: #3f4550; --accent-main: #0a5fd1; --ok-main: #17753f; --warn-main: #8a5a00; --bad-main: #b42318; }
+@media (prefers-color-scheme: dark) {
+  :root { --text-main: #f4f5f7; --text-sub: #c3c8d0; --accent-main: #5aa2ff; --ok-main: #5fd08a; --warn-main: #f0c060; --bad-main: #ff8a80; }
+}
+
+/* Barras de herramientas generadas por JS (StentSim / AmnioSim) */
+.st-toolbar, .st-readout, .st-tip {
+  -webkit-backdrop-filter: var(--blur) !important; backdrop-filter: var(--blur) !important;
+  background: var(--hud-bg) !important; border: 1px solid var(--hud-border) !important;
+  border-radius: var(--r-md) !important; box-shadow: inset 0 1px 0 var(--hud-highlight), var(--hud-shadow);
+}
+.st-toolbar { padding: 6px !important; gap: 4px !important; }
+.st-tool { border-radius: var(--r-sm) !important; min-height: 44px; }
+.st-tool:hover { background: rgba(255,255,255,.08) !important; }
+.st-dim, .st-vhead, .tray-h, .tray-row > span, .syr .lbl, .stage.locked { color: var(--hud-dim) !important; }
+.st-status { border-radius: var(--r-xs) !important; color: var(--hud-dim) !important; }
+.tray-row button, .tray-row select { border-radius: var(--r-xs) !important; min-height: 30px; background: rgba(255,255,255,.07) !important; }
+.tray-row button.primary { background: var(--hud-accent) !important; color: #04101f !important; border-color: transparent !important; }
