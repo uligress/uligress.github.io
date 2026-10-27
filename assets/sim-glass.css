@@ -23,10 +23,11 @@ html, body { font-family: var(--font-sans) !important; -webkit-font-smoothing: a
   -webkit-backdrop-filter: var(--blur) !important; backdrop-filter: var(--blur) !important;
   background-color: var(--hud-bg) !important;
   border: 1px solid var(--hud-border) !important;
-  border-radius: var(--r-sm) !important;
+  border-radius: var(--z-radius) !important;
   box-shadow: inset 0 1px 0 var(--hud-highlight), var(--hud-shadow);
 }
 .us-console { border-radius: var(--r-pill) !important; padding: 6px 16px !important; }
+.checklist, .g-list, .mentor, .g-mentor { background-color: var(--hud-bg-strong) !important; }
 .pip, .endo-pip { border-radius: var(--r-md) !important; overflow: hidden; }
 .top-actions button, .hud-actions button { border-radius: var(--r-pill) !important; padding: 6px 14px !important; min-height: 32px; color: var(--hud-text) !important; font-family: var(--font-sans) !important; font-weight: 600; }
 .toolbar { border-radius: var(--r-md) !important; padding: 6px !important; }
@@ -107,3 +108,7 @@ table.hist td, table.hist th { border-bottom-color: var(--glass-border) !importa
 .st-status { border-radius: var(--r-xs) !important; color: var(--hud-dim) !important; }
 .tray-row button, .tray-row select { border-radius: var(--r-xs) !important; min-height: 30px; background: rgba(255,255,255,.07) !important; }
 .tray-row button.primary { background: var(--hud-accent) !important; color: #04101f !important; border-color: transparent !important; }
+/* Solo las escenas Vite son pantallas fijas; portada y catálogo deben desplazarse. */
+@media (max-width: 700px) {
+  html, body { overflow: hidden !important; }
+}

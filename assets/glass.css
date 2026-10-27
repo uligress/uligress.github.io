@@ -213,6 +213,8 @@
 .stage-list .stage.locked, .g-list .g-st.locked { color: var(--hud-dim) !important; }
 .stage-count, .g-c { font: 600 9.5px/1.2 var(--font-sans) !important; letter-spacing: .06em; color: var(--hud-dim) !important; font-variant-numeric: tabular-nums; }
 /* Z5 monitor y Z6 mentor */
+.checklist, .g-list, .vitals, #vitals, .mentor, .g-mentor { box-sizing: border-box; }
+.vitals, #vitals { top: var(--z-right-top) !important; }
 .vitals, #vitals, .mentor, .g-mentor { border-radius: var(--z-radius) !important; width: var(--z-right-w) !important; right: var(--z-gap) !important; }
 .mentor, .g-mentor { bottom: var(--z-gap) !important; top: auto !important; }
 .mentor-head, .vitals-head, .g-head, .st-vhead {
@@ -236,22 +238,24 @@
     max-width: calc(100vw - 150px) !important; white-space: nowrap !important; overflow: hidden !important;
     text-overflow: ellipsis !important; font-size: 9.5px !important;
   }
+  body:has(#btn-progress) .st-title { max-width: calc(100vw - 232px) !important; }
   .hud-top { top: 8px !important; left: 12px !important; right: 12px !important; flex-wrap: nowrap !important; }
-  .checklist, .g-list, .st-hud, .hud-controls, .mag, .clip-panel, #tray { display: none !important; }
+  .checklist, .g-list, .st-hud, .hud-controls, .hud:has(.mag), .mag, .clip-panel, .tool-tooltip, .st-tip, #tray { display: none !important; }
   .vitals, #vitals { zoom: .62; top: 72px !important; right: 20px !important; }
   .mentor, .g-mentor {
-    left: 12px !important; right: 12px !important; width: auto !important; bottom: 96px !important;
+    left: 12px !important; right: 12px !important; width: auto !important; bottom: 140px !important;
     max-height: 30vh !important; overflow-y: auto !important;
   }
   .toolbar-wrap, .st-toolwrap, .toolbar {
     left: 8px !important; right: 8px !important; transform: none !important; bottom: 8px !important;
     max-width: none !important; width: auto !important; min-width: 0 !important;
   }
-  .toolbar-wrap .toolbar { position: static !important; }
+  .toolbar-wrap .toolbar { position: static !important; width: 100% !important; box-sizing: border-box; }
+  .st-toolbar, .tool-row { width: 100% !important; max-width: 100%; box-sizing: border-box; }
+  .st-toolbar .st-tool, .tool-row button, .toolbar .tool-btn { flex-shrink: 0; }
   .toolbar:not(:has(.tool-row)), .st-toolbar, .tool-row { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; scrollbar-width: none; }
   .tool-readout, .st-readout, .tool-hint { max-width: calc(100vw - 24px) !important; white-space: normal !important; font-size: 11px !important; }
   .pip { zoom: .7; }
-  html, body { overflow: hidden !important; }
   body .us-console { position: fixed !important; top: 40px !important; left: 12px !important; bottom: auto !important; transform: none !important;
     max-width: calc(100vw - 225px) !important; flex-wrap: wrap !important; white-space: normal !important; gap: 4px 10px !important; border-radius: 14px !important; z-index: 7; }
   .hud-actions { gap: 6px !important; flex-shrink: 0; }
