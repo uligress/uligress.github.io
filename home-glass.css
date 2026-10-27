@@ -151,3 +151,9 @@ body {
 
 /* "Acerca" está vacío en data.js (site.about = ''): se oculta hasta que tenga texto */
 .about:has([data-text="site.about"]:empty) { display: none; }
+
+/* Centrado óptico: elimina el espacio de línea del logo en la barra. */
+.nav .brand { display: flex; align-items: center; align-self: stretch; }
+.nav .brand .logo-mask { display: block; }
+/* El mismo fondo de estudio que los renders 3D. */
+.hero { background: radial-gradient(circle, rgba(255,255,255,.065) 1px, transparent 1.5px) 0 0 / 24px 24px, radial-gradient(ellipse at 55% 42%, #343b45 0%, #171c24 50%, #0b0e14 100%); }
