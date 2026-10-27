@@ -98,6 +98,7 @@ root.innerHTML = DATA.projects.map((p, pi) => {
           <span class="chip"><span class="dot"></span>${esc(p.status)}</span>
           ${p.description ? `<p class="project-desc">${rich(p.description)}</p>` : ''}
           ${p.note ? `<p class="project-note">${rich(p.note)}</p>` : ''}
+          ${p.attribution ? `<p class="project-note"><a href="${esc(p.attribution.href)}">${esc(p.attribution.text)}</a></p>` : ''}
           ${p.link ? `<a class="sim-btn" href="${esc(p.link)}" target="_blank" rel="noopener">Probar ${plain(p.name)} <span class="arrow" aria-hidden="true">→</span></a>` : ''}
         </div>
         <div class="project-info reveal">
