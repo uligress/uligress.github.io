@@ -35,19 +35,19 @@ window.UNG = {
       {
         label: 'Simuladores',
         items: [
-          { name: 'Bronco*Sim*', area: 'Neumología', text: 'Árbol bronquial 3D y navegación endoscópica por segmentos. Rotación, flexión y orientación anatómica.', status: 'Beta educativa', img: 'https://uligress.me/lab/broncosim/cover.svg?v=20261025-ung', link: 'https://uligress.me/lab/broncosim/' },
-          { name: 'Amnio*Sim*', area: 'Medicina materno-fetal', text: 'Amniocentesis guiada por ultrasonido, con la punta de la aguja siempre visible.', status: 'Disponible', img: 'https://uligress.me/lab/img/amniosim.jpg', link: 'https://uligress.me/lab/amniosim/' },
-          { name: 'Clip*Sim*', area: 'Neurocirugía', text: 'Clipaje microquirúrgico de un aneurisma, visto a través del microscopio.', status: 'Disponible', img: 'https://uligress.me/lab/img/neurocirugia.jpg', link: 'https://uligress.me/lab/clipsim/' },
-          { name: 'Stent*Sim*', area: 'Endovascular', text: 'Angioplastia y stent ilíaco bajo fluoroscopia simulada.', status: 'Beta', img: 'https://uligress.me/lab/img/stentsim.jpg', link: 'https://uligress.me/lab/stentsim/' },
-          { name: 'Hernio*Sim*', area: 'Cirugía general', text: 'Hernioplastia inguinal laparoscópica (TAPP) con malla y grapas.', status: 'Disponible', img: 'https://uligress.me/lab/img/herniosim.jpg', link: 'https://uligress.me/lab/herniosim/' },
+          { name: 'Bronco*Sim*', area: 'Neumología', text: 'Árbol bronquial 3D y navegación endoscópica por segmentos. Rotación, flexión y orientación anatómica.', status: 'Beta educativa', img: '/lab/broncosim/cover.svg?v=20261025-ung', link: '/lab/broncosim/' },
+          { name: 'Amnio*Sim*', area: 'Medicina materno-fetal', text: 'Amniocentesis guiada por ultrasonido, con la punta de la aguja siempre visible.', status: 'Disponible', img: '/lab/img/amniosim.jpg', link: '/lab/amniosim/' },
+          { name: 'Clip*Sim*', area: 'Neurocirugía', text: 'Clipaje microquirúrgico de un aneurisma, visto a través del microscopio.', status: 'Disponible', img: '/lab/img/neurocirugia.jpg', link: '/lab/clipsim/' },
+          { name: 'Stent*Sim*', area: 'Endovascular', text: 'Angioplastia y stent ilíaco bajo fluoroscopia simulada.', status: 'Beta', img: '/lab/img/stentsim.jpg', link: '/lab/stentsim/' },
+          { name: 'Hernio*Sim*', area: 'Cirugía general', text: 'Hernioplastia inguinal laparoscópica (TAPP) con malla y grapas.', status: 'Disponible', img: '/lab/img/herniosim.jpg', link: '/lab/herniosim/' },
         ],
       },
       {
         label: 'Cursos de idiomas',
         items: [
-          { name: 'Medical *English*', area: 'Inglés médico', text: 'Consulta, hospital y artículos: 24 clases de 15 minutos con audio de voces naturales.', status: 'Disponible', link: 'https://uligress.me/ingles/' },
-          { name: 'Medizinisches *Deutsch*', area: 'Alemán médico', text: 'Anamnesis, Klinikalltag y artículos para rotar o trabajar en Alemania: 24 clases.', status: 'Disponible', link: 'https://uligress.me/aleman/' },
-          { name: 'Français *médical*', area: 'Francés médico', text: 'Interrogatorio, hospital y artículos para rotar o trabajar en Francia: 24 clases.', status: 'Disponible', link: 'https://uligress.me/frances/' },
+          { name: 'Medical *English*', area: 'Inglés médico', text: 'Consulta, hospital y artículos: 24 clases de 15 minutos con audio de voces naturales.', status: 'Disponible', link: '/ingles/' },
+          { name: 'Medizinisches *Deutsch*', area: 'Alemán médico', text: 'Anamnesis, Klinikalltag y artículos para rotar o trabajar en Alemania: 24 clases.', status: 'Disponible', link: '/aleman/' },
+          { name: 'Français *médical*', area: 'Francés médico', text: 'Interrogatorio, hospital y artículos para rotar o trabajar en Francia: 24 clases.', status: 'Disponible', link: '/frances/' },
         ],
       },
     ],
@@ -57,7 +57,7 @@ window.UNG = {
       number: 1,
       name: 'Amnio*Sim*',
       status: 'Disponible',
-      link: 'https://uligress.me/lab/amniosim/',
+      link: '/lab/amniosim/',
       kicker: 'Simulador educativo · Medicina materno-fetal',
       description: 'Un simulador web de *amniocentesis guiada por ultrasonido*. Ecografía simulada con sombra acústica, aguja especular y *tenting* de membranas: practicas la punción con la punta siempre visible y recibes retroalimentación de cada error, con su evidencia.',
       facts: [
@@ -82,7 +82,7 @@ window.UNG = {
       number: 2,
       name: 'Clip*Sim*',
       status: 'Disponible',
-      link: 'https://uligress.me/lab/clipsim/',
+      link: '/lab/clipsim/',
       kicker: 'Simulador microquirúrgico · Demo educativa',
       description: 'Clipaje microquirúrgico de un *aneurisma de la unión carótida interna–comunicante posterior* por abordaje pterional transilviano, visto como a través del *microscopio quirúrgico*. Avanzas por las etapas con tus instrumentos mientras un mentor te guía y el monitor reacciona a cada movimiento.',
       facts: [
@@ -107,7 +107,7 @@ window.UNG = {
       number: 3,
       name: 'Stent*Sim*',
       status: 'Beta',
-      link: 'https://uligress.me/lab/stentsim/',
+      link: '/lab/stentsim/',
       kicker: 'Simulador endovascular · Angioplastia ilíaca',
       description: 'Angioplastia y colocación de *stent en la arteria ilíaca* bajo fluoroscopia. Navegas la guía por la bifurcación, mides la lesión, eliges el tamaño y liberas un *stent de nitinol*; el simulador registra fluoroscopia, contraste y estenosis residual.',
       facts: [

@@ -1,0 +1,153 @@
+/* Capa visual "vidrio" para el home (maqueta). Se carga DESPUÉS de styles.css.
+   Solo cambia presentación; los IDs y clases que usa main.js no se tocan. */
+:root {
+  /* Variables heredadas de styles.css → tokens de glass.css */
+  --night: var(--bg);
+  --night-2: var(--glass-bg-strong);
+  --white: var(--text);
+  --snow: var(--glass-bg);
+  --smoke: var(--text-2);
+  --ash: var(--text-2);
+  --graphite: var(--text-3);
+  --glass: var(--glass-bg);
+  --glass-2: var(--glass-bg-hover);
+  --hair: var(--glass-border);
+  --hair-dark: var(--glass-border);
+  --sans: var(--font-display);
+  --mono: var(--font-mono);
+  --pad: clamp(16px, 3.2vw, 48px);
+}
+html { background: var(--bg); }
+body {
+  font-family: var(--font-sans); font-weight: 400; color: var(--text);
+  background:
+    radial-gradient(60% 50% at 12% 0%, var(--bg-tint-1), transparent 70%),
+    radial-gradient(50% 45% at 95% 12%, var(--bg-tint-2), transparent 70%),
+    radial-gradient(70% 50% at 50% 100%, var(--bg-tint-3), transparent 70%),
+    var(--bg);
+  /* sin background-attachment: fixed (repinta en cada scroll) */
+}
+.mono { font-weight: 500; letter-spacing: 0; }
+:where(a, button, input, textarea, [tabindex]):focus-visible { outline: none !important; box-shadow: var(--focus) !important; border-radius: 10px; }
+
+/* Nav: píldora de vidrio fija (sustituye mix-blend-mode: difference) */
+.nav {
+  mix-blend-mode: normal; color: var(--text);
+  top: 12px; left: 50%; right: auto; transform: translateX(-50%);
+  width: min(calc(100% - 24px), 1180px); padding: 8px 8px 8px 20px; border-radius: var(--r-pill);
+  background: var(--glass-bg-strong); -webkit-backdrop-filter: var(--blur-strong); backdrop-filter: var(--blur-strong);
+  border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-md);
+}
+.brand .logo-mask { width: 52px; }
+.nav-status { color: var(--text-3); opacity: 1; }
+.nav-links { gap: 4px; align-items: center; font-size: 14px; font-weight: 500; }
+.nav-links a { padding: 0 14px; min-height: 40px; display: inline-flex; align-items: center; border-radius: var(--r-pill); color: var(--text-2); transition: background .2s, color .2s; }
+.nav-links a:hover { background: var(--glass-bg-hover); color: var(--text); }
+.nav-links a::after { display: none; }
+.nav-links .nav-cta { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.nav-links .nav-cta:hover { background: var(--accent); color: var(--accent-ink); filter: brightness(1.08); }
+
+/* Hero */
+.hero { background: transparent; padding-top: 120px; min-height: min(100svh, 900px); }
+.hero-logo .big { color: var(--text); }
+.hero-title {
+  font-family: var(--font-display); font-weight: 700; letter-spacing: -0.04em;
+  background: linear-gradient(180deg, var(--text) 40%, var(--text-2)); -webkit-background-clip: text; background-clip: text;
+}
+.hero-title .script { color: var(--text); -webkit-text-fill-color: var(--text); font-weight: 400; }
+.hero-foot { flex-wrap: wrap; align-items: flex-end; }
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-cta .g-btn { min-height: 48px; padding: 0 22px; font-size: 15px; }
+.hero-list { padding: 14px 20px; border-radius: var(--r-lg); background: var(--glass-bg); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: 1px solid var(--glass-border); box-shadow: var(--shadow-sm); }
+.hero-list a { display: inline-block; padding: 4px 0; }
+.hero-list .script { color: var(--text-3); }
+.label { color: var(--text-2); font-weight: 500; }
+.spark { color: var(--accent); }
+
+/* Marquee decorativo: se retira (repetía los nombres ya listados) */
+.marquee { display: none; }
+
+/* Secciones: fondo único, contenido en superficies de vidrio */
+.catalog, .project-sec, .footer { background: transparent; border-top: 0; }
+.catalog { padding-top: 72px; }
+.cat-title, .project-name, .buzon-title, .about-text { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.035em; }
+.cat-label { color: var(--text-2); border-bottom-color: var(--glass-border); font-weight: 600; letter-spacing: .04em; }
+.cat-card, .pol, .text-only .cat-card {
+  background: var(--glass-bg); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border); border-radius: var(--r-lg);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-md);
+}
+.cat-card:hover, .pol:hover { background: var(--glass-bg-hover); border-color: var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-lg); }
+.cat-img { border-bottom: 0; margin: 8px 8px 0; border-radius: calc(var(--r-lg) - 8px); background: var(--media-bg); }
+.cat-name { font-weight: 700; }
+.cat-status { color: var(--text-2); background: var(--glass-bg-strong); border-color: var(--glass-border); font-weight: 600; }
+.cat-text, .cat-area { color: var(--text-2); }
+.cat-no { color: var(--text-3); }
+
+/* Botones primarios (antes pastilla blanca + círculo negro) */
+.sim-btn, .send, .cat-open, .buzon .send {
+  background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow-sm); min-height: 44px; font-weight: 600;
+}
+.sim-btn .arrow, .send .arrow, .cat-open .arrow, .buzon .send .arrow { background: rgba(255,255,255,.22); color: inherit; }
+.car-btn, .lb-nav { background: var(--glass-bg-strong); color: var(--text); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); }
+.car-btn:hover:not([aria-disabled="true"]), .lb-nav:hover { background: var(--accent); color: var(--accent-ink); }
+.chip, .tags span { background: var(--glass-bg); color: var(--text-2); }
+.chip .dot { background: var(--ok); box-shadow: none; }
+.facts dt { color: var(--text-3); }
+.pol { color: var(--text); }
+.pol-img { background: var(--media-bg); border-radius: calc(var(--r-lg) - 10px); }
+.pol-meta { color: var(--text-3); }
+.pol.end.go { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.pol.end.go:hover { background: var(--accent); }
+.go-k { color: inherit; opacity: .85; }
+.go-a { background: rgba(255,255,255,.22); color: inherit; }
+.stamp { background: var(--glass-bg-strong); color: var(--text); border-color: var(--glass-border); }
+
+/* Acerca y Buzón: ya no son bandas blancas; tarjetas de vidrio sobre el mismo fondo */
+.about, .buzon { background: transparent; color: var(--text); }
+.about { min-height: 0; padding: var(--s-8) var(--pad); }
+.about > * { position: relative; }
+.about { margin: 0 var(--pad); padding: clamp(40px, 6vw, 80px); border-radius: var(--r-xl);
+  background: var(--glass-bg); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border); box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-md); }
+.about-text { font-size: clamp(28px, 3.6vw, 56px); max-width: 26ch; }
+.about-logo, .about .spark, .buzon .spark { color: var(--text); }
+.about .label, .buzon .label { color: var(--text-2); }
+.buzon-intro, .f > span, .buzon-form legend, .check { color: var(--text-2); }
+.buzon-form fieldset { background: var(--glass-bg); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border-color: var(--glass-border); border-radius: var(--r-lg); box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-sm); }
+.f input, .f textarea { background: var(--glass-bg-strong); color: var(--text); border-color: var(--glass-border); min-height: 44px; }
+.f input::placeholder, .f textarea::placeholder { color: var(--text-3); opacity: 1; }
+.f input:focus, .f textarea:focus { border-color: var(--accent); box-shadow: var(--focus); }
+.chips label { background: var(--glass-bg-strong); border-color: var(--glass-border); color: var(--text); min-height: 44px; }
+.chips label:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chips input, .check input { accent-color: var(--accent); }
+.buzon-msg.ok { color: var(--ok); } .buzon-msg.err { color: var(--bad); }
+
+/* Pie */
+.footer-cols { border-bottom-color: var(--glass-border); }
+.footer-cols a:not(.send) { color: var(--text); min-height: 32px; display: inline-flex; align-items: center; }
+.footer-k { color: var(--text-3); }
+.footer-logo { color: var(--glass-border); }
+.footer-legal { color: var(--text-3); }
+
+/* Lightbox */
+.lightbox { background: var(--scrim); -webkit-backdrop-filter: var(--blur-strong); backdrop-filter: var(--blur-strong); }
+.lb-face { background: var(--glass-bg-strong); border-color: var(--glass-border); box-shadow: var(--shadow-lg); }
+.lb-close { color: var(--text); background: var(--glass-bg-strong); min-height: 44px; }
+.back-text { color: var(--text); }
+
+@media (max-width: 860px) {
+  .nav { grid-template-columns: auto 1fr; padding: 6px 6px 6px 14px; top: 8px; width: calc(100% - 16px); }
+  .nav-links { gap: 0; justify-content: flex-end; overflow-x: auto; scrollbar-width: none; font-size: 13px; }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a { padding: 0 10px; min-height: 40px; }
+  .nav-links a[href="#proyectos"] { display: none; } /* sigue en el pie */
+  .hero { padding-top: 96px; min-height: min(100svh, 860px); }
+  #gl { filter: opacity(.45); } /* atenúa las piezas 3D en móvil sin pisar el fundido por scroll de main.js */
+  .hero-list { width: 100%; }
+  .about { margin: 0 12px; padding: 32px 22px; }
+  .chips label { font-size: 13px; }
+}
+
+/* "Acerca" está vacío en data.js (site.about = ''): se oculta hasta que tenga texto */
+.about:has([data-text="site.about"]:empty) { display: none; }

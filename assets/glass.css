@@ -1,0 +1,263 @@
+/* ==========================================================================
+   uligress · glass.css — tokens compartidos (maqueta local, no producción)
+   Estética "vidrio pulido" iOS/macOS. Modo claro/oscuro por prefers-color-scheme.
+   Contraste: --text / --text-2 / --text-3 cumplen WCAG AA (≥4.5:1) sobre --bg
+   y sobre --glass-bg-strong en ambos modos.
+   ========================================================================== */
+:root {
+  color-scheme: light dark;
+
+  /* Tipografía del sistema */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --font-script: "Great Vibes", "Snell Roundhand", cursive; /* acento de marca existente */
+
+  --fs-xs: 12px; --fs-sm: 14px; --fs-md: 16px; --fs-lg: 19px; --fs-xl: 24px;
+  --fs-2xl: clamp(28px, 3.2vw, 40px); --fs-3xl: clamp(40px, 6vw, 80px); --fs-hero: clamp(44px, 7.2vw, 112px);
+  --lh-tight: 1.05; --lh-body: 1.5;
+  --tracking-display: -0.035em;
+
+  /* Espacio (escala 4/8) */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 72px; --s-9: 112px;
+  --pad: clamp(16px, 3.2vw, 48px);
+  --maxw: 1240px;
+
+  /* Radios generosos */
+  --r-xs: 8px; --r-sm: 12px; --r-md: 18px; --r-lg: 26px; --r-xl: 34px; --r-pill: 999px;
+
+  /* Vidrio */
+  --blur: saturate(180%) blur(22px);
+  --blur-strong: saturate(190%) blur(34px);
+  --hairline: 1px;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --tap: 44px; /* tamaño mínimo de toque */
+
+  /* ---- Modo claro (por defecto) ---- */
+  --bg: #eef0f5;
+  --bg-tint-1: rgba(120, 160, 255, .28);
+  --bg-tint-2: rgba(255, 170, 200, .22);
+  --bg-tint-3: rgba(140, 230, 210, .20);
+  --text: #0d0f14;        /* 17.6:1 sobre --bg */
+  --text-2: #353a44;      /* 10.3:1 */
+  --text-3: #555b66;      /* 6.1:1 */
+  --glass-bg: rgba(255, 255, 255, .58);
+  --glass-bg-strong: rgba(255, 255, 255, .80);
+  --glass-bg-hover: rgba(255, 255, 255, .74);
+  --glass-border: rgba(15, 20, 30, .10);
+  --glass-highlight: rgba(255, 255, 255, .85);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, .06), 0 2px 8px rgba(16, 24, 40, .05);
+  --shadow-md: 0 2px 6px rgba(16, 24, 40, .06), 0 12px 32px -8px rgba(16, 24, 40, .14);
+  --shadow-lg: 0 4px 12px rgba(16, 24, 40, .06), 0 30px 80px -20px rgba(16, 24, 40, .22);
+  --accent: #0a5fd1;      /* 5.6:1 sobre blanco */
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(10, 95, 209, .12);
+  --ok: #17753f; --warn: #8a5a00; --bad: #b42318;
+  --focus: 0 0 0 3px rgba(10, 95, 209, .45);
+  --scrim: rgba(240, 242, 248, .6);
+  --media-bg: #0b0e13;    /* fondo de visores 3D/endoscopio: se mantiene oscuro */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #07090d;
+    --bg-tint-1: rgba(70, 110, 255, .22);
+    --bg-tint-2: rgba(170, 80, 200, .14);
+    --bg-tint-3: rgba(40, 170, 160, .14);
+    --text: #f4f5f7;      /* 18.4:1 */
+    --text-2: #c9cdd4;    /* 12.2:1 */
+    --text-3: #9ea4ae;    /* 7.6:1 */
+    --glass-bg: rgba(30, 33, 40, .52);
+    --glass-bg-strong: rgba(26, 29, 36, .78);
+    --glass-bg-hover: rgba(44, 48, 58, .62);
+    --glass-border: rgba(255, 255, 255, .12);
+    --glass-highlight: rgba(255, 255, 255, .10);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+    --shadow-md: 0 2px 6px rgba(0, 0, 0, .35), 0 16px 40px -10px rgba(0, 0, 0, .6);
+    --shadow-lg: 0 6px 16px rgba(0, 0, 0, .35), 0 40px 90px -20px rgba(0, 0, 0, .75);
+    --accent: #5aa2ff;    /* 7.4:1 sobre --bg */
+    --accent-ink: #04101f;
+    --accent-soft: rgba(90, 162, 255, .16);
+    --ok: #5fd08a; --warn: #f0c060; --bad: #ff8a80;
+    --focus: 0 0 0 3px rgba(90, 162, 255, .55);
+    --scrim: rgba(4, 6, 10, .6);
+  }
+}
+
+/* ---------- Primitivas reutilizables ---------- */
+.g-backdrop {
+  background:
+    radial-gradient(60% 50% at 12% 0%, var(--bg-tint-1), transparent 70%),
+    radial-gradient(50% 45% at 95% 10%, var(--bg-tint-2), transparent 70%),
+    radial-gradient(60% 50% at 50% 100%, var(--bg-tint-3), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+}
+.g-surface {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: var(--hairline) solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-md);
+  border-radius: var(--r-lg);
+}
+.g-surface--strong { background: var(--glass-bg-strong); -webkit-backdrop-filter: var(--blur-strong); backdrop-filter: var(--blur-strong); }
+.g-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--s-2);
+  min-height: var(--tap); padding: 0 var(--s-5); border-radius: var(--r-pill);
+  font: 600 var(--fs-sm)/1 var(--font-sans); color: var(--text); text-decoration: none;
+  background: var(--glass-bg); border: var(--hairline) solid var(--glass-border);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  box-shadow: inset 0 1px 0 var(--glass-highlight), var(--shadow-sm);
+  cursor: pointer; transition: background .2s, transform .3s var(--ease), box-shadow .2s;
+}
+.g-btn:hover { background: var(--glass-bg-hover); transform: translateY(-1px); }
+.g-btn--primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.g-btn--primary:hover { background: var(--accent); filter: brightness(1.08); }
+.g-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--r-pill);
+  font: 600 var(--fs-xs)/1.2 var(--font-sans); color: var(--text-2);
+  background: var(--glass-bg); border: var(--hairline) solid var(--glass-border);
+}
+.g-chip--ok { color: var(--ok); }
+.g-focus:focus-visible, .g-btn:focus-visible { outline: none; box-shadow: var(--focus); }
+
+/* Sin backdrop-filter: vidrio opaco legible */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root { --glass-bg: var(--glass-bg-strong); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root { --glass-bg: var(--glass-bg-strong); --blur: none; --blur-strong: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-btn { transition: none; }
+}
+
+/* ---------- HUD sobre imagen médica (ultrasonido, fluoroscopia, microscopio, 3D) ----------
+   Las vistas clínicas son oscuras por naturaleza; los controles que flotan sobre ellas usan
+   SIEMPRE vidrio oscuro (como los controles de la cámara de iOS), en claro y en oscuro.
+   Contraste: --hud-text 15:1 y --hud-dim 8:1 sobre --hud-bg compuesto con negro. */
+:root {
+  --hud-bg: rgba(18, 20, 26, .58);
+  --hud-bg-strong: rgba(18, 20, 26, .80);
+  --hud-border: rgba(255, 255, 255, .14);
+  --hud-highlight: rgba(255, 255, 255, .08);
+  --hud-text: #f2f4f7;
+  --hud-dim: #b6bcc6;
+  --hud-accent: #7db8ff;
+  --hud-shadow: 0 8px 28px rgba(0, 0, 0, .45);
+}
+.g-hud {
+  background: var(--hud-bg); color: var(--hud-text);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: 1px solid var(--hud-border); border-radius: var(--r-md);
+  box-shadow: inset 0 1px 0 var(--hud-highlight), var(--hud-shadow);
+}
+
+/* ==========================================================================
+   SIM SHELL — patrón común de los 5 simuladores (layout ClipSim + estética BroncoSim)
+   Ver UX-PATTERN.md. Zonas: Z0 rótulo · Z1 acciones · Z2 procedimiento · Z3 auxiliar ·
+   Z4 controles · Z5 monitor · Z6 mentor · Z7 barra de herramientas.
+   Componentes reutilizables: .sim-panel, .sim-head, .sim-steps, .sim-caption, .sim-key.
+   Los selectores de cada build (.checklist/.g-list, .vitals/#vitals, .mentor/.g-mentor…)
+   se mapean a las mismas zonas para que los 5 se vean y se usen igual.
+   ========================================================================== */
+:root {
+  --z-gap: 16px;          /* margen a los bordes */
+  --z-top: 40px;          /* bajo el rótulo */
+  --z-right-top: 56px;    /* bajo los botones de acción */
+  --z-left-w: 250px;
+  --z-right-w: 300px;
+  --z-radius: 14px;       /* radio de panel BroncoSim */
+  --z-head-size: 10.5px;
+}
+/* Componentes */
+.sim-panel {
+  background: var(--hud-bg); color: var(--hud-text);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: 1px solid var(--hud-border); border-radius: var(--z-radius);
+  box-shadow: inset 0 1px 0 var(--hud-highlight), var(--hud-shadow);
+  padding: 12px 14px; font: 500 12px/1.45 var(--font-sans);
+}
+.sim-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  font: 600 var(--z-head-size)/1.2 var(--font-sans); letter-spacing: .08em; text-transform: uppercase; color: var(--hud-dim);
+}
+.sim-head .num { color: var(--hud-accent); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.sim-caption {
+  position: absolute; left: var(--z-gap); top: 12px; z-index: 6; pointer-events: none;
+  font: 600 11px/1.2 var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--hud-dim);
+}
+.sim-steps { list-style: none; margin: 8px 0 0; padding: 0; }
+.sim-key { font: 600 13px/1 var(--font-sans); font-variant-numeric: tabular-nums; color: var(--hud-text); }
+
+/* Z0 rótulo */
+.hud-title, .st-title {
+  left: var(--z-gap) !important; top: 12px !important;
+  font: 600 11px/1.2 var(--font-sans) !important; letter-spacing: .12em !important; text-transform: uppercase; color: var(--hud-dim) !important;
+}
+/* Z2 procedimiento */
+.checklist, .g-list {
+  left: var(--z-gap) !important; top: var(--z-top) !important; width: var(--z-left-w) !important;
+  border-radius: var(--z-radius) !important; padding: 12px 14px 10px !important;
+}
+.checklist-head, .g-lhead {
+  font: 600 var(--z-head-size)/1.2 var(--font-sans) !important; letter-spacing: .08em !important; text-transform: uppercase; color: var(--hud-dim) !important;
+}
+.checklist-head .num, .g-lhead .g-num { color: var(--hud-accent) !important; letter-spacing: 0 !important; }
+.stage-list .stage, .g-list .g-st {
+  display: grid !important; grid-template-columns: 12px 16px 1fr auto !important; gap: 0 6px !important; align-items: baseline;
+  padding: 5px 6px !important; border-radius: 8px; font: 500 12px/1.35 var(--font-sans) !important;
+}
+.stage-list .stage.active, .g-list .g-st.active { background: rgba(125,184,255,.12) !important; color: var(--hud-text) !important; box-shadow: inset 2px 0 0 var(--hud-accent); }
+.stage-list .stage.complete, .stage-list .stage.done, .g-list .g-st.complete, .g-list .g-st.done { color: var(--ok-main, #5fd08a) !important; }
+.stage-list .stage.locked, .g-list .g-st.locked { color: var(--hud-dim) !important; }
+.stage-count, .g-c { font: 600 9.5px/1.2 var(--font-sans) !important; letter-spacing: .06em; color: var(--hud-dim) !important; font-variant-numeric: tabular-nums; }
+/* Z5 monitor y Z6 mentor */
+.checklist, .g-list, .vitals, #vitals, .mentor, .g-mentor { box-sizing: border-box; }
+.vitals, #vitals { top: var(--z-right-top) !important; }
+.vitals, #vitals, .mentor, .g-mentor { border-radius: var(--z-radius) !important; width: var(--z-right-w) !important; right: var(--z-gap) !important; }
+.mentor, .g-mentor { bottom: var(--z-gap) !important; top: auto !important; }
+.mentor-head, .vitals-head, .g-head, .st-vhead {
+  font-family: var(--font-sans) !important; font-weight: 600 !important; letter-spacing: .08em !important; font-size: var(--z-head-size) !important;
+}
+.mentor-title, .mentor h2, .g-title { font: 600 14px/1.3 var(--font-sans) !important; color: var(--hud-text) !important; }
+/* Z4 controles, Z3 auxiliares */
+.st-hud, .hud-controls, .clip-panel, .pip { border-radius: var(--z-radius) !important; }
+/* Z7 barra de herramientas: tecla arriba, abreviatura abajo, activa en azul */
+.toolbar, .st-toolbar, .tool-row { border-radius: 16px !important; }
+.tool-btn.active, .st-tool.active, .st-tool[aria-pressed=true], .tool.active { box-shadow: inset 0 0 0 1px var(--hud-accent) !important; color: var(--hud-text) !important; }
+/* Tipografía BroncoSim (sans) en todo el HUD; cifras tabulares */
+.st-panel, .st-hud, .st-readout, .st-tool, .st-tip, .st-status, .g-list, .g-mentor, .checklist, .mentor, .vitals,
+.hud-case, .hud-scope, .hud-controls, .tool-hint, .tool-row button, .toast, .probe, .viewlabel, .legend, .top-actions button { font-family: var(--font-sans) !important; }
+.num, .val, .g-num, .g-pct, .g-c, .stage-count, .v-big, .st-big { font-variant-numeric: tabular-nums; }
+/* SIM SHELL — móvil (≤700 px): mismo patrón en los 5. Como ya hacían Amnio/Stent/Hernio:
+   se ocultan la lista de etapas (el mentor muestra ETAPA n/6), la ayuda de teclado y los paneles auxiliares;
+   monitor compacto arriba-der., mentor como hoja inferior, herramientas en una fila desplazable. */
+@media (max-width: 700px) {
+  .hud-title, .st-title, .hud-case {
+    max-width: calc(100vw - 150px) !important; white-space: nowrap !important; overflow: hidden !important;
+    text-overflow: ellipsis !important; font-size: 9.5px !important;
+  }
+  body:has(#btn-progress) .st-title { max-width: calc(100vw - 232px) !important; }
+  .hud-top { top: 8px !important; left: 12px !important; right: 12px !important; flex-wrap: nowrap !important; }
+  .checklist, .g-list, .st-hud, .hud-controls, .hud:has(.mag), .mag, .clip-panel, .tool-tooltip, .st-tip, #tray { display: none !important; }
+  .vitals, #vitals { zoom: .62; top: 72px !important; right: 20px !important; }
+  .mentor, .g-mentor {
+    left: 12px !important; right: 12px !important; width: auto !important; bottom: 140px !important;
+    max-height: 30vh !important; overflow-y: auto !important;
+  }
+  .toolbar-wrap, .st-toolwrap, .toolbar {
+    left: 8px !important; right: 8px !important; transform: none !important; bottom: 8px !important;
+    max-width: none !important; width: auto !important; min-width: 0 !important;
+  }
+  .toolbar-wrap .toolbar { position: static !important; width: 100% !important; box-sizing: border-box; }
+  .st-toolbar, .tool-row { width: 100% !important; max-width: 100%; box-sizing: border-box; }
+  .st-toolbar .st-tool, .tool-row button, .toolbar .tool-btn { flex-shrink: 0; }
+  .toolbar:not(:has(.tool-row)), .st-toolbar, .tool-row { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; scrollbar-width: none; }
+  .tool-readout, .st-readout, .tool-hint { max-width: calc(100vw - 24px) !important; white-space: normal !important; font-size: 11px !important; }
+  .pip { zoom: .7; }
+  body .us-console { position: fixed !important; top: 40px !important; left: 12px !important; bottom: auto !important; transform: none !important;
+    max-width: calc(100vw - 225px) !important; flex-wrap: wrap !important; white-space: normal !important; gap: 4px 10px !important; border-radius: 14px !important; z-index: 7; }
+  .hud-actions { gap: 6px !important; flex-shrink: 0; }
+  .hud-actions button, .top-actions button { white-space: nowrap !important; padding: 4px 10px !important; min-height: 30px !important; font-size: 11px !important; }
+}
