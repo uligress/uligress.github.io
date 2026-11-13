@@ -107,6 +107,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .opt.dim{opacity:.4}
 .ans{background:var(--glass);border:1px solid var(--hair);border-radius:16px;padding:18px;font-size:18px;line-height:1.35;animation:in .5s var(--ease)}
 .why{margin-top:14px;color:var(--ash);font-size:15px;line-height:1.45}
+.why b{color:#fff;font-weight:600}
 .src{margin-top:10px}
 .lfoot{border-top:1px solid var(--hair);padding:14px 20px calc(14px + env(safe-area-inset-bottom))}
 .lfoot .in{max-width:640px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -152,7 +153,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 <div class="sheet" id="sheet" hidden></div>
 <div class="lesson" id="lesson" hidden></div>
 
-<script src="data.js?v=1"></script>
+<script src="data.js?v=2"></script>
 <script>
 (function(){
 'use strict';
@@ -168,7 +169,7 @@ try{var g=JSON.parse(localStorage.getItem(KEY)||'null'); if(g) for(var k in g) S
 function guarda(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function reg(id){return S.it[id]||(S.it[id]={c:0,w:0})}
 function dominada(it){var r=S.it[it.id];return !!r&&r.c>=DOMINIO}
-function avance(t){var n=0;t.items.forEach(function(i){if(dominada(i))n++});return n/t.items.length}
+function avance(t){var n=0;t.items.forEach(function(i){var r=S.it[i.id];if(r)n+=Math.min(r.c,DOMINIO)});return n/(DOMINIO*t.items.length)} // cada acierto a la primera suma; 2 = dominada
 function abierta(i){return S.libre||i===0||(S.lec[D.temas[i-1].n]||0)>0}
 function racha(){
   var set={},n=0,d=new Date();S.dias.forEach(function(x){set[x]=1});
@@ -275,6 +276,7 @@ function marca(it,bien){
   var r=reg(it.id), prim=!(it.id in L.primera);
   if(prim){L.primera[it.id]=bien; if(bien)L.ok++; else L.mal++}
   if(bien){ if(prim) r.c++; } else { r.w++; r.c=0; }
+  guarda(); // se guarda en cada respuesta, aunque salgas a media lección
 }
 function marco(cuerpo,pie){
   var p=L.total?100*L.hechas/L.total:0;
@@ -291,8 +293,10 @@ function nota(it){
   return v?'<div class="caso"><div class="mono">✦ Caso clínico</div>'+esc(v)+'</div>':'';
 }
 function explica(it){
-  return (it.w?'<div class="why">'+esc(it.w)+'</div>':'')+
-    (it.nt?'<div class="why">'+esc(it.nt)+'</div>':'')+
+  var neg=function(x){return esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')};
+  var av=(it.d?'⚠ Dudosa · ':'')+(it.s?'Sin clave · ':'')+(it.r?'opciones reconstruidas · ':'');
+  return (it.e?'<div class="why">'+neg(it.e)+'</div>':(it.w?'<div class="why">'+esc(it.w)+'</div>':'')+(it.nt?'<div class="why">'+esc(it.nt)+'</div>':''))+
+    (it.e&&(av||it.fu)?'<div class="mono src">'+esc(av+(it.fu||''))+'</div>':'')+
     '<div class="mono src">'+meta(it)+'</div>';
 }
 function sig(){
