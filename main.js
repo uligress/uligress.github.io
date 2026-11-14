@@ -51,16 +51,16 @@ if (cat && catRoot) {
         <p class="cat-label mono reveal">${esc(g.label)} <span class="muted">· ${g.items.length}</span></p>
         <div class="cat-grid${g.items.some((it) => it.img) ? '' : ' text-only'}">
           ${g.items.map((it) => `
-            <a class="cat-card reveal" href="${esc(it.link)}">
+            <${it.link ? `a class="cat-card reveal" href="${esc(it.link)}"` : 'div class="cat-card locked reveal" aria-disabled="true"'}>
               ${it.img ? `<span class="cat-img"><img src="${esc(it.img)}" alt="" loading="lazy"></span>` : ''}
               <span class="cat-body">
                 <span class="cat-top"><span class="script cat-no">(${String(++n).padStart(2, '0')})</span><span class="cat-status mono">${esc(it.status)}</span></span>
                 <span class="cat-name">${rich(it.name)}</span>
                 <span class="cat-area mono">${esc(it.area)}</span>
                 <span class="cat-text">${esc(it.text)}</span>
-                <span class="cat-open">Abrir <span class="arrow" aria-hidden="true">→</span></span>
+                ${it.link ? '<span class="cat-open">Abrir <span class="arrow" aria-hidden="true">→</span></span>' : '<span class="cat-lock mono">No disponible por ahora</span>'}
               </span>
-            </a>`).join('')}
+            </${it.link ? 'a' : 'div'}>`).join('')}
         </div>
       </div>`).join('')}`;
 }

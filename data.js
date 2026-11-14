@@ -42,9 +42,8 @@ window.UNG = {
             "name": "Amnio*Sim*",
             "area": "Medicina materno-fetal",
             "text": "Amniocentesis guiada por ultrasonido, con la punta de la aguja siempre visible.",
-            "status": "Disponible",
-            "img": "/photos/amniosim/01.jpg?v=20261027-gallery",
-            "link": "/lab/amniosim/"
+            "status": "Bloqueado",
+            "img": "/photos/amniosim/01.jpg?v=20261027-gallery"
           },
           {
             "name": "Clip*Sim*",
@@ -58,17 +57,15 @@ window.UNG = {
             "name": "Stent*Sim*",
             "area": "Endovascular",
             "text": "Angioplastia y stent ilíaco bajo fluoroscopia simulada.",
-            "status": "Beta",
-            "img": "/photos/stentsim/01.jpg?v=20261027-gallery",
-            "link": "/lab/stentsim/"
+            "status": "Bloqueado",
+            "img": "/photos/stentsim/01.jpg?v=20261027-gallery"
           },
           {
             "name": "Hernio*Sim*",
             "area": "Cirugía general",
             "text": "Hernioplastia inguinal laparoscópica (TAPP) con malla y grapas.",
-            "status": "Disponible",
-            "img": "/photos/herniosim/01.jpg?v=20261027-gallery",
-            "link": "/lab/herniosim/"
+            "status": "Bloqueado",
+            "img": "/photos/herniosim/01.jpg?v=20261027-gallery"
           }
         ]
       }
@@ -137,8 +134,7 @@ window.UNG = {
     {
       "number": 2,
       "name": "Amnio*Sim*",
-      "status": "Disponible",
-      "link": "/lab/amniosim/",
+      "status": "Bloqueado",
       "kicker": "Simulador educativo · Medicina materno-fetal",
       "description": "Un simulador web de *amniocentesis guiada por ultrasonido*. Ecografía simulada con sombra acústica, aguja especular y *tenting* de membranas: practicas la punción con la punta siempre visible y recibes retroalimentación de cada error, con su evidencia.",
       "facts": [
@@ -289,8 +285,7 @@ window.UNG = {
     {
       "number": 4,
       "name": "Stent*Sim*",
-      "status": "Beta",
-      "link": "/lab/stentsim/",
+      "status": "Bloqueado",
       "kicker": "Simulador endovascular · Angioplastia ilíaca",
       "description": "Angioplastia y colocación de *stent en la arteria ilíaca* bajo fluoroscopia. Navegas la guía por la bifurcación, mides la lesión, eliges el tamaño y liberas un *stent de nitinol*; el simulador registra fluoroscopia, contraste y estenosis residual.",
       "facts": [
@@ -364,8 +359,7 @@ window.UNG = {
     },
     {
       "name": "Hernio*Sim*",
-      "link": "/lab/herniosim/",
-      "status": "Disponible",
+      "status": "Bloqueado",
       "kicker": "Simulador educativo · Cirugía general",
       "description": "Una introducción a la *hernioplastia inguinal laparoscópica*, con exploración del espacio, colocación de malla y fijación.",
       "tags": [
