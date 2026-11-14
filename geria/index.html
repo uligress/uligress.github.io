@@ -145,11 +145,12 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .pnom{flex:1;min-width:0;text-align:center}
 .pnom b{display:block;font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pnom span{display:block;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pnom span.top{color:#f4ff00}
+.pnom span.top{color:#ff9a1f}
 .pg{position:relative;margin:0 auto 12px;background:#fff;border-radius:6px;overflow:hidden}
 .pg canvas{display:block;width:100%;height:100%}
 .pg .n{position:absolute;left:8px;top:6px;font-family:var(--mono);font-size:11px;color:#8a8a8a}
-.pg .hl{position:absolute;background:#f4ff00;mix-blend-mode:multiply;border-radius:2px;pointer-events:none}
+.pg .hl{position:absolute;background:rgba(255,138,0,.62);mix-blend-mode:multiply;border-radius:2px;pointer-events:none;animation:late 2.6s ease-in-out infinite}
+@keyframes late{0%,100%{opacity:1}50%{opacity:.28}}
 @media (min-width:900px){
   body.conpdf .ltop,body.conpdf .lbody,body.conpdf .lfoot{padding-right:calc(min(46vw,640px) + 36px)}
 }
@@ -164,7 +165,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
   .step.pad-l{padding-left:12%}.step.pad-r{padding-right:12%}
   .info h2{font-size:17px}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){*:not(.hl){animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
