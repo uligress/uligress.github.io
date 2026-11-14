@@ -205,7 +205,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
     <button class="x" id="pSig" aria-label="Notas siguientes">→</button></div>
 </div>
 
-<script src="data.js?v=8"></script>
+<script src="data.js?v=9"></script>
 <script>
 (function(){
 'use strict';
@@ -353,9 +353,9 @@ function explica(it){
   return (it.e?'<div class="why">'+neg(it.e)+'</div>':(it.w?'<div class="why">'+esc(it.w)+'</div>':'')+(it.nt?'<div class="why">'+esc(it.nt)+'</div>':''))+
     (it.e&&(av||it.fu)?'<div class="mono src">'+esc(av+(it.fu||''))+'</div>':'')+
     '<div class="mono src">'+meta(it)+'</div>'+
-    (FIN(it)?'':'<button class="ghost pdfb" data-id="'+it.id+'">'+pEtq(it)+'</button>');
+    (SIN(it)?'':'<button class="ghost pdfb" data-id="'+it.id+'">'+pEtq(it)+'</button>');
 }
-function FIN(it){return it.id.charAt(0)==='f'} // exámenes finales: no están ligados a las notas
+function SIN(it){return it.id.charAt(0)==='f'&&!pHay(it)} // pregunta de examen final que ningún apunte responde: sin ruleta
 function sig(){
   if(!L.cola.length) return fin();
   var c=L.cola[0];
@@ -528,8 +528,8 @@ function pPone(k){
 }
 function pGira(d){ var i=P.ord.indexOf(P.k); pPone(P.ord[(i+d+3)%3]) }
 function pCtx(it,t){
-  var m=(it&&it.m)||{}, pm=t.pm||{};
-  return {n:{p:(it&&it.p)||t.p,tg:it&&it.p?it.tg:[],ok:!!(it&&it.p)},
+  var m=(it&&it.m)||{}, t0=it&&it.t0, pm=t0?{b:t0[1],a:t0[2]}:(t.pm||{}); // t0 = inicio del tema en cada apunte (exámenes finales)
+  return {n:{p:(it&&it.p)||(t0?t0[0]:t.p),tg:it&&it.p?it.tg:[],ok:!!(it&&it.p)},
           b:{p:m.b?m.b[0]:pm.b,tg:m.b?m.b[1]:[],ok:!!m.b}, a:{p:m.a?m.a[0]:pm.a,tg:m.a?m.a[1]:[],ok:!!m.a}};
 }
 function pHay(it){ return !!(it.p||(it.m&&(it.m.b||it.m.a))) }
@@ -549,9 +549,9 @@ function pDe(id){
   verPdf(c,pOrd(r.it),true,k);
 }
 // notas siempre visibles en pantalla ancha: antes de responder se abren en la página, sin subrayar (el subrayado sale al ver la respuesta)
-function pPrev(it){ if(window.innerWidth<900||FIN(it)) return; var r=PORID[it.id], c=pCtx(it,r.t); ['n','b','a'].forEach(function(k){c[k].tg=[]}); P.id=it.id; verPdf(c,pOrd(it),true) }
+function pPrev(it){ if(window.innerWidth<900||SIN(it)) return; var r=PORID[it.id], c=pCtx(it,r.t); ['n','b','a'].forEach(function(k){c[k].tg=[]}); P.id=it.id; verPdf(c,pOrd(it),true) }
 function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t&&!t.fin){ P.id=null; verPdf(pCtx(null,t),['n','b','a'],false) } }
-function pAuto(it){ if(window.innerWidth>=900&&!FIN(it)) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
+function pAuto(it){ if(window.innerWidth>=900&&!SIN(it)) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
 function pZoom(d){ if(!P.doc) return; var z=Math.max(1,Math.min(3,P.z+d)); if(z===P.z) return; var a=pActual(); P.z=z; pMonta(a,false) }
 // en pantalla ancha la pregunta nunca hace scroll: si no cabe, se encoge hasta caber (el scroll queda solo en las notas)
