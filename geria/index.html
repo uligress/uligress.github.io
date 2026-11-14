@@ -551,6 +551,22 @@ function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t){ 
 function pAuto(it){ if(window.innerWidth>=900) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
 function pZoom(d){ if(!P.doc) return; var z=Math.max(1,Math.min(3,P.z+d)); if(z===P.z) return; var a=pActual(); P.z=z; pMonta(a,false) }
+// en pantalla ancha la pregunta nunca hace scroll: si no cabe, se encoge hasta caber (el scroll queda solo en las notas)
+var FIT=0;
+function lFit(){
+  FIT=0; var b=document.querySelector('#lesson .lbody'), n=b&&b.firstElementChild; if(!n||$('lesson').hidden) return;
+  n.style.zoom=''; n.style.maxWidth=''; b.style.overflow='';
+  if(window.innerWidth<900) return;
+  var cs=getComputedStyle(b), alto=b.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom), ancho=b.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  for(var z=1;z>=.5;z-=.04){
+    if(z<1){ n.style.zoom=z; n.style.maxWidth=Math.min(ancho,920)/z+'px' }
+    if(n.getBoundingClientRect().height<=alto){ b.style.overflow='hidden'; return }
+  }
+}
+function lFitYa(){ if(!FIT) FIT=setTimeout(lFit,30) }
+new MutationObserver(lFitYa).observe($('lesson'),{childList:true,subtree:true});
+new MutationObserver(lFitYa).observe(document.body,{attributes:true,attributeFilter:['class']});
+window.addEventListener('resize',lFitYa);
 $('pX').onclick=pCierra; $('pAnt').onclick=function(){pGira(-1)}; $('pSig').onclick=function(){pGira(1)};
 $('pB1').onclick=$('pB2').onclick=function(){pPone(this.dataset.k)}; $('pMas').onclick=function(){pZoom(.5)}; $('pMen').onclick=function(){pZoom(-.5)};
 $('pScr').addEventListener('scroll',function(){ if(!P.raf) P.raf=requestAnimationFrame(function(){P.raf=0;pTxt()}) });
