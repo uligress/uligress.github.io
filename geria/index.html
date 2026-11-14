@@ -65,6 +65,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .info{min-width:0;flex:1}
 .info h2{margin:0 0 6px;font-size:19px;font-weight:500;letter-spacing:-.02em;line-height:1.15}
 .step.pad-l{padding-left:22%}
+.finh{position:relative;text-align:center;padding:46px 0 26px}.finh .mono{color:#ff9a1f}.finh p{margin:8px 0 0;color:var(--ash);font-size:14px}
 .step.pad-r{padding-right:22%}
 
 /* botones */
@@ -204,7 +205,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
     <button class="x" id="pSig" aria-label="Notas siguientes">→</button></div>
 </div>
 
-<script src="data.js?v=7"></script>
+<script src="data.js?v=8"></script>
 <script>
 (function(){
 'use strict';
@@ -245,10 +246,11 @@ function pinta(){
     var p=avance(t), ab=abierta(i), C=2*Math.PI*48;
     var lado=i%2?'r pad-r':'pad-l';
     var est=!ab?'lock':(p>=1?'done':(i===actual?'now':''));
+    if(t.fin===1) h+='<div class="finh"><div class="mono">✦ Exámenes finales</div><p>Preguntas variadas de todos los temas</p></div>';
     h+='<div class="step '+lado+' '+est+'" data-i="'+i+'">'+
-      '<button class="node" data-i="'+i+'" aria-label="Tema '+t.n+': '+esc(t.titulo)+(ab?'':' (bloqueado)')+'">'+
+      '<button class="node" data-i="'+i+'" aria-label="'+(t.fin?'':'Tema '+t.n+': ')+esc(t.titulo)+(ab?'':' (bloqueado)')+'">'+
         '<svg viewBox="0 0 102 102"><circle class="trk" cx="51" cy="51" r="48"/><circle class="prg" cx="51" cy="51" r="48" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-p)).toFixed(1)+'"/></svg>'+
-        '<span class="num">'+('0'+t.n).slice(-2)+'</span></button>'+
+        '<span class="num">'+(t.fin?'E'+t.fin:('0'+t.n).slice(-2))+'</span></button>'+
       '<div class="info"><h2>'+esc(t.titulo)+'</h2><div class="mono">'+
         (ab?Math.round(p*100)+' % · '+t.items.length+' preguntas':'bloqueado · completa el anterior')+'</div></div></div>';
   });
@@ -277,12 +279,12 @@ function hoja(i){
   var t=D.temas[i], ab=abierta(i), dom=0, rep=0, mc=0;
   t.items.forEach(function(it){if(dominada(it))dom++; if(it.x>=2)rep++; if(it.o)mc++});
   $('sheet').innerHTML='<div class="card" role="dialog" aria-modal="true">'+
-    '<div class="mono">✦ Tema <span>'+('0'+t.n).slice(-2)+'</span></div><h3>'+esc(t.titulo)+'</h3>'+
-    '<div class="kv mono"><span><b style="color:#fff">'+dom+'</b> / '+t.items.length+' dominadas</span><span>'+rep+' repetidas en exámenes</span><span>'+(S.lec[t.n]||0)+' lecciones hechas</span></div>'+
+    '<div class="mono">✦ '+(t.fin?'Examen final · variado':'Tema <span>'+('0'+t.n).slice(-2)+'</span>')+'</div><h3>'+esc(t.titulo)+'</h3>'+
+    '<div class="kv mono"><span><b style="color:#fff">'+dom+'</b> / '+t.items.length+' dominadas</span>'+(t.fin?'<span>'+esc(t.sub)+'</span>':'<span>'+rep+' repetidas en exámenes</span>')+'<span>'+(S.lec[t.n]||0)+' lecciones hechas</span></div>'+
     '<div class="row">'+(ab?
       '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
-    '<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes</button>'+
+    (t.fin?'':'<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes</button>')+
     '<button class="ghost" id="hX">Cerrar</button></div></div>';
   $('sheet').hidden=false;
   $('hX').onclick=function(){$('sheet').hidden=true};
@@ -351,8 +353,9 @@ function explica(it){
   return (it.e?'<div class="why">'+neg(it.e)+'</div>':(it.w?'<div class="why">'+esc(it.w)+'</div>':'')+(it.nt?'<div class="why">'+esc(it.nt)+'</div>':''))+
     (it.e&&(av||it.fu)?'<div class="mono src">'+esc(av+(it.fu||''))+'</div>':'')+
     '<div class="mono src">'+meta(it)+'</div>'+
-    '<button class="ghost pdfb" data-id="'+it.id+'">'+pEtq(it)+'</button>';
+    (FIN(it)?'':'<button class="ghost pdfb" data-id="'+it.id+'">'+pEtq(it)+'</button>');
 }
+function FIN(it){return it.id.charAt(0)==='f'} // exámenes finales: no están ligados a las notas
 function sig(){
   if(!L.cola.length) return fin();
   var c=L.cola[0];
@@ -546,9 +549,9 @@ function pDe(id){
   verPdf(c,pOrd(r.it),true,k);
 }
 // notas siempre visibles en pantalla ancha: antes de responder se abren en la página, sin subrayar (el subrayado sale al ver la respuesta)
-function pPrev(it){ if(window.innerWidth<900) return; var r=PORID[it.id], c=pCtx(it,r.t); ['n','b','a'].forEach(function(k){c[k].tg=[]}); P.id=it.id; verPdf(c,pOrd(it),true) }
-function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t){ P.id=null; verPdf(pCtx(null,t),['n','b','a'],false) } }
-function pAuto(it){ if(window.innerWidth>=900) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
+function pPrev(it){ if(window.innerWidth<900||FIN(it)) return; var r=PORID[it.id], c=pCtx(it,r.t); ['n','b','a'].forEach(function(k){c[k].tg=[]}); P.id=it.id; verPdf(c,pOrd(it),true) }
+function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t&&!t.fin){ P.id=null; verPdf(pCtx(null,t),['n','b','a'],false) } }
+function pAuto(it){ if(window.innerWidth>=900&&!FIN(it)) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
 function pZoom(d){ if(!P.doc) return; var z=Math.max(1,Math.min(3,P.z+d)); if(z===P.z) return; var a=pActual(); P.z=z; pMonta(a,false) }
 // en pantalla ancha la pregunta nunca hace scroll: si no cabe, se encoge hasta caber (el scroll queda solo en las notas)
