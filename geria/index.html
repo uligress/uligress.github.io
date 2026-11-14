@@ -119,6 +119,25 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .end h3{font-size:clamp(44px,10vw,88px);font-weight:500;letter-spacing:-.04em;line-height:.95;margin:0 0 18px}
 .end .kv{justify-content:center;margin-bottom:30px}
 
+/* visor del PDF: panel flotante a la derecha de la pregunta */
+.pdfb{margin-top:16px;font-size:14px;padding:10px 16px}
+.pdf{position:fixed;z-index:40;right:16px;top:16px;bottom:16px;width:min(46vw,640px);background:var(--night-2);border:1px solid var(--hair);border-radius:20px;
+  box-shadow:0 24px 80px rgba(0,0,0,.6);display:flex;flex-direction:column;overflow:hidden;animation:in .5s var(--ease)}
+.ptop{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--hair)}
+.ptop .mono{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ptop .x{font-family:var(--mono);width:34px;height:34px}
+.pscroll{position:relative;flex:1;overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 12px 40px}
+.pg{position:relative;margin:0 auto 12px;background:#fff;border-radius:6px;overflow:hidden}
+.pg canvas{display:block;width:100%;height:100%}
+.pg .n{position:absolute;left:8px;top:6px;font-family:var(--mono);font-size:11px;color:#8a8a8a}
+.pg .hl{position:absolute;background:#f4ff00;mix-blend-mode:multiply;border-radius:2px;pointer-events:none}
+@media (min-width:900px){
+  body.conpdf .ltop,body.conpdf .lbody,body.conpdf .lfoot{padding-right:calc(min(46vw,640px) + 36px)}
+}
+@media (max-width:899px){
+  .pdf{left:8px;right:8px;width:auto;top:38%;bottom:8px}
+}
+
 @media (max-width:520px){
   .step{height:122px;gap:14px}
   .node{width:78px;height:78px}.node svg{width:88px;height:88px}.node .num{font-size:29px}
@@ -152,8 +171,13 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 
 <div class="sheet" id="sheet" hidden></div>
 <div class="lesson" id="lesson" hidden></div>
+<div class="pdf" id="pdf" hidden>
+  <div class="ptop"><button class="x" id="pX" aria-label="Cerrar el PDF">✕</button><span class="mono" id="pTxt"></span>
+    <button class="x" id="pMen" aria-label="Alejar">−</button><button class="x" id="pMas" aria-label="Acercar">+</button></div>
+  <div class="pscroll" id="pScr"></div>
+</div>
 
-<script src="data.js?v=2"></script>
+<script src="data.js?v=5"></script>
 <script>
 (function(){
 'use strict';
@@ -231,6 +255,7 @@ function hoja(i){
     '<div class="row">'+(ab?
       '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
+    (t.p?'<button class="ghost pdfb" style="margin:0" data-p="'+t.p+'">Notas del tema · pág. '+t.p+'</button>':'')+
     '<button class="ghost" id="hX">Cerrar</button></div></div>';
   $('sheet').hidden=false;
   $('hX').onclick=function(){$('sheet').hidden=true};
@@ -271,7 +296,7 @@ function empieza(i){
   $('lesson').hidden=false; document.body.style.overflow='hidden';
   sig();
 }
-function cierra(){ $('lesson').hidden=true; document.body.style.overflow=''; L=null; pinta(); }
+function cierra(){ pCierra(); $('lesson').hidden=true; document.body.style.overflow=''; L=null; pinta(); }
 function marca(it,bien){
   var r=reg(it.id), prim=!(it.id in L.primera);
   if(prim){L.primera[it.id]=bien; if(bien)L.ok++; else L.mal++}
@@ -279,6 +304,7 @@ function marca(it,bien){
   guarda(); // se guarda en cada respuesta, aunque salgas a media lección
 }
 function marco(cuerpo,pie){
+  pCierra(); // el PDF trae la respuesta subrayada: se cierra al pasar a otra pregunta
   var p=L.total?100*L.hechas/L.total:0;
   $('lesson').innerHTML='<div class="ltop"><button class="x" id="lX" aria-label="Salir de la lección">✕</button><div class="bar"><i style="width:'+p+'%"></i></div><span class="mono">'+L.hechas+' / '+L.total+'</span></div>'+
     '<div class="lbody"><div class="in">'+cuerpo+'</div></div><div class="lfoot"><div class="in">'+pie+'</div></div>';
@@ -297,7 +323,8 @@ function explica(it){
   var av=(it.d?'⚠ Dudosa · ':'')+(it.s?'Sin clave · ':'')+(it.r?'opciones reconstruidas · ':'');
   return (it.e?'<div class="why">'+neg(it.e)+'</div>':(it.w?'<div class="why">'+esc(it.w)+'</div>':'')+(it.nt?'<div class="why">'+esc(it.nt)+'</div>':''))+
     (it.e&&(av||it.fu)?'<div class="mono src">'+esc(av+(it.fu||''))+'</div>':'')+
-    '<div class="mono src">'+meta(it)+'</div>';
+    '<div class="mono src">'+meta(it)+'</div>'+
+    '<button class="ghost pdfb" data-id="'+it.id+'">'+(it.p?'Ver en las notas · pág. '+it.p:'No viene en las notas · abrir el tema')+'</button>';
 }
 function sig(){
   if(!L.cola.length) return fin();
@@ -323,7 +350,7 @@ function mc(c){
     if(!visto){
       visto=true; var bien=ops[sel].i===it.k; marca(it,bien);
       bs.forEach(function(b,j){b.disabled=true;b.classList.remove('sel'); if(ops[j].i===it.k)b.classList.add('ok'); else if(j===sel)b.classList.add('bad'); else b.classList.add('dim')});
-      $('fb').innerHTML=explica(it);
+      $('fb').innerHTML=explica(it); pAuto(it);
       $('vd').textContent=bien?'Correcto':'Incorrecto · volverá al final'; $('vd').className='verdict '+(bien?'ok':'bad');
       this.firstChild.textContent='Continuar'; this.dataset.b=bien?1:0;
     } else avanza(c,this.dataset.b==='1');
@@ -334,7 +361,7 @@ function rec(c){
   marco('<div class="kind">✦ Responde de memoria</div>'+nota(it)+'<div class="q">'+esc(it.q)+'</div><div id="fb"></div>',
     '<span class="mono">Dila en voz alta antes de verla</span><button class="pill" id="go"><span>Ver respuesta</span><span class="arr">→</span></button>');
   $('go').onclick=function(){
-    $('fb').innerHTML='<div class="ans">'+esc(it.a)+'</div>'+explica(it);
+    $('fb').innerHTML='<div class="ans">'+esc(it.a)+'</div>'+explica(it); pAuto(it);
     document.querySelector('#lesson .lfoot .in').innerHTML='<button class="ghost" id="no">No la sabía</button><button class="pill" id="si"><span>La sabía</span><span class="arr">→</span></button>';
     $('no').onclick=function(){marca(it,false);avanza(c,false)};
     $('si').onclick=function(){marca(it,true);avanza(c,true)};
@@ -375,7 +402,96 @@ function fin(){
     '<button class="ghost" id="fM">Volver al mapa</button><button class="pill" id="fO"><span>Otra lección</span><span class="arr">→</span></button>');
   $('fM').onclick=cierra; $('fO').onclick=function(){empieza(i)};
 }
+/* ---------- visor del PDF (Notas - Geria): flota a la derecha, se cambia de hoja con scroll, subraya la respuesta ---------- */
+var P={url:'notas.pdf',cdn:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/',doc:null,carga:null,z:1,r:842/595,io:null,obj:0,tg:[],foco:false,raf:0};
+var PORID={}; D.temas.forEach(function(t){t.items.forEach(function(i){PORID[i.id]={it:i,t:t}})});
+function pLib(){
+  if(!P.carga) P.carga=new Promise(function(ok,no){
+    var s=document.createElement('script'); s.src=P.cdn+'pdf.min.js'; s.onerror=no;
+    s.onload=function(){
+      var l=window.pdfjsLib; l.GlobalWorkerOptions.workerSrc=P.cdn+'pdf.worker.min.js';
+      l.getDocument(P.url).promise.then(function(d){
+        P.doc=d; d.getPage(1).then(function(pg){var v=pg.getViewport({scale:1});P.r=v.height/v.width;ok(d)},no);
+      },no);
+    };
+    document.head.appendChild(s);
+  }).catch(function(e){P.carga=null;throw e});
+  return P.carga;
+}
+function pAncho(){return Math.round(Math.min($('pScr').clientWidth-24,900)*P.z)}
+function pHojas(){return [].slice.call($('pScr').querySelectorAll('.pg'))}
+function pActual(){
+  var sc=$('pScr'), m=sc.scrollTop+sc.clientHeight/3, n=1;
+  pHojas().some(function(h){ if(h.offsetTop<=m){n=+h.dataset.n;return false} return true });
+  return n;
+}
+function pTxt(){ if(P.doc) $('pTxt').textContent='Notas · pág. '+pActual()+' / '+P.doc.numPages+(P.tg.length?' · respuesta en la '+P.obj:'') }
+function pNorm(x){return x.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g,'')}
+// subrayado amarillo: busca cada frase clave en el texto de la hoja y pinta encima de esos renglones
+function pMarca(h,pg,vp){
+  return pg.getTextContent().then(function(tc){
+    var norm='', map=[], U=window.pdfjsLib.Util, primero=null;
+    tc.items.forEach(function(it,k){ for(var c=0;c<it.str.length;c++){ var n=pNorm(it.str[c]); for(var j=0;j<n.length;j++){norm+=n[j];map.push([k,c])} } });
+    P.tg.forEach(function(t){
+      var tn=pNorm(t), a=tn?norm.indexOf(tn):-1; if(a<0) return;
+      var seg={};
+      for(var i=a;i<a+tn.length;i++){ var k=map[i][0], c=map[i][1], s=seg[k]||(seg[k]=[c,c]); if(c<s[0])s[0]=c; if(c>s[1])s[1]=c }
+      Object.keys(seg).forEach(function(k){
+        var it=tc.items[k], L=it.str.length||1, tr=U.transform(vp.transform,it.transform), alto=Math.hypot(tr[2],tr[3]), ancho=it.width*vp.scale;
+        var x=tr[4]+ancho*seg[k][0]/L, w=ancho*(seg[k][1]+1-seg[k][0])/L, y=tr[5]-alto*.92;
+        var d=document.createElement('div'); d.className='hl';
+        d.style.cssText='left:'+(100*x/vp.width)+'%;top:'+(100*y/vp.height)+'%;width:'+(100*w/vp.width)+'%;height:'+(100*alto*1.2/vp.height)+'%';
+        h.appendChild(d); var f=y/vp.height; if(primero===null||f<primero) primero=f;
+      });
+    });
+    if(primero!==null&&!P.foco){ P.foco=true; var sc=$('pScr'); sc.scrollTop=Math.max(0,h.offsetTop+primero*h.offsetHeight-sc.clientHeight/4) }
+  });
+}
+function pDibuja(h){
+  var w=pAncho(), dpr=Math.min(window.devicePixelRatio||1,2), marca=w+'@'+dpr;
+  if(h._m===marca) return; h._m=marca;
+  P.doc.getPage(+h.dataset.n).then(function(pg){
+    if(h._m!==marca) return;
+    var vp=pg.getViewport({scale:w*dpr/pg.getViewport({scale:1}).width}), c=document.createElement('canvas');
+    c.width=Math.round(vp.width); c.height=Math.round(vp.height);
+    pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise.then(function(){
+      if(h._m!==marca) return; pLimpia(h); h.appendChild(c);
+      if(+h.dataset.n===P.obj&&P.tg.length) pMarca(h,pg,vp);
+    });
+  });
+}
+function pLimpia(h){ [].slice.call(h.querySelectorAll('canvas,.hl')).forEach(function(x){x.remove()}) }
+function pMonta(p,foco){
+  var sc=$('pScr'), w=pAncho(), n=P.doc.numPages, h='';
+  for(var i=1;i<=n;i++) h+='<div class="pg" data-n="'+i+'" style="width:'+w+'px;height:'+Math.round(w*P.r)+'px"><span class="n">'+i+'</span></div>';
+  sc.innerHTML=h; P.foco=!foco;
+  if(P.io) P.io.disconnect();
+  // solo se dibujan las hojas cercanas a la vista; las lejanas se sueltan para no llenar la memoria
+  P.io=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting) pDibuja(e.target); else{ pLimpia(e.target); e.target._m=null }
+  })},{root:sc,rootMargin:'150% 0px'});
+  var hs=pHojas(); hs.forEach(function(x){P.io.observe(x)});
+  sc.scrollTop=Math.max(0,hs[Math.min(p,n)-1].offsetTop-10); sc.scrollLeft=0;
+  pTxt();
+}
+function verPdf(p,tg){
+  P.obj=p||1; P.tg=tg||[]; P.z=1; $('pdf').hidden=false; document.body.classList.add('conpdf');
+  $('pScr').innerHTML='<div class="mono" style="padding:30px 8px">Cargando las notas…</div>'; $('pTxt').textContent='';
+  pLib().then(function(){ if(!$('pdf').hidden) pMonta(P.obj,true) },function(){
+    $('pScr').innerHTML='<div class="mono" style="padding:30px 8px">No se pudo abrir el PDF. Revisa la conexión y vuelve a intentar.</div>';
+  });
+}
+function pDe(id){ var r=PORID[id]; if(r) verPdf(r.it.p||r.t.p, r.it.p?r.it.tg:[]) }
+function pAuto(it){ if(window.innerWidth>=900&&it.p) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
+function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
+function pZoom(d){ if(!P.doc) return; var z=Math.max(1,Math.min(3,P.z+d)); if(z===P.z) return; var a=pActual(); P.z=z; pMonta(a,false) }
+$('pX').onclick=pCierra; $('pMas').onclick=function(){pZoom(.5)}; $('pMen').onclick=function(){pZoom(-.5)};
+$('pScr').addEventListener('scroll',function(){ if(!P.raf) P.raf=requestAnimationFrame(function(){P.raf=0;pTxt()}) });
+window.addEventListener('resize',function(){ if(!$('pdf').hidden&&P.doc) pMonta(pActual(),false) });
+document.addEventListener('click',function(e){var b=e.target.closest('.pdfb'); if(!b) return; if(b.dataset.id) pDe(b.dataset.id); else verPdf(+b.dataset.p,[])});
+
 document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&!$('pdf').hidden){ pCierra(); return }
   if(e.key==='Escape'){ if(!$('sheet').hidden)$('sheet').hidden=true; return }
   if(!L) return;
   if(e.key==='Enter'){var g=$('go')||$('si')||$('fO'); if(g&&!g.disabled){e.preventDefault();g.click()}}
