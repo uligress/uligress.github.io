@@ -134,6 +134,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .pbk span{position:absolute;top:14px;writing-mode:vertical-rl;white-space:nowrap;background:rgba(8,8,8,.82);padding:9px 5px;border-radius:7px}
 .pbk.izq{left:8px;transform:rotate(-3deg);z-index:1}.pbk.izq span{left:9px}
 .pbk.der{right:8px;transform:rotate(3deg);z-index:0}.pbk.der span{right:9px}
+.pbk.d3{right:3px;transform:rotate(6deg)}.pbk.d3 span{top:auto;bottom:14px;right:4px}
 .pbk.izq:hover{transform:translateX(-4px) rotate(-4deg)}.pbk.der:hover{transform:translateX(4px) rotate(4deg)}
 .pbk:hover::before{opacity:.95}
 .pbk b{font-weight:700}
@@ -197,7 +198,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
   <div class="ptop"><button class="x" id="pX" aria-label="Cerrar el PDF">✕</button><span class="mono" id="pTxt"></span>
     <button class="x" id="pMen" aria-label="Alejar">−</button><button class="x" id="pMas" aria-label="Acercar">+</button></div>
   <div class="pstage">
-    <button class="pbk izq" id="pB1"></button><button class="pbk der" id="pB2"></button>
+    <button class="pbk izq" id="pB1"></button><button class="pbk der" id="pB2"></button><button class="pbk der d3" id="pB3"></button>
     <div class="pscroll" id="pScr"></div>
   </div>
   <div class="pfoot"><button class="x" id="pAnt" aria-label="Notas anteriores">←</button>
@@ -205,7 +206,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
     <button class="x" id="pSig" aria-label="Notas siguientes">→</button></div>
 </div>
 
-<script src="data.js?v=9"></script>
+<script src="data.js?v=10"></script>
 <script>
 (function(){
 'use strict';
@@ -284,7 +285,7 @@ function hoja(i){
     '<div class="row">'+(ab?
       '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
-    (t.fin?'':'<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes</button>')+
+    (t.fin?'':'<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes y diapositivas</button>')+
     '<button class="ghost" id="hX">Cerrar</button></div></div>';
   $('sheet').hidden=false;
   $('hX').onclick=function(){$('sheet').hidden=true};
@@ -435,9 +436,10 @@ function fin(){
     '<button class="ghost" id="fM">Volver al mapa</button><button class="pill" id="fO"><span>Otra lección</span><span class="arr">→</span></button>');
   $('fM').onclick=cierra; $('fO').onclick=function(){empieza(i)};
 }
-/* ---------- notas en ruleta (Notas - Geria, Baironotas, Andy Notas): flotan a la derecha, scroll entre hojas, subrayan la respuesta ---------- */
-var SRC={n:{url:'notas.pdf',nom:'Notas - Geria'},b:{url:'bairo.pdf',nom:'Baironotas'},a:{url:'andy.pdf',nom:'Andy Notas'}};
-var P={cdn:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/',lib:null,doc:null,k:'n',ord:['n','b','a'],ctx:{},rank:false,z:1,r:842/595,io:null,obj:0,tg:[],foco:false,raf:0};
+/* ---------- notas en ruleta (Notas - Geria, Baironotas, Andy Notas y las diapositivas de clase): flotan a la derecha, scroll entre hojas, subrayan la respuesta ---------- */
+var SRC={n:{url:'notas.pdf',nom:'Notas - Geria'},b:{url:'bairo.pdf',nom:'Baironotas'},a:{url:'andy.pdf',nom:'Andy Notas'},d:{url:'diapos.pdf',nom:'Diapositivas',big:1}};
+var KS=['n','b','a','d']; // d = diapositivas de clase (fotos con texto leído por OCR): pesa ~44 MB, así que solo se bajan las hojas que se ven
+var P={cdn:'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/',lib:null,doc:null,k:'n',ord:KS,ctx:{},rank:false,z:1,r:842/595,io:null,obj:0,tg:[],foco:false,raf:0};
 var PORID={}; D.temas.forEach(function(t){t.items.forEach(function(i){PORID[i.id]={it:i,t:t}})});
 function pLib(k){
   if(!P.lib) P.lib=new Promise(function(ok,no){
@@ -446,7 +448,7 @@ function pLib(k){
     document.head.appendChild(s);
   }).catch(function(e){P.lib=null;throw e});
   var S=SRC[k];
-  if(!S.carga) S.carga=P.lib.then(function(){return window.pdfjsLib.getDocument(S.url).promise}).then(function(d){
+  if(!S.carga) S.carga=P.lib.then(function(){return window.pdfjsLib.getDocument(S.big?{url:S.url,disableAutoFetch:true,disableStream:true}:S.url).promise}).then(function(d){
     S.doc=d; return d.getPage(1).then(function(pg){var v=pg.getViewport({scale:1});S.r=v.height/v.width;return d});
   }).catch(function(e){S.carga=null;throw e});
   return S.carga;
@@ -521,23 +523,23 @@ function pPone(k){
   $('pNom').textContent=SRC[k].nom;
   var r=$('pRank'); r.className='mono'+(P.rank&&c.ok&&i===0?' top':'');
   r.textContent=!P.rank?'Inicio del tema · pág. '+P.obj:(c.ok?'#'+(i+1)+' de confiabilidad'+(i===0?' · la más relacionada con la pregunta':''):'No trae esta respuesta · inicio del tema');
-  [['pB1',1],['pB2',2]].forEach(function(x){ var o=P.ord[(i+x[1])%3], b=$(x[0]); b.dataset.k=o; b.innerHTML='<span><b>'+SRC[o].nom+'</b>'+(P.rank?' · '+pRk(o):'')+'</span>' });
+  [['pB1',1],['pB2',2],['pB3',3]].forEach(function(x){ var o=P.ord[(i+x[1])%P.ord.length], b=$(x[0]); b.dataset.k=o; b.innerHTML='<span><b>'+SRC[o].nom+'</b>'+(P.rank?' · '+pRk(o):'')+'</span>' });
   pLib(k).then(function(d){ if($('pdf').hidden||P.k!==k) return; P.doc=d; P.r=SRC[k].r; pMonta(P.obj,true) },function(){
     if(P.k===k) sc.innerHTML='<div class="mono" style="padding:30px 8px">No se pudo abrir el PDF. Revisa la conexión y vuelve a intentar.</div>';
   });
 }
-function pGira(d){ var i=P.ord.indexOf(P.k); pPone(P.ord[(i+d+3)%3]) }
+function pGira(d){ var i=P.ord.indexOf(P.k); var n=P.ord.length; pPone(P.ord[(i+d+n)%n]) }
 function pCtx(it,t){
-  var m=(it&&it.m)||{}, t0=it&&it.t0, pm=t0?{b:t0[1],a:t0[2]}:(t.pm||{}); // t0 = inicio del tema en cada apunte (exámenes finales)
+  var m=(it&&it.m)||{}, t0=it&&it.t0, pm=t0?{b:t0[1],a:t0[2],d:t0[3]}:(t.pm||{}); // t0 = inicio del tema en cada apunte (exámenes finales)
   return {n:{p:(it&&it.p)||(t0?t0[0]:t.p),tg:it&&it.p?it.tg:[],ok:!!(it&&it.p)},
-          b:{p:m.b?m.b[0]:pm.b,tg:m.b?m.b[1]:[],ok:!!m.b}, a:{p:m.a?m.a[0]:pm.a,tg:m.a?m.a[1]:[],ok:!!m.a}};
+          b:{p:m.b?m.b[0]:pm.b,tg:m.b?m.b[1]:[],ok:!!m.b}, a:{p:m.a?m.a[0]:pm.a,tg:m.a?m.a[1]:[],ok:!!m.a}, d:{p:m.d?m.d[0]:pm.d,tg:m.d?m.d[1]:[],ok:!!m.d}};
 }
-function pHay(it){ return !!(it.p||(it.m&&(it.m.b||it.m.a))) }
-function pOrd(it){ return ((it.m&&it.m.o)||'nba').split('') }
+function pHay(it){ return !!(it.p||(it.m&&(it.m.b||it.m.a||it.m.d))) }
+function pOrd(it){ return ((it.m&&it.m.o)||'nbad').split('') }
 function pEtq(it){
   if(!pHay(it)) return 'No viene en las notas · abrir el tema';
-  var c=pCtx(it,PORID[it.id].t), k=pOrd(it)[0], n=['n','b','a'].filter(function(x){return c[x].ok}).length;
-  return 'Ver en las notas · '+SRC[k].nom+' pág. '+c[k].p+(n>1?' · '+n+' apuntes':'');
+  var c=pCtx(it,PORID[it.id].t), k=pOrd(it)[0], n=KS.filter(function(x){return c[x].ok}).length;
+  return 'Ver en las notas · '+SRC[k].nom+' pág. '+c[k].p+(n>1?' · '+n+' fuentes':'');
 }
 function pDe(id){
   var r=PORID[id]; if(!r) return; var k=!$('pdf').hidden&&P.id===id?P.k:null, c=pCtx(r.it,r.t); P.id=id;
@@ -549,8 +551,8 @@ function pDe(id){
   verPdf(c,pOrd(r.it),true,k);
 }
 // notas siempre visibles en pantalla ancha: antes de responder se abren en la página, sin subrayar (el subrayado sale al ver la respuesta)
-function pPrev(it){ if(window.innerWidth<900||SIN(it)) return; var r=PORID[it.id], c=pCtx(it,r.t); ['n','b','a'].forEach(function(k){c[k].tg=[]}); P.id=it.id; verPdf(c,pOrd(it),true) }
-function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t&&!t.fin){ P.id=null; verPdf(pCtx(null,t),['n','b','a'],false) } }
+function pPrev(it){ if(window.innerWidth<900||SIN(it)) return; var r=PORID[it.id], c=pCtx(it,r.t); KS.forEach(function(k){c[k].tg=[]}); P.id=it.id; verPdf(c,pOrd(it),true) }
+function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t&&!t.fin){ P.id=null; verPdf(pCtx(null,t),KS,false) } }
 function pAuto(it){ if(window.innerWidth>=900&&!SIN(it)) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
 function pZoom(d){ if(!P.doc) return; var z=Math.max(1,Math.min(3,P.z+d)); if(z===P.z) return; var a=pActual(); P.z=z; pMonta(a,false) }
@@ -571,7 +573,7 @@ new MutationObserver(lFitYa).observe($('lesson'),{childList:true,subtree:true});
 new MutationObserver(lFitYa).observe(document.body,{attributes:true,attributeFilter:['class']});
 window.addEventListener('resize',lFitYa);
 $('pX').onclick=pCierra; $('pAnt').onclick=function(){pGira(-1)}; $('pSig').onclick=function(){pGira(1)};
-$('pB1').onclick=$('pB2').onclick=function(){pPone(this.dataset.k)}; $('pMas').onclick=function(){pZoom(.5)}; $('pMen').onclick=function(){pZoom(-.5)};
+$('pB1').onclick=$('pB2').onclick=$('pB3').onclick=function(){pPone(this.dataset.k)}; $('pMas').onclick=function(){pZoom(.5)}; $('pMen').onclick=function(){pZoom(-.5)};
 $('pScr').addEventListener('scroll',function(){ if(!P.raf) P.raf=requestAnimationFrame(function(){P.raf=0;pTxt()}) });
 window.addEventListener('resize',function(){ if(!$('pdf').hidden&&P.doc) pMonta(pActual(),false) });
 document.addEventListener('click',function(e){var b=e.target.closest('.pdfb'); if(!b) return; if(b.dataset.id) pDe(b.dataset.id); else pTema(+b.dataset.tn)});
