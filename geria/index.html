@@ -60,6 +60,9 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .step.now .node{background:var(--white)}
 .step.now .node .num{color:var(--night)}
 .step.done .node .num{color:var(--white)}
+.step.done .node{border-color:var(--white)}
+.node .chk{position:absolute;right:-4px;top:-4px;width:26px;height:26px;border-radius:50%;background:var(--white);color:var(--night);display:grid;place-items:center;font-size:14px;font-weight:700;line-height:1}
+.step.done .info .mono{color:var(--white)}
 .step.lock .node{opacity:.35}
 .step.lock .info{opacity:.35}
 .info{min-width:0;flex:1}
@@ -225,6 +228,10 @@ function guarda(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function reg(id){return S.it[id]||(S.it[id]={c:0,w:0})}
 function dominada(it){var r=S.it[it.id];return !!r&&r.c>=DOMINIO}
 function avance(t){var n=0;t.items.forEach(function(i){var r=S.it[i.id];if(r)n+=Math.min(r.c,DOMINIO)});return n/(DOMINIO*t.items.length)} // cada acierto a la primera suma; 2 = dominada
+// td: preguntas ya contestadas en el modo «Todas las preguntas» (es lo que marca la escalera)
+// la primera vez se siembra con lo ya contestado antes, para no perder el avance guardado
+if(!S.td){ S.td={}; for(var k0 in S.it) S.td[k0]=1; }
+function contestadas(t){var n=0;t.items.forEach(function(i){if(S.td[i.id])n++});return n}
 function abierta(i){return S.libre||i===0||(S.lec[D.temas[i-1].n]||0)>0}
 function racha(){
   var set={},n=0,d=new Date();S.dias.forEach(function(x){set[x]=1});
@@ -244,18 +251,19 @@ function pinta(){
   // el escalón "actual" es el más avanzado abierto que no está dominado
   D.temas.forEach(function(t,i){ if(abierta(i)&&avance(t)<1&&!S.libre) actual=i; });
   if(S.libre){actual=-1;D.temas.some(function(t,i){if(avance(t)<1){actual=i;return true}})}
-  var h='';
+  var h='', sigue=-1;
+  D.temas.some(function(t,i){if(abierta(i)&&contestadas(t)<t.items.length){sigue=i;return true}});
   D.temas.forEach(function(t,i){
-    var p=avance(t), ab=abierta(i), C=2*Math.PI*48;
+    var nc=contestadas(t), nt=t.items.length, p=nc/nt, ab=abierta(i), C=2*Math.PI*48;
     var lado=i%2?'r pad-r':'pad-l';
-    var est=!ab?'lock':(p>=1?'done':(i===actual?'now':''));
+    var est=!ab?'lock':(nc>=nt?'done':(i===sigue?'now':''));
     if(t.fin===1) h+='<div class="finh"><div class="mono">✦ Exámenes finales</div><p>Preguntas variadas de todos los temas</p></div>';
     h+='<div class="step '+lado+' '+est+'" data-i="'+i+'">'+
-      '<button class="node" data-i="'+i+'" aria-label="'+(t.fin?'':'Tema '+t.n+': ')+esc(t.titulo)+(ab?'':' (bloqueado)')+'">'+
+      '<button class="node" data-i="'+i+'" aria-label="'+(t.fin?'':'Tema '+t.n+': ')+esc(t.titulo)+(ab?' · '+nc+' de '+nt+' contestadas':' (bloqueado)')+'">'+
         '<svg viewBox="0 0 102 102"><circle class="trk" cx="51" cy="51" r="48"/><circle class="prg" cx="51" cy="51" r="48" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+(C*(1-p)).toFixed(1)+'"/></svg>'+
-        '<span class="num">'+(t.fin?'E'+t.fin:('0'+t.n).slice(-2))+'</span></button>'+
+        '<span class="num">'+(t.fin?'E'+t.fin:('0'+t.n).slice(-2))+'</span>'+(ab&&nc>=nt?'<span class="chk" aria-hidden="true">✓</span>':'')+'</button>'+
       '<div class="info"><h2>'+esc(t.titulo)+'</h2><div class="mono">'+
-        (ab?Math.round(p*100)+' % · '+t.items.length+' preguntas':'bloqueado · completa el anterior')+'</div></div></div>';
+        (ab?(nc>=nt?'✓ completo · '+nc+' / '+nt+' contestadas':nc+' / '+nt+' contestadas'+(nc?' · faltan '+(nt-nc):'')):'bloqueado · completa el anterior')+'</div></div></div>';
   });
   $('map').innerHTML='<svg class="path" id="pth"></svg>'+h;
   $('gBar').style.width=(100*hechas/total).toFixed(1)+'%';
@@ -283,7 +291,7 @@ function hoja(i){
   t.items.forEach(function(it){if(dominada(it))dom++; if(it.x>=2)rep++; if(it.o)mc++});
   $('sheet').innerHTML='<div class="card" role="dialog" aria-modal="true">'+
     '<div class="mono">✦ '+(t.fin?'Examen final · variado':'Tema <span>'+('0'+t.n).slice(-2)+'</span>')+'</div><h3>'+esc(t.titulo)+'</h3>'+
-    '<div class="kv mono"><span><b style="color:#fff">'+dom+'</b> / '+t.items.length+' dominadas</span>'+(t.fin?'<span>'+esc(t.sub)+'</span>':'<span>'+rep+' repetidas en exámenes</span>')+'<span>'+(S.lec[t.n]||0)+' lecciones hechas</span></div>'+
+    '<div class="kv mono"><span><b style="color:#fff">'+dom+'</b> / '+t.items.length+' dominadas</span><span><b style="color:#fff">'+contestadas(t)+'</b> / '+t.items.length+' contestadas en Todas</span>'+(t.fin?'<span>'+esc(t.sub)+'</span>':'<span>'+rep+' repetidas en exámenes</span>')+'<span>'+(S.lec[t.n]||0)+' lecciones hechas</span></div>'+
     '<div class="row">'+(ab?
       '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
@@ -336,6 +344,7 @@ function marca(it,bien){
   var r=reg(it.id), prim=!(it.id in L.primera);
   if(prim){L.primera[it.id]=bien; if(bien)L.ok++; else L.mal++}
   if(bien){ if(prim) r.c++; } else { r.w++; r.c=0; }
+  if(L.todas) S.td[it.id]=1;
   guarda(); // se guarda en cada respuesta, aunque salgas a media lección
 }
 function marco(cuerpo,pie){
