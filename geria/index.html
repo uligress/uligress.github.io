@@ -285,13 +285,15 @@ function hoja(i){
     '<div class="mono">✦ '+(t.fin?'Examen final · variado':'Tema <span>'+('0'+t.n).slice(-2)+'</span>')+'</div><h3>'+esc(t.titulo)+'</h3>'+
     '<div class="kv mono"><span><b style="color:#fff">'+dom+'</b> / '+t.items.length+' dominadas</span>'+(t.fin?'<span>'+esc(t.sub)+'</span>':'<span>'+rep+' repetidas en exámenes</span>')+'<span>'+(S.lec[t.n]||0)+' lecciones hechas</span></div>'+
     '<div class="row">'+(ab?
-      '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button><button class="ghost" id="hTodas" style="margin:0">Todas las preguntas · '+t.items.length+'</button>':
+      '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
+    '<button class="'+(ab?'ghost':'pill')+'" id="hTodas" style="margin:0">Todas las preguntas · '+t.items.length+'</button>'+
     (t.fin?'':'<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes y diapositivas</button>')+
     '<button class="ghost" id="hX">Cerrar</button></div></div>';
   $('sheet').hidden=false;
   $('hX').onclick=function(){$('sheet').hidden=true};
-  if(ab){ $('hIr').onclick=function(){$('sheet').hidden=true;empieza(i)}; $('hTodas').onclick=function(){$('sheet').hidden=true;empieza(i,true)}; }
+  if(ab) $('hIr').onclick=function(){$('sheet').hidden=true;empieza(i)};
+  $('hTodas').onclick=function(){$('sheet').hidden=true;empieza(i,true)};
 }
 $('sheet').addEventListener('click',function(e){if(e.target===this)this.hidden=true});
 $('map').addEventListener('click',function(e){var n=e.target.closest('.node');if(n)hoja(+n.dataset.i)});
