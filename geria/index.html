@@ -96,6 +96,8 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 @keyframes in{from{opacity:0;transform:translateY(24px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
 .kind{font-size:13px;color:var(--ash)}
 .q{font-size:clamp(21px,4.4vw,28px);letter-spacing:-.02em;line-height:1.2;margin:14px 0 22px}
+.caso u{text-decoration:underline;text-decoration-color:rgba(255,255,255,.55);text-decoration-thickness:1.5px;text-underline-offset:3px;color:var(--white)}
+.orig{font-size:13px;color:var(--ash);line-height:1.45;margin:12px 0 0}.orig .mono{display:block;margin-bottom:4px}
 .caso{font-size:15px;color:var(--ash);line-height:1.45;border-left:1px solid var(--hair);padding:2px 0 2px 16px;margin:14px 0 4px}
 .caso .mono{margin-bottom:6px}
 .opt{display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;background:var(--glass);border:1px solid var(--hair);border-radius:16px;padding:16px 18px;margin-bottom:10px;font-size:16px;line-height:1.35;transition:background .2s,border-color .2s,opacity .2s}
@@ -206,7 +208,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
     <button class="x" id="pSig" aria-label="Notas siguientes">→</button></div>
 </div>
 
-<script src="data.js?v=10"></script>
+<script src="data.js?v=11"></script>
 <script>
 (function(){
 'use strict';
@@ -283,13 +285,13 @@ function hoja(i){
     '<div class="mono">✦ '+(t.fin?'Examen final · variado':'Tema <span>'+('0'+t.n).slice(-2)+'</span>')+'</div><h3>'+esc(t.titulo)+'</h3>'+
     '<div class="kv mono"><span><b style="color:#fff">'+dom+'</b> / '+t.items.length+' dominadas</span>'+(t.fin?'<span>'+esc(t.sub)+'</span>':'<span>'+rep+' repetidas en exámenes</span>')+'<span>'+(S.lec[t.n]||0)+' lecciones hechas</span></div>'+
     '<div class="row">'+(ab?
-      '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
+      '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button><button class="ghost" id="hTodas" style="margin:0">Todas las preguntas · '+t.items.length+'</button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
     (t.fin?'':'<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes y diapositivas</button>')+
     '<button class="ghost" id="hX">Cerrar</button></div></div>';
   $('sheet').hidden=false;
   $('hX').onclick=function(){$('sheet').hidden=true};
-  if(ab) $('hIr').onclick=function(){$('sheet').hidden=true;empieza(i)};
+  if(ab){ $('hIr').onclick=function(){$('sheet').hidden=true;empieza(i)}; $('hTodas').onclick=function(){$('sheet').hidden=true;empieza(i,true)}; }
 }
 $('sheet').addEventListener('click',function(e){if(e.target===this)this.hidden=true});
 $('map').addEventListener('click',function(e){var n=e.target.closest('.node');if(n)hoja(+n.dataset.i)});
@@ -314,15 +316,16 @@ function elige(t){
   }
   return sel;
 }
-function empieza(i){
-  var t=D.temas[i], items=elige(t), cola=[];
+function empieza(i,todas){
+  // todas: el tema completo en su orden (los casos quedan juntos); lo fallado vuelve al final hasta acertarlo
+  var t=D.temas[i], items=todas?t.items.slice():elige(t), cola=[];
   // un ejercicio de emparejar con 4 tarjetas de recuerdo cortas y distintas
   var cortas=items.filter(function(x){return !x.o&&!x.c&&x.a.length<=60&&x.q.length<=140}), usados={}, par=[];
-  cortas.forEach(function(x){var k=x.a.toLowerCase();if(par.length<4&&!usados[k]){usados[k]=1;par.push(x)}});
+  if(!todas) cortas.forEach(function(x){var k=x.a.toLowerCase();if(par.length<4&&!usados[k]){usados[k]=1;par.push(x)}});
   var enPar={}; if(par.length===4) par.forEach(function(x){enPar[x.id]=1});
   items.forEach(function(x){ if(!enPar[x.id]) cola.push({tipo:(x.o&&x.k!=null)?'mc':'rec',it:x}) });
   if(par.length===4) cola.splice(Math.min(3,cola.length),0,{tipo:'par',its:par});
-  L={i:i,t:t,cola:cola,total:cola.length,hechas:0,ok:0,mal:0,primera:{}};
+  L={i:i,t:t,todas:!!todas,cola:cola,total:cola.length,hechas:0,ok:0,mal:0,primera:{}};
   $('lesson').hidden=false; document.body.style.overflow='hidden';
   sig();
 }
@@ -346,12 +349,20 @@ function meta(it){
 function nota(it){
   // preguntas de seguimiento: se muestra la viñeta literal del caso (viene de su primera pregunta)
   var v=it.c&&D.casos&&D.casos[it.c]&&D.casos[it.c].v;
-  return v?'<div class="caso"><div class="mono">✦ Caso clínico</div>'+esc(v)+'</div>':'';
+  return v?'<div class="caso"><div class="mono">✦ Caso clínico</div>'+subr(v,it.h)+'</div>':'';
+}
+function subr(v,h){
+  // subraya en la viñeta los fragmentos importantes para esta pregunta (literales; todas sus apariciones)
+  var r=[],o='',p=0;
+  (h||[]).forEach(function(x){for(var i=v.indexOf(x);x&&i>=0;i=v.indexOf(x,i+x.length))r.push([i,i+x.length])});
+  r.sort(function(a,b){return a[0]-b[0]});
+  r.forEach(function(x){if(x[1]<=p)return;var a=Math.max(x[0],p);o+=esc(v.slice(p,a))+'<u>'+esc(v.slice(a,x[1]))+'</u>';p=x[1]});
+  return o+esc(v.slice(p));
 }
 function explica(it){
   var neg=function(x){return esc(x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')};
   var av=(it.d?'⚠ Dudosa · ':'')+(it.s?'Sin clave · ':'')+(it.r?'opciones reconstruidas · ':'');
-  return (it.e?'<div class="why">'+neg(it.e)+'</div>':(it.w?'<div class="why">'+esc(it.w)+'</div>':'')+(it.nt?'<div class="why">'+esc(it.nt)+'</div>':''))+
+  return (it.qd?'<div class="orig"><span class="mono">Así venía en el examen</span>«'+esc(it.q)+'»</div>':'')+(it.e?'<div class="why">'+neg(it.e)+'</div>':(it.w?'<div class="why">'+esc(it.w)+'</div>':'')+(it.nt?'<div class="why">'+esc(it.nt)+'</div>':''))+
     (it.e&&(av||it.fu)?'<div class="mono src">'+esc(av+(it.fu||''))+'</div>':'')+
     '<div class="mono src">'+meta(it)+'</div>'+
     (SIN(it)?'':'<button class="ghost pdfb" data-id="'+it.id+'">'+pEtq(it)+'</button>');
@@ -372,7 +383,7 @@ function mc(c){
   var LETRAS=/\b[a-e] y [a-e]\b/i, FIJA=/anteriores|^todas las opciones/i;
   if(it.o.some(function(o){return LETRAS.test(o)})) ops.sort(function(a,b){return a.i-b.i}); // opciones que citan letras: orden original
   else ops=ops.filter(function(o){return !FIJA.test(o.o)}).concat(ops.filter(function(o){return FIJA.test(o.o)}));
-  marco('<div class="kind">✦ Elige la respuesta</div>'+nota(it)+'<div class="q">'+esc(it.q)+'</div>'+
+  marco('<div class="kind">✦ Elige la respuesta</div>'+nota(it)+'<div class="q">'+esc(it.qd||it.q)+'</div>'+
     ops.map(function(o,j){return '<button class="opt" data-j="'+j+'"><span class="l">'+'abcde'[j]+'</span><span>'+esc(o.o)+'</span></button>'}).join('')+'<div id="fb"></div>',
     '<span class="verdict" id="vd"></span><button class="pill" id="go" disabled><span>Comprobar</span><span class="arr">→</span></button>');
   pPrev(it);
@@ -390,7 +401,7 @@ function mc(c){
 }
 function rec(c){
   var it=c.it;
-  marco('<div class="kind">✦ Responde de memoria</div>'+nota(it)+'<div class="q">'+esc(it.q)+'</div><div id="fb"></div>',
+  marco('<div class="kind">✦ Responde de memoria</div>'+nota(it)+'<div class="q">'+esc(it.qd||it.q)+'</div><div id="fb"></div>',
     '<span class="mono">Dila en voz alta antes de verla</span><button class="pill" id="go"><span>Ver respuesta</span><span class="arr">→</span></button>');
   pPrev(it);
   $('go').onclick=function(){
@@ -433,8 +444,8 @@ function fin(){
   L.hechas=L.total;
   marco('<div class="end"><div class="mono">✦ Tema '+('0'+L.t.n).slice(-2)+' · '+esc(L.t.titulo)+'</div><h3>Lección <span class="script" style="font-size:1.3em">hecha</span></h3>'+
     '<div class="kv mono"><span><b style="color:#fff">'+pct+' %</b> a la primera</span><span>+'+gana+' xp</span><span>tema al '+p+' %</span><span>racha '+racha()+' d</span></div></div>',
-    '<button class="ghost" id="fM">Volver al mapa</button><button class="pill" id="fO"><span>Otra lección</span><span class="arr">→</span></button>');
-  $('fM').onclick=cierra; $('fO').onclick=function(){empieza(i)};
+    '<button class="ghost" id="fM">Volver al mapa</button><button class="pill" id="fO"><span>'+(L.todas?'Todas otra vez':'Otra lección')+'</span><span class="arr">→</span></button>');
+  $('fM').onclick=cierra; var td=L.todas; $('fO').onclick=function(){empieza(i,td)};
 }
 /* ---------- notas en ruleta (Notas - Geria, Baironotas, Andy Notas y las diapositivas de clase): flotan a la derecha, scroll entre hojas, subrayan la respuesta ---------- */
 var SRC={n:{url:'notas.pdf',nom:'Notas - Geria'},b:{url:'bairo.pdf',nom:'Baironotas'},a:{url:'andy.pdf',nom:'Andy Notas'},d:{url:'diapos.pdf',nom:'Diapositivas',big:1}};
