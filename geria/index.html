@@ -59,10 +59,11 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .node .prg{stroke:var(--white);stroke-linecap:round;transition:stroke-dashoffset .9s var(--ease)}
 .step.now .node{background:var(--white)}
 .step.now .node .num{color:var(--night)}
-.step.done .node .num{color:var(--white)}
-.step.done .node{border-color:var(--white)}
-.node .chk{position:absolute;right:-4px;top:-4px;width:26px;height:26px;border-radius:50%;background:var(--white);color:var(--night);display:grid;place-items:center;font-size:14px;font-weight:700;line-height:1}
-.step.done .info .mono{color:var(--white)}
+.step.done .node .num{color:#3ddc84}
+.step.done .node{border-color:#3ddc84;background:rgba(61,220,132,.10)}
+.step.done .node .prg{stroke:#3ddc84}
+.node .chk{position:absolute;right:-4px;top:-4px;width:26px;height:26px;border-radius:50%;background:#3ddc84;color:var(--night);display:grid;place-items:center;font-size:14px;font-weight:700;line-height:1}
+.step.done .info .mono{color:#3ddc84}
 .step.lock .node{opacity:.35}
 .step.lock .info{opacity:.35}
 .info{min-width:0;flex:1}
