@@ -79,6 +79,15 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .pill:disabled{opacity:.3;cursor:default}
 .ghost{border:1px solid var(--hair);border-radius:999px;padding:12px 20px;font-size:15px}
 .ghost:hover{background:var(--glass)}
+/* brillo sutil que cruza los botones */
+@keyframes brillo{0%,55%{background-position:130% 0}100%{background-position:-60% 0}}
+.ghost,.lcl,.pill{background-repeat:no-repeat;background-size:220% 100%;background-position:130% 0;animation:brillo 4.2s ease-in-out infinite}
+.ghost,.lcl{background-image:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.16) 50%,transparent 58%)}
+.pill{background-image:linear-gradient(110deg,transparent 42%,rgba(5,8,12,.13) 50%,transparent 58%)}
+.pill:disabled{animation:none}
+/* efecto ola: las letras de los botones se alumbran una por una, sutil, para que se noten */
+@keyframes ola{0%,62%,100%{opacity:.66;transform:none;text-shadow:none}74%{opacity:1;transform:translateY(-1.5px);text-shadow:0 0 12px currentColor}}
+.ol{display:inline-block;white-space:pre;opacity:.66;animation:ola 3.4s ease-in-out infinite}
 .foot{position:fixed;left:0;right:0;bottom:0;padding:14px 0 calc(14px + env(safe-area-inset-bottom));background:linear-gradient(0deg,var(--night) 65%,transparent);z-index:4}
 .foot .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px}
 
@@ -230,7 +239,8 @@ body.encl .ltop,body.encl .lbody,body.encl .lfoot{transition:padding-right .45s 
   .step.pad-l{padding-left:12%}.step.pad-r{padding-right:12%}
   .info h2{font-size:17px}
 }
-@media (prefers-reduced-motion:reduce){*:not(.hl){animation:none!important;transition:none!important}}
+@keyframes olaq{0%,62%,100%{opacity:.66;text-shadow:none}74%{opacity:1;text-shadow:0 0 12px currentColor}}
+@media (prefers-reduced-motion:reduce){*:not(.hl):not(.ol):not(.ghost):not(.pill):not(.lcl){animation:none!important;transition:none!important}.ghost,.pill,.lcl{transition:none!important}.ol{animation-name:olaq}}
 </style>
 </head>
 <body>
@@ -356,7 +366,7 @@ function hoja(i){
     '<div class="row">'+(ab?
       '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
-    '<button class="'+(ab?'ghost':'pill')+'" id="hTodas" style="margin:0;background:#e5262b;border-color:#ff5a5f;color:#fff">🔥 Todas las preguntas · '+t.items.length+'</button>'+
+    '<button class="'+(ab?'ghost':'pill')+'" id="hTodas" style="margin:0;background-color:#e5262b;border-color:#ff5a5f;color:#fff">🔥 Todas las preguntas · '+t.items.length+'</button>'+
     (t.fin?'':'<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes y diapositivas</button>')+
     (CL[t.n]?'<button class="ghost" id="hCl" style="margin:0">Clase del tema · caso y perlas</button>':'')+
     '<button class="ghost" id="hX">Cerrar</button></div></div>';
@@ -718,6 +728,21 @@ $('pB1').onclick=$('pB2').onclick=$('pB3').onclick=function(){pPone(this.dataset
 $('pScr').addEventListener('scroll',function(){ if(!P.raf) P.raf=requestAnimationFrame(function(){P.raf=0;pTxt()}) });
 window.addEventListener('resize',function(){ if(!$('pdf').hidden&&P.doc) pMonta(pActual(),false) });
 document.addEventListener('click',function(e){var b=e.target.closest('.pdfb'); if(!b) return; if(b.dataset.dia==='c'&&C) pDia(C.t.n,C.k,'c'); else if(b.dataset.dia==='f') pDia(F.n,F.k,'f'); else if(b.dataset.id) pDe(b.dataset.id); else pTema(+b.dataset.tn)});
+
+// efecto ola: parte el texto de cada botón en letras con retraso escalonado
+function ola(){
+  [].forEach.call(document.querySelectorAll('.ghost,.pill,.lcl'),function(b){
+    if(b.querySelector('.ol')) return; var i=0, t=b.textContent.replace('→','').trim();
+    (function baja(n){ [].slice.call(n.childNodes).forEach(function(c){
+      if(c.nodeType===3){ if(!c.nodeValue.trim()) return; var f=document.createDocumentFragment();
+        Array.from(c.nodeValue).forEach(function(ch){ var s=document.createElement('span'); s.className='ol'; s.textContent=ch; s.style.animationDelay=(i++*55)+'ms'; s.setAttribute('aria-hidden','true'); f.appendChild(s) });
+        n.replaceChild(f,c);
+      } else if(c.nodeType===1&&!c.classList.contains('arr')) baja(c);
+    }) })(b);
+    if(i&&!b.getAttribute('aria-label')) b.setAttribute('aria-label',t);
+  });
+}
+var OLA=0; new MutationObserver(function(){ if(!OLA) OLA=requestAnimationFrame(function(){OLA=0;ola()}) }).observe(document.body,{childList:true,subtree:true,characterData:true}); ola();
 
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&!$('pdf').hidden){ pCierra(); return }
