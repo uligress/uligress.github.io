@@ -333,7 +333,7 @@ function hoja(i){
     '<div class="row">'+(ab?
       '<button class="pill" id="hIr"><span>'+(dom>=t.items.length?'Repasar':'Empezar lección')+'</span><span class="arr">→</span></button>':
       '<span class="mono">Completa una lección del tema anterior para abrirlo.</span>')+
-    '<button class="'+(ab?'ghost':'pill')+'" id="hTodas" style="margin:0">Todas las preguntas · '+t.items.length+'</button>'+
+    '<button class="'+(ab?'ghost':'pill')+'" id="hTodas" style="margin:0;background:#e5262b;border-color:#ff5a5f;color:#fff">🔥 Todas las preguntas · '+t.items.length+'</button>'+
     (t.fin?'':'<button class="ghost pdfb" style="margin:0" data-tn="'+t.n+'">Notas del tema · 3 apuntes y diapositivas</button>')+
     (CL[t.n]?'<button class="ghost" id="hCl" style="margin:0">Clase del tema · caso y perlas</button><button class="ghost" id="hFl" style="margin:0">Clase flotante</button>':'')+
     '<button class="ghost" id="hX">Cerrar</button></div></div>';
