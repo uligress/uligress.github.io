@@ -80,6 +80,10 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .ghost{border:1px solid var(--hair);border-radius:999px;padding:12px 20px;font-size:15px}
 .ghost:hover{background:var(--glass)}
 /* brillo sutil que cruza los botones */
+.lfoot .in.fin{flex-wrap:wrap;justify-content:center;gap:10px}
+.cal{margin:6px 0 16px}.cal .nota{font-size:72px;font-weight:600;line-height:1;letter-spacing:-.03em}.cal .nota small{font-size:22px;opacity:.55;font-weight:400}
+.cal>.mono{margin-top:8px}.cal details{margin-top:14px;text-align:left}.cal summary{cursor:pointer;text-align:center}
+.cal ol{max-height:34vh;overflow:auto;margin:10px 0 0;padding-left:22px;font-size:14px;line-height:1.4}.cal li{margin-bottom:10px;opacity:.85}.cal li b{display:block;color:#fff;margin-top:2px}
 @keyframes brillo{0%,55%{background-position:130% 0}100%{background-position:-60% 0}}
 .ghost,.lcl,.pill{background-repeat:no-repeat;background-size:220% 100%;background-position:130% 0;animation:brillo 4.2s ease-in-out infinite}
 .ghost,.lcl{background-image:linear-gradient(110deg,transparent 42%,rgba(255,255,255,.16) 50%,transparent 58%)}
@@ -374,7 +378,7 @@ function hoja(i){
   $('hX').onclick=function(){$('sheet').hidden=true};
   if(ab) $('hIr').onclick=function(){$('sheet').hidden=true;empieza(i)};
   $('hTodas').onclick=function(){$('sheet').hidden=true;empieza(i,true)};
-  if($('hCl')) $('hCl').onclick=function(){$('sheet').hidden=true;clase(i,function(){hoja(i)})};
+  if($('hCl')) $('hCl').onclick=function(){$('sheet').hidden=true;clase(i)};
 }
 $('sheet').addEventListener('click',function(e){if(e.target===this)this.hidden=true});
 $('map').addEventListener('click',function(e){var n=e.target.closest('.node');if(n)hoja(+n.dataset.i)});
@@ -409,19 +413,28 @@ function fPinta(){
 }
 function cFin(sigue){
   var c=C; C=null; pCierra(); document.body.classList.remove('encl'); if(!S.cl)S.cl={}; S.cl[c.t.n]=1; guarda();
-  if(sigue&&c.luego){ c.luego(); return }
+  if(sigue==='sig'){ clase(cSigTema(c.i)); return }
+  // a las preguntas: la lección que esperaba o, si la clase se abrió sola, todas las de examen del tema
+  if(sigue){ if(c.luego) c.luego(); else empieza(c.i,true,true); return }
   $('lesson').hidden=true; document.body.style.overflow=''; pinta();
 }
+function cSigTema(i){ for(var j=i+1;j<D.temas.length;j++) if(CL[D.temas[j].n]) return j; return -1 }
 function cPinta(){
   var d=C.d[C.k], n=C.d.length, ult=C.k===n-1;
   $('lesson').innerHTML='<div class="ltop"><button class="x" id="lX" aria-label="Salir de la clase">✕</button><div class="bar"><i style="width:'+(100*(C.k+1)/n)+'%"></i></div><span class="mono">'+(C.k+1)+' / '+n+'</span></div>'+
     '<div class="lbody"><div class="in cl '+d.l+'"><div class="esc"><div class="av">'+d.e+'</div><div class="chip">'+esc(d.c)+'</div></div>'+
-    '<div class="mono">✦ '+ETQ[d.l]+' · Tema '+('0'+C.t.n).slice(-2)+'</div><h4>'+esc(d.t)+'</h4><p>'+esc(d.x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')+'</p><button class="ghost pdfb rul" data-dia="c">Ruleta de apuntes · ver en las notas</button></div></div>'+
-    '<div class="lfoot"><div class="in">'+(C.k?'<button class="ghost" id="cAnt">Atrás</button>':'<button class="ghost" id="cSal">Saltar clase</button>')+
-    '<button class="pill" id="cSig"><span>'+(ult?'Ir a las preguntas':'Continuar')+'</span><span class="arr">→</span></button></div></div>';
+    '<div class="mono">✦ '+ETQ[d.l]+' · Tema '+('0'+C.t.n).slice(-2)+'</div><h4>'+esc(d.t)+'</h4><p>'+esc(d.x).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')+'</p>'+(ult?'':'<button class="ghost pdfb rul" data-dia="c">Ruleta de apuntes · ver en las notas</button>')+'</div></div>'+
+    (ult?'<div class="lfoot"><div class="in fin"><button class="ghost" id="cEsc">Escalones</button>'+
+      '<button class="pill" id="cSig"><span>Preguntas de examen</span><span class="arr">→</span></button>'+
+      (cSigTema(C.i)>=0?'<button class="ghost" id="cOtra">Siguiente clase</button>':'')+'</div></div>'
+    :'<div class="lfoot"><div class="in">'+(C.k?'<button class="ghost" id="cAnt">Atrás</button>':'<button class="ghost" id="cSal">Saltar clase</button>')+
+    '<button class="pill" id="cSig"><span>Continuar</span><span class="arr">→</span></button></div></div>');
   $('lX').onclick=function(){cFin(false)};
   if($('cAnt')) $('cAnt').onclick=function(){C.k--;cPinta()};
   if($('cSal')) $('cSal').onclick=function(){cFin(true)};
+  if($('cEsc')) $('cEsc').onclick=function(){cFin(false)};
+  if($('cOtra')) $('cOtra').onclick=function(){cFin('sig')};
+  if(ult) pCierra();
   if(!$('pdf').hidden) pDia(C.t.n,C.k,'c');
   $('cSig').onclick=function(){ if(ult) cFin(true); else{C.k++;cPinta()} };
 }
@@ -574,7 +587,16 @@ function fin(){
   guarda();
   var p=Math.round(avance(L.t)*100), i=L.i;
   L.hechas=L.total;
-  marco('<div class="end"><div class="mono">✦ Tema '+('0'+L.t.n).slice(-2)+' · '+esc(L.t.titulo)+'</div><h3>Lección <span class="script" style="font-size:1.3em">hecha</span></h3>'+
+  // calificación: solo cuenta el primer intento; lo que se repite al final por fallar es repaso y ya no suma ni resta
+  var cal='';
+  if((L.todas||L.t.fin)&&n){
+    var nota=Math.round(100*L.ok/n)/10, col=nota>=8?'#4ade80':nota>=6?'#fbbf24':'#ff5a5f';
+    var fl=Object.keys(L.primera).filter(function(id){return !L.primera[id]&&PORID[id]});
+    cal='<div class="cal"><div class="nota" style="color:'+col+'">'+nota.toFixed(1)+'<small> / 10</small></div>'+
+      '<div class="mono">'+L.ok+' de '+n+' a la primera · '+(nota>=9?'Excelente, vas listo':nota>=8?'Muy bien, afina lo fallado':nota>=6?'Aprobado, repasa lo fallado':'Aún no: repasa y vuelve a intentarlo')+'</div>'+
+      (fl.length?'<details><summary class="mono">Ver las '+fl.length+' que fallaste</summary><ol>'+fl.map(function(id){var x=PORID[id].it;return '<li>'+esc(x.q)+'<b>'+esc(x.a||(x.o&&x.o[x.k])||'')+'</b></li>'}).join('')+'</ol></details>':'')+'</div>';
+  }
+  marco('<div class="end"><div class="mono">✦ '+(L.t.fin?'Examen final':'Tema '+('0'+L.t.n).slice(-2))+' · '+esc(L.t.titulo)+'</div><h3>'+(cal?'Tu <span class="script" style="font-size:1.3em">calificación</span>':'Lección <span class="script" style="font-size:1.3em">hecha</span>')+'</h3>'+cal+
     '<div class="kv mono"><span><b style="color:#fff">'+pct+' %</b> a la primera</span><span>+'+gana+' xp</span><span>tema al '+p+' %</span><span>racha '+racha()+' d</span></div></div>',
     '<button class="ghost" id="fM">Volver al mapa</button><button class="pill" id="fO"><span>'+(L.todas?'Todas otra vez':'Otra lección')+'</span><span class="arr">→</span></button>');
   $('fM').onclick=cierra; var td=L.todas; $('fO').onclick=function(){empieza(i,td)};
@@ -748,7 +770,7 @@ document.addEventListener('keydown',function(e){
   if(e.key==='Escape'&&!$('pdf').hidden){ pCierra(); return }
   if(e.key==='Escape'&&C){ cFin(false); return }
   if(e.key==='Escape'){ if(!$('sheet').hidden)$('sheet').hidden=true; return }
-  if(C){ if(e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();$('cSig').click()} else if(e.key==='ArrowLeft'&&$('cAnt'))$('cAnt').click(); else if(e.key==='Escape')cFin(false); return }
+  if(C){ if(e.key==='Enter'||e.key==='ArrowRight'){e.preventDefault();$('cSig').click()} else if(e.key==='ArrowLeft'&&C.k){C.k--;cPinta()} else if(e.key==='Escape')cFin(false); return }
   if(!L) return;
   if(e.key==='Enter'){var g=$('go')||$('si')||$('fO'); if(g&&!g.disabled){e.preventDefault();g.click()}}
   var j='abcde'.indexOf(e.key.toLowerCase()), bs=document.querySelectorAll('#lesson .lbody .opt[data-j]');
