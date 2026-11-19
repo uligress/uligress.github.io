@@ -339,3 +339,10 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 /* v14: marcas más delgadas */
 .bs .hs,.bs .hf{border-radius:1px;box-shadow:none;background:rgba(255,122,26,.36)}
 .bs .hf{background:rgba(255,122,26,.32);border-bottom:1.5px solid rgba(255,122,26,.7)}
+
+/* v15: amarillo = contexto amplio; naranja hover = parpadeo más fuerte; clic = naranja sólido encima */
+.bs .hl{background:rgba(255,226,0,.5)}
+.bs .hs{background:rgba(255,122,26,.62);animation:parp2 1.8s ease-in-out infinite}
+@keyframes parp2{0%,100%{opacity:1}50%{opacity:.35}}
+.bs .hf{background:rgba(255,106,0,.7);border-bottom:2px solid rgba(230,90,0,.95)}
+@media (prefers-reduced-motion:reduce){.bs .hs{animation:parp2 1.8s ease-in-out infinite!important}}
