@@ -155,7 +155,7 @@ body.conlibro main.vista{padding-right:calc(var(--pw) + 48px)}
 @media (max-width:820px){.top{position:static}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.bs .hl{animation:late 2.6s ease-in-out infinite!important}}
 
-.bs .hl{position:absolute;background:rgba(255,138,0,.62);mix-blend-mode:multiply;border-radius:2px;pointer-events:none;animation:late 2.6s ease-in-out infinite}
+.bs .hl{position:absolute;background:rgba(255,226,0,.6);mix-blend-mode:multiply;border-radius:2px;pointer-events:none}
 @keyframes late{0%,100%{opacity:1}50%{opacity:.28}}
 
 /* ===== clase: menú de temas a la izquierda, diapositivas en scroll continuo, libro con zoom ===== */
@@ -266,3 +266,16 @@ body.nomin.lat main.vista{padding-left:24px}
 #mintog svg,.ttog svg{pointer-events:none}
 @media(max-width:1000px){.ttog{display:flex!important;width:48px;height:48px}}
 @media(min-width:1001px){.ttog{display:none!important}}
+
+/* v6 libro PDF: navegación y concepto naranja parpadeante */
+.bs .hs{position:absolute;background:rgba(255,112,0,.78);mix-blend-mode:multiply;border-radius:3px;pointer-events:none;box-shadow:0 0 0 2px rgba(255,112,0,.9);animation:parp .8s ease-in-out infinite}
+@keyframes parp{0%,100%{opacity:1}50%{opacity:.15}}
+.bnav{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--hair)}
+.bnav button{width:34px;height:34px;padding:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+.bnav input{width:56px;height:30px;text-align:center;background:transparent;border:1px solid var(--hair);border-radius:999px;color:#fff;font:inherit}
+.bnav .bmsg{margin-left:auto;color:#ff8a3d;font-size:12px}
+.bs .pw{width:100%;background:#fff;border-radius:10px;overflow:visible}
+.bs .pw canvas{border-radius:10px}
+@media (prefers-reduced-motion:reduce){.bs .hs{animation:parp .8s ease-in-out infinite!important}}
+.sbody b,.sbody strong,.sbody .ex,.sbody .m,.sbody .m2{cursor:pointer}
+.sbody .ex:hover,.sbody b:hover{text-decoration:underline;text-decoration-color:#ff7000;text-decoration-thickness:2px}
