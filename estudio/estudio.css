@@ -269,7 +269,7 @@ body.nomin.lat main.vista{padding-left:24px}
 
 /* v6 libro PDF: navegación y concepto naranja parpadeante */
 .bs .hs{position:absolute;background:rgba(255,112,0,.78);mix-blend-mode:multiply;border-radius:3px;pointer-events:none;box-shadow:0 0 0 2px rgba(255,112,0,.9);animation:parp .8s ease-in-out infinite}
-@keyframes parp{0%,100%{opacity:1}50%{opacity:.15}}
+@keyframes parp{0%,100%{opacity:.55}50%{opacity:.12}}
 .bnav{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--hair)}
 .bnav button{width:34px;height:34px;padding:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
 .bnav input{width:56px;height:30px;text-align:center;background:transparent;border:1px solid var(--hair);border-radius:999px;color:#fff;font:inherit}
@@ -332,3 +332,7 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
   html.emb body.lat main.vista{top:0!important;padding-top:8px}
   html.emb body.nomin.lat main.vista{padding-top:56px}
 }
+/* v13: parpadeo naranja más tenue y lento */
+.bs .hs{background:rgba(255,122,26,.42);box-shadow:0 0 0 1px rgba(255,122,26,.5);animation:parp 2.2s ease-in-out infinite}
+.bs .hf{background:rgba(255,122,26,.38);box-shadow:0 0 0 1px rgba(255,122,26,.55)}
+@media (prefers-reduced-motion:reduce){.bs .hs{animation:parp 2.2s ease-in-out infinite!important}}
