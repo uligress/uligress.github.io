@@ -15,14 +15,14 @@
   <link rel="stylesheet" href="/styles.css?v=20261114-bloqueo">
   <link rel="stylesheet" href="/home-glass.css?v=20261027-gallery">
   <style>
-    .hero.mini{min-height:0;padding:150px var(--pad) 40px;display:block}
-    .hero.mini .hero-title{margin:18px 0 0;font-size:clamp(56px,11vw,168px);line-height:.92}
-    .hero.mini .hero-copy{margin:22px 0 0;max-width:46ch}
+    .hero.mini{min-height:0;padding:110px var(--pad) 18px;display:block}
+    .hero.mini .hero-title{margin:18px 0 0;font-size:clamp(48px,8vw,112px);line-height:.92}
+    .hero.mini .hero-copy{margin:12px 0 0;max-width:46ch}
     .hero.mini .hero-cta{margin-top:26px}
     .marquee{display:block}
-    .catalog{padding-top:40px}
-    .cat-grid.text-only{grid-template-columns:repeat(3,minmax(0,1fr))}
-    @media(max-width:860px){.cat-grid.text-only{grid-template-columns:1fr}.hero.mini{padding-top:110px}}
+    .catalog{padding:24px var(--pad) 40px}.cat-head{margin-bottom:22px}.cat-title{font-size:clamp(36px,4.5vw,64px)}.cat-img{aspect-ratio:21/9}.cat-card{min-height:0!important}.cat-grid{gap:12px}.footer-logo{margin-top:20px!important}.cat-body{padding:12px 18px 16px!important;gap:6px!important}.cat-name{margin:0!important;line-height:1!important}.cat-name{font-size:36px}.cat-open,.cat-lock{margin-top:0;min-height:0}
+    .cat-grid.text-only{grid-template-columns:repeat(6,minmax(0,1fr))}.cat-img{aspect-ratio:4/3!important}.cat-name{font-size:30px!important}.cat-body{padding:12px 14px 14px!important}.cat-status{font-size:9px!important;padding:4px 8px!important}.cat-no{font-size:22px!important}@media(max-width:1100px){.cat-grid.text-only{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:700px){.cat-grid.text-only{grid-template-columns:repeat(2,minmax(0,1fr))}.hero.mini{padding-top:110px}}
   </style>
 </head>
 <body>
@@ -42,7 +42,7 @@
       <p class="label"><span class="spark" aria-hidden="true">✦</span> Elige tu curso</p>
       <h1 class="hero-title">Interna <em class="script">2</em></h1>
       <p class="hero-copy">Selecciona la materia para entrar a su clase, su mapa y los exámenes anteriores.</p>
-      <div class="hero-cta"><a class="g-btn g-btn--primary" href="#cursos">Ver cursos <span aria-hidden="true">→</span></a><a class="g-btn" href="/">← uligress.me</a></div>
+      
     </section>
     <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>Cardiología</span><span>✦</span><span>Nefrología</span><span>✦</span><span>Oncología</span><span>✦</span><span>Reumatología</span><span>✦</span><span>Geriatría</span><span>✦</span><span>Neumología</span><span>✦</span><span>Cardiología</span><span>✦</span><span>Nefrología</span><span>✦</span><span>Oncología</span><span>✦</span><span>Reumatología</span><span>✦</span><span>Geriatría</span><span>✦</span><span>Neumología</span><span>✦</span></div></div>
     <section id="cursos" class="section catalog" aria-label="Cursos de Interna 2">
@@ -55,56 +55,50 @@
         <p class="cat-label mono">Cursos · 6</p>
         <div class="cat-grid text-only">
         <div class="cat-card locked" aria-disabled="true">
+          <span class="cat-img"><img src="../photos/stentsim/01.jpg?v=20261027-gallery" alt="" loading="lazy"></span>
           <span class="cat-body">
             <span class="cat-top"><span class="script cat-no">(01)</span><span class="cat-status mono">Próximamente</span></span>
-            <span class="cat-name">Cardiolo<em class="script">gía</em></span>
-            <span class="cat-area mono">Medicina interna</span>
-            <span class="cat-text">Clase, mapa y exámenes anteriores del curso.</span>
+            <span class="cat-name">Car<em class="script">dio</em></span>
             <span class="cat-lock mono">No disponible por ahora</span>
           </span>
         </div>
         <div class="cat-card locked" aria-disabled="true">
+          <span class="cat-img"><img src="../photos/amniosim/01.jpg?v=20261027-gallery" alt="" loading="lazy"></span>
           <span class="cat-body">
             <span class="cat-top"><span class="script cat-no">(02)</span><span class="cat-status mono">Próximamente</span></span>
-            <span class="cat-name">Nefrolo<em class="script">gía</em></span>
-            <span class="cat-area mono">Medicina interna</span>
-            <span class="cat-text">Clase, mapa y exámenes anteriores del curso.</span>
+            <span class="cat-name">Nef<em class="script">ro</em></span>
             <span class="cat-lock mono">No disponible por ahora</span>
           </span>
         </div>
         <div class="cat-card locked" aria-disabled="true">
+          <span class="cat-img"><img src="../photos/neurocirugia/01.jpg?v=20261027-gallery" alt="" loading="lazy"></span>
           <span class="cat-body">
             <span class="cat-top"><span class="script cat-no">(03)</span><span class="cat-status mono">Próximamente</span></span>
-            <span class="cat-name">Oncolo<em class="script">gía</em></span>
-            <span class="cat-area mono">Medicina interna</span>
-            <span class="cat-text">Clase, mapa y exámenes anteriores del curso.</span>
+            <span class="cat-name">On<em class="script">co</em></span>
             <span class="cat-lock mono">No disponible por ahora</span>
           </span>
         </div>
         <a class="cat-card" href="../reuma/">
+          <span class="cat-img"><img src="../photos/herniosim/01.jpg?v=20261027-gallery" alt="" loading="lazy"></span>
           <span class="cat-body">
             <span class="cat-top"><span class="script cat-no">(04)</span><span class="cat-status mono">Disponible</span></span>
-            <span class="cat-name">Reumatolo<em class="script">gía</em></span>
-            <span class="cat-area mono">Medicina interna</span>
-            <span class="cat-text">Clase y mapa del curso.</span>
+            <span class="cat-name">Reu<em class="script">ma</em></span>
             <span class="cat-open">Abrir <span class="arrow" aria-hidden="true">→</span></span>
           </span>
         </a>
         <a class="cat-card" href="../geria/">
+          <span class="cat-img"><img src="../photos/amniosim/01.jpg?v=20261027-gallery" alt="" loading="lazy"></span>
           <span class="cat-body">
             <span class="cat-top"><span class="script cat-no">(05)</span><span class="cat-status mono">Disponible</span></span>
-            <span class="cat-name">Geriat<em class="script">ría</em></span>
-            <span class="cat-area mono">Medicina interna</span>
-            <span class="cat-text">Clase, mapa y exámenes anteriores.</span>
+            <span class="cat-name">Ger<em class="script">ia</em></span>
             <span class="cat-open">Abrir <span class="arrow" aria-hidden="true">→</span></span>
           </span>
         </a>
         <a class="cat-card" href="../neumo/">
+          <span class="cat-img"><img src="../photos/broncosim/01.jpg?v=20261027-gallery" alt="" loading="lazy"></span>
           <span class="cat-body">
             <span class="cat-top"><span class="script cat-no">(06)</span><span class="cat-status mono">Disponible</span></span>
-            <span class="cat-name">Neumolo<em class="script">gía</em></span>
-            <span class="cat-area mono">Medicina interna</span>
-            <span class="cat-text">Clase basada en el Cecil, mapa y exámenes anteriores.</span>
+            <span class="cat-name">Neu<em class="script">mo</em></span>
             <span class="cat-open">Abrir <span class="arrow" aria-hidden="true">→</span></span>
           </span>
         </a>
