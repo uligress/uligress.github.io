@@ -319,3 +319,6 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 .modal .qc summary{color:#ff9a4d}
 /* v10: con miniaturas ocultas, el título no queda bajo los controles flotantes */
 @media (min-width:1001px){body.nomin.lat main.vista{padding-top:52px}}
+/* v11: columnas adaptativas (las decide fit()) */
+.sbody .bar{break-after:avoid}
+.sbody>.t,.sbody>.box,.sbody>.cd,.sbody>svg{break-inside:avoid}
