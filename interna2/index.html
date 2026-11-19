@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Interna 2 · ung</title>
+<meta name="description" content="Elige tu curso de Interna 2: cardiología, nefrología, oncología, reumatología, geriatría y neumología.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+:root{--night:#05080c;--night-2:#0b0f14;--white:#fff;--ash:#aaa9ad;--graphite:#5b5b5b;--glass:rgba(255,255,255,.03);--hair:rgba(255,255,255,.1);--sans:"Geist",system-ui,sans-serif;--script:"Great Vibes",cursive;--mono:"Geist Mono",ui-monospace,monospace;--ease:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--night);color:var(--white);font-family:var(--sans);font-weight:500;-webkit-font-smoothing:antialiased}
+body{min-height:100dvh;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+.mono{font-family:var(--mono);font-size:13px;color:var(--ash)}
+.script{font-family:var(--script);font-weight:400;letter-spacing:0}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px max(16px,4vw)}
+.nav a.back{font-size:15px;border:1px solid var(--hair);border-radius:999px;padding:9px 18px;transition:background .3s var(--ease)}
+.nav a.back:hover{background:var(--glass)}
+.nav .brand{font-size:20px;letter-spacing:-.04em}
+main{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:6vh max(16px,4vw) 10vh}
+.label{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ash);margin:0 0 20px}
+h1{margin:0 0 20px;font-size:clamp(48px,9vw,128px);line-height:.95;letter-spacing:-.04em;font-weight:500;background:linear-gradient(180deg,#fff 30%,#aaa9ad);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 .script{font-size:1.3em;padding-right:.1em}
+.intro{max-width:560px;font-size:18px;line-height:1.45;color:var(--ash);margin:0 0 7vh}
+.lista{list-style:none;margin:0;padding:0;border-top:1px solid var(--hair)}
+.lista li{border-bottom:1px solid var(--hair)}
+.fila{display:grid;grid-template-columns:72px 1fr auto;align-items:center;gap:16px;padding:22px 4px;transition:opacity .4s var(--ease),padding .4s var(--ease)}
+.fila .n{font-family:var(--script);font-size:34px;color:var(--ash)}
+.fila .t{font-size:clamp(26px,4vw,52px);letter-spacing:-.04em;line-height:1}
+.fila .t small{display:block;font-size:13px;letter-spacing:0;color:var(--ash);margin-top:8px;font-family:var(--mono)}
+.fila .go{width:44px;height:44px;border-radius:50%;background:#fff;color:#05080c;display:grid;place-items:center;font-size:18px;transition:transform .4s var(--ease)}
+.lista:hover .fila{opacity:.35}
+.lista .fila:hover,.lista .fila:focus-visible{opacity:1;padding-left:14px;outline:none}
+.fila:hover .go,.fila:focus-visible .go{transform:rotate(-45deg) scale(1.1)}
+.pronto{pointer-events:none;opacity:.4}
+.pronto .go{background:transparent;color:var(--ash);border:1px solid var(--hair);font-size:11px;font-family:var(--mono);width:auto;padding:0 14px;border-radius:999px;height:32px}
+.lista:hover .pronto{opacity:.25}
+footer{padding:24px max(16px,4vw);border-top:1px solid var(--hair);color:var(--graphite);font-size:13px}
+@media (max-width:600px){.fila{grid-template-columns:48px 1fr auto;padding:18px 0}.fila .n{font-size:26px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="nav"><a class="brand" href="../">ung</a><a class="back" href="../">← uligress.me</a></header>
+<main>
+  <p class="label"><span aria-hidden="true">✦</span> Elige tu curso</p>
+  <h1>Interna <span class="script">2</span></h1>
+  <p class="intro">Selecciona la materia para entrar a su clase, su mapa y los exámenes anteriores.</p>
+  <ol class="lista" aria-label="Cursos de Interna 2">
+    <li><a class="fila pronto" aria-disabled="true"><span class="n">(01)</span><span class="t">Cardiología<small>Próximamente</small></span><span class="go">pronto</span></a></li>
+    <li><a class="fila pronto" aria-disabled="true"><span class="n">(02)</span><span class="t">Nefrología<small>Próximamente</small></span><span class="go">pronto</span></a></li>
+    <li><a class="fila pronto" aria-disabled="true"><span class="n">(03)</span><span class="t">Oncología<small>Próximamente</small></span><span class="go">pronto</span></a></li>
+    <li><a class="fila" href="../reuma/"><span class="n">(04)</span><span class="t">Reumatología<small>Clase y mapa</small></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="fila" href="../geria/"><span class="n">(05)</span><span class="t">Geriatría<small>Clase, mapa y exámenes</small></span><span class="go" aria-hidden="true">→</span></a></li>
+    <li><a class="fila" href="../neumo/"><span class="n">(06)</span><span class="t">Neumología<small>Clase, mapa y exámenes</small></span><span class="go" aria-hidden="true">→</span></a></li>
+  </ol>
+</main>
+<footer>Instagram @uligress</footer>
+</body>
+</html>
