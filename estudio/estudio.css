@@ -260,3 +260,9 @@ body.nomin.lat main.vista{padding-left:24px}
   .sbox .sbody .cd{margin-bottom:10px;padding:10px 14px}
   body.lat .nav{margin:8px 0 0}
 }
+
+/* v5 hamburguesa */
+#mintog,.ttog{width:40px;height:40px;padding:0!important;border-radius:50%;display:inline-flex;align-items:center;justify-content:center}
+#mintog svg,.ttog svg{pointer-events:none}
+@media(max-width:1000px){.ttog{display:flex!important;width:48px;height:48px}}
+@media(min-width:1001px){.ttog{display:none!important}}

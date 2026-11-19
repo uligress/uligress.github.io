@@ -26,7 +26,7 @@ function go(t,i){cierraQ();REP=false;T=t;I=Math.max(0,Math.min(i,D[t].slides.len
 document.body.classList.add('lat');
 var side=document.createElement('nav');side.className='side';side.id='side';side.setAttribute('aria-label','Temas');
 var mainEl=$('m');mainEl.parentNode.insertBefore(side,mainEl);
-var tt=document.createElement('button');tt.className='ttog';tt.id='ttog';tt.textContent='▤ Miniaturas';document.body.appendChild(tt);
+var tt=document.createElement('button');tt.className='ttog';tt.id='ttog';tt.setAttribute('aria-label','Miniaturas');tt.innerHTML='<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 4.5h14M2 9h14M2 13.5h14"/></svg>';document.body.appendChild(tt);
 
 function qcards(arr,conTema){
   return arr.map(function(q){
@@ -51,7 +51,7 @@ function lateral(){
   }
   side.innerHTML=h;
   var o=D.map(function(t,k){return '<option value="'+k+'"'+(!REP&&k===T?' selected':'')+'>'+pad(k+1)+' · '+esc(t.name||t.tab||('Tema '+(k+1)))+'</option>'}).join('')+'<option value="rep"'+(REP?' selected':'')+'>★ Más repetidas</option>';
-  $('tabs').innerHTML='<select id="tsel" aria-label="Tema">'+o+'</select><button class="ghost" id="mintog" aria-label="Mostrar u ocultar miniaturas">▤ Miniaturas</button>';
+  $('tabs').innerHTML='<button class="ghost" id="mintog" aria-label="Mostrar u ocultar miniaturas" title="Miniaturas"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 4.5h14M2 9h14M2 13.5h14"/></svg></button><select id="tsel" aria-label="Tema">'+o+'</select>';
 }
 
 function seccion(d,k,n){
