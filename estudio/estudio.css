@@ -294,3 +294,14 @@ body.nomin.lat main.vista{padding-left:24px}
   body.lat main.vista{padding-bottom:12px}
   body.nomin.lat main.vista{padding-left:20px}
 }
+/* v8: PDF a todo el espacio, número de página flotante arriba a la derecha */
+.book{position:fixed}
+.bnav{position:absolute;top:10px;right:18px;z-index:5;padding:4px 6px;gap:4px;border:1px solid var(--hair);border-radius:999px;background:rgba(11,15,20,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 4px 18px rgba(0,0,0,.45)}
+.bnav button{width:28px;height:28px}
+.bnav input{width:48px;height:26px}
+.bnav .bmsg{margin-left:6px;max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bnav .bmsg:empty{display:none}
+.book .bs{padding:6px;gap:6px}
+.book .bs .pw,.book .bs canvas{border-radius:6px}
+.book.nohead .bh{display:none}
+@media (max-width:1000px){.book.nohead .bh{display:flex}}

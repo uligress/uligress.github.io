@@ -115,6 +115,7 @@ function panel(book,show,sf){
   if(!show){V=null;navBar(false);b.hidden=true;document.body.classList.remove('conlibro','open');b.classList.remove('open');$('tog').hidden=true;return}
   b.hidden=false;document.body.classList.add('conlibro');$('tog').hidden=false;
   if(book&&book.length&&book[0].k&&!sf){var ks=book.map(function(x){return x.k});f=[{nom:'Cecil',url:'../fuente/cecil.pdf',page:ks[0],ex:ks.slice(1),tg:[],big:1,auto:1}];FU=f;PK=0;FU_nom='';pdfPanel(f);return}
+  $('book').classList.remove('nohead');
   if(book&&book.length){
     V=null;navBar(false);
     $('bt').textContent=(book[0].fuente||'Cecil')+' · subrayado = lo de la diapositiva · clic = zoom';
@@ -183,7 +184,7 @@ function visor(doc,sc,f,k,mi){
     sc.innerHTML='';
     for(var p=1;p<=V0.n;p++){
       var fg=document.createElement('figure');fg.dataset.p=p;
-      fg.innerHTML='<figcaption>'+esc(V0.nom)+' · pág. '+p+'</figcaption><div class="pw" style="position:relative;aspect-ratio:'+ratio+'"></div>';
+      fg.innerHTML='<div class="pw" style="position:relative;aspect-ratio:'+ratio+'"></div>';
       sc.appendChild(fg);V0.figs[p]=fg;
     }
     navBar(true);$('bpt').textContent=V0.n;
@@ -198,7 +199,7 @@ function pdfPanel(f){
   if(PK>=f.length)PK=0;FU=f;
   $('bt').textContent='Notas · clic = zoom · toca un concepto de la diapositiva';
   $('bchips').innerHTML=f.map(function(x,k){return '<button class="chip" data-pk="'+k+'"'+(k===PK?' aria-current="true"':'')+'>'+esc(x.nom)+'</button>'}).join('');
-  PG=f[PK].page||1;$('bs').classList.remove('zoom');var mi=++PT;V=null;navBar(false);
+  $('book').classList.toggle('nohead',f.length<2);PG=f[PK].page||1;$('bs').classList.remove('zoom');var mi=++PT;V=null;navBar(false);
   $('bs').innerHTML='<div class="mono" style="padding:20px">Cargando '+esc(f[PK].nom)+'…</div>';
   var k=PK,sc=$('bs');
   getDoc(f[k]).then(function(doc){
