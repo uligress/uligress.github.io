@@ -214,9 +214,28 @@ function pdfPanel(f){
   },function(){sc.innerHTML='<div class="nolib"><b>No pude abrir el PDF</b>Revisa tu conexión y vuelve a intentar.</div>'});
 }
 function pn(x){return x.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g,'')}
+/* une las cajas por línea y rellena el hueco entre líneas: una sola forma ajustada al texto */
+function fusiona(h,cls,bx,vp){
+  if(!bx.length)return null;
+  bx.sort(function(a,b){return a.y-b.y||a.x-b.x});
+  var L=[];bx.forEach(function(b){var l=L[L.length-1];
+    if(l&&Math.abs(l.y-b.y)<b.h*.5&&b.x-(l.x+l.w)<b.h*1.6){var r=Math.max(l.x+l.w,b.x+b.w);l.x=Math.min(l.x,b.x);l.w=r-l.x;l.h=Math.max(l.h,b.h)}
+    else{
+      var m=null;for(var i=L.length-1;i>=0&&i>L.length-6;i--){var o=L[i];if(Math.abs(o.y-b.y)<b.h*.5&&b.x-(o.x+o.w)<b.h*1.6&&b.x>=o.x-b.h){m=o;break}}
+      if(m){var r2=Math.max(m.x+m.w,b.x+b.w);m.x=Math.min(m.x,b.x);m.w=r2-m.x;m.h=Math.max(m.h,b.h)}
+      else L.push({x:b.x,y:b.y,w:b.w,h:b.h})}});
+  L.forEach(function(a){var best=null;L.forEach(function(b){if(b===a)return;var dy=b.y-a.y;
+    if(dy>a.h*.4&&dy<a.h*2&&b.x<a.x+a.w&&b.x+b.w>a.x&&(!best||dy<best.y-a.y))best=b});
+    if(best&&best.y-a.y>a.h)a.h=best.y-a.y});
+  var primero=null;
+  L.forEach(function(a){var d=document.createElement('div');d.className=cls;
+    d.style.cssText='left:'+(100*a.x/vp.width)+'%;top:'+(100*a.y/vp.height)+'%;width:'+(100*a.w/vp.width)+'%;height:'+(100*a.h/vp.height)+'%';
+    h.appendChild(d);var f=a.y/vp.height;if(primero===null||f<primero)primero=f});
+  return primero;
+}
 function marca(h,pg,vp,tgs,cls){
   return pg.getTextContent().then(function(tc){
-    var norm='',map=[],U=window.pdfjsLib.Util,primero=null;
+    var norm='',map=[],U=window.pdfjsLib.Util,bx=[];
     tc.items.forEach(function(it,k){for(var c=0;c<it.str.length;c++){var n=pn(it.str[c]);for(var j=0;j<n.length;j++){norm+=n[j];map.push([k,c])}}});
     tgs.forEach(function(t){
       var tn=pn(t),a=tn?norm.indexOf(tn):-1;if(a<0)return;var seg={};
@@ -224,29 +243,25 @@ function marca(h,pg,vp,tgs,cls){
       Object.keys(seg).forEach(function(k){
         var it=tc.items[k],L=it.str.length||1,tr=U.transform(vp.transform,it.transform),alto=Math.hypot(tr[2],tr[3]),ancho=it.width*vp.scale;
         var x=tr[4]+ancho*seg[k][0]/L,w=ancho*(seg[k][1]+1-seg[k][0])/L,y=tr[5]-alto*.8;
-        var d=document.createElement('div');d.className=cls;
-        d.style.cssText='left:'+(100*x/vp.width)+'%;top:'+(100*y/vp.height)+'%;width:'+(100*w/vp.width)+'%;height:'+(100*alto*.95/vp.height)+'%';
-        h.appendChild(d);var f=y/vp.height;if(primero===null||f<primero)primero=f;
+        bx.push({x:x,y:y,w:w,h:alto*.95});
       });
     });
-    return primero;
+    return fusiona(h,cls,bx,vp);
   });
 }
 
 function marcaRango(h,pg,vp,a,b,cls){
   return pg.getTextContent().then(function(tc){
-    var map=[],U=window.pdfjsLib.Util,primero=null;
+    var map=[],U=window.pdfjsLib.Util,bx=[];
     tc.items.forEach(function(it,k){for(var c=0;c<it.str.length;c++){var n=pn(it.str[c]);for(var j=0;j<n.length;j++)map.push([k,c])}});
     var seg={};
     for(var i=a;i<=b&&i<map.length;i++){var k=map[i][0],c=map[i][1],s=seg[k]||(seg[k]=[c,c]);if(c<s[0])s[0]=c;if(c>s[1])s[1]=c}
     Object.keys(seg).forEach(function(k){
       var it=tc.items[k],L=it.str.length||1,tr=U.transform(vp.transform,it.transform),alto=Math.hypot(tr[2],tr[3]),ancho=it.width*vp.scale;
       var x=tr[4]+ancho*seg[k][0]/L,w=ancho*(seg[k][1]+1-seg[k][0])/L,y=tr[5]-alto*.8;
-      var d=document.createElement('div');d.className=cls;
-      d.style.cssText='left:'+(100*x/vp.width)+'%;top:'+(100*y/vp.height)+'%;width:'+(100*w/vp.width)+'%;height:'+(100*alto*.95/vp.height)+'%';
-      h.appendChild(d);var f=y/vp.height;if(primero===null||f<primero)primero=f;
+      bx.push({x:x,y:y,w:w,h:alto*.95});
     });
-    return primero;
+    return fusiona(h,cls,bx,vp);
   });
 }
 /* zona del libro que corresponde a toda la línea de la diapositiva */
