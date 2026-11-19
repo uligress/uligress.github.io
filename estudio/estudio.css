@@ -373,3 +373,12 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 .bs .hl,.bs .hl.x{animation:none!important;opacity:1}
 
 .bs{overscroll-behavior:contain;touch-action:pan-x pan-y}
+
+/* v27: botón y formulario de comentarios */
+.fbtn{margin-left:auto;font-family:var(--mono);font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--hair);color:#fff}
+.fbtn+.right{margin-left:0}
+.fform{display:flex;flex-direction:column;gap:12px;max-width:460px;width:100%}
+.fform label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ash)}
+.fform input,.fform textarea{background:transparent;border:1px solid var(--hair);border-radius:12px;padding:10px 12px;color:#fff;font:inherit;font-size:15px}
+.fform .fsend{align-self:flex-start;background:#fff;color:#05080c;border-radius:999px;padding:9px 20px}
+.fmsg{font-size:12px;color:var(--ash);min-height:16px}.fmsg.ok{color:#7fe3a0}.fmsg.err{color:#ff8a3d}

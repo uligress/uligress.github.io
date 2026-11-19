@@ -456,3 +456,39 @@ lee();render();
 })();
 
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&document.querySelector('.sbody .sel')){document.querySelectorAll('.sbody .sel').forEach(function(x){x.classList.remove('sel')});quitaMarcas('.hf')}});
+
+/* ---------- comentarios y mejoras ---------- */
+(function(){
+  var FORM='https://docs.google.com/forms/d/e/1FAIpQLScchGZzSPC2K-Sx9YhpnD2bf3m71x_q3ySYR7zHDVH2xDcwaw/formResponse';
+  var EN={titulo:'entry.346673698',problema:'entry.388895883',referencias:'entry.191798921',nombre:'entry.80540622',tema:'entry.1464743382'};
+  var top=document.querySelector('header.top'),cnt=document.getElementById('cnt');if(!top)return;
+  var b=document.createElement('button');b.className='ghost fbtn';b.type='button';b.textContent='✦ Comentarios';
+  top.insertBefore(b,cnt||null);
+  var m=document.createElement('div');m.className='modal';m.id='fm';m.hidden=true;
+  m.innerHTML='<form class="mp fform" novalidate><div class="mh"><span class="mono">✦ Comentarios y mejoras</span><button type="button" class="ghost" id="fx">Cerrar</button></div>'+
+   '<label>Tu nombre *<input name="nombre" autocomplete="name" maxlength="80"></label>'+
+   '<label>¿Quién te recomendó esta página? *<input name="rec" maxlength="80"></label>'+
+   '<label>¿Qué cambiarías de la web? *<textarea name="cambio" rows="5" maxlength="1500"></textarea></label>'+
+   '<input name="sitio" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">'+
+   '<div class="fmsg mono" id="fmsg" role="status"></div><button class="ghost fsend" type="submit">Enviar</button></form>';
+  document.body.appendChild(m);
+  var t0=Date.now();
+  function abre(){m.hidden=false;var i=m.querySelector('input');if(i)i.focus()}
+  function cierra(){m.hidden=true}
+  b.addEventListener('click',abre);
+  m.addEventListener('click',function(e){if(e.target===m||e.target.id==='fx')cierra()});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.hidden)cierra()});
+  var f=m.querySelector('form'),msg=m.querySelector('#fmsg');
+  f.addEventListener('submit',function(e){
+    e.preventDefault();var v=function(n){return f.elements[n].value.trim()};
+    if(!v('nombre')||!v('rec')||!v('cambio')){msg.textContent='Llena los tres campos.';msg.className='fmsg mono err';return}
+    if(v('sitio')||Date.now()-t0<3000){msg.textContent='Enviado. ¡Gracias!';return}
+    var mat=(window.MATERIA&&(window.MATERIA.nombre||window.MATERIA.nom))||document.title;
+    var body=new URLSearchParams();
+    body.append(EN.titulo,'Comentario · clase '+mat);body.append(EN.nombre,v('nombre'));body.append(EN.referencias,'Recomendó: '+v('rec'));body.append(EN.problema,v('cambio'));body.append(EN.tema,'Clase · '+location.pathname+location.hash);
+    var s=f.querySelector('.fsend');s.disabled=true;msg.textContent='Enviando…';msg.className='fmsg mono';
+    fetch(FORM,{method:'POST',mode:'no-cors',body:body}).then(function(){
+      msg.textContent='¡Gracias! Tu comentario fue enviado.';msg.className='fmsg mono ok';f.reset();t0=Date.now();setTimeout(cierra,1800);
+    },function(){msg.textContent='No se pudo enviar. Revisa tu conexión.';msg.className='fmsg mono err'}).then(function(){s.disabled=false});
+  });
+})();
