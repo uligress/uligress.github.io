@@ -18,7 +18,19 @@ function lee(){
   var m=h.match(/t(\d+)\/(\d+)/);
   if(m&&D[+m[1]-1]){T=+m[1]-1;I=+m[2]}
 }
-function go(t,i){REP=false;T=t;I=Math.max(0,Math.min(i,total()-1));history.replaceState(null,'','#t'+(T+1)+'/'+I);render();window.scrollTo(0,0)}
+var PT=0,ACT=-1,pt=null;
+function sec(i){return $('m').querySelector('.slide[data-i="'+i+'"]')}
+function hh(){var h=document.querySelector('header.top');return h?h.getBoundingClientRect().bottom:0}
+function irA(i,suave){var el=sec(i);if(!el)return;var y=el.getBoundingClientRect().top+window.pageYOffset-Math.max(hh(),0)-14;window.scrollTo({top:Math.max(0,y),behavior:suave?'smooth':'auto'})}
+function go(t,i){
+  REP=false;i=Math.max(0,Math.min(i,D[t].slides.length+1));
+  if(t!==T||!sec(0)){T=t;I=i;ACT=-1;render();return}
+  irA(i,true);
+}
+document.body.classList.add('lat');
+var side=document.createElement('nav');side.className='side';side.id='side';side.setAttribute('aria-label','Temas');
+var mainEl=$('m');mainEl.parentNode.insertBefore(side,mainEl);
+var tt=document.createElement('button');tt.className='ttog';tt.id='ttog';tt.textContent='☰ Temas';document.body.appendChild(tt);
 
 function qcards(arr,conTema){
   return arr.map(function(q){
@@ -29,55 +41,91 @@ function qcards(arr,conTema){
   }).join('');
 }
 
-function cabecera(){
-  var tabs=D.map(function(t,k){return '<button class="tab" role="tab" data-t="'+k+'" aria-selected="'+(!REP&&k===T)+'">'+esc(t.tab||('Tema '+(k+1)))+'</button>'}).join('');
-  tabs+='<button class="tab" role="tab" data-rep="1" aria-selected="'+REP+'">★ Más repetidas</button>';
-  $('tabs').innerHTML=tabs;
+function lateral(){
+  var h='<div class="sh mono">✦ '+esc(M.nombre)+'</div>';
+  D.forEach(function(t,k){
+    var on=!REP&&k===T;
+    h+='<button class="sit" data-t="'+k+'"'+(on?' aria-current="true"':'')+'><span class="script">('+pad(k+1)+')</span><span class="nm">'+esc(t.name||t.tab||('Tema '+(k+1)))+'</span></button>';
+    if(on){
+      h+='<div class="subs">'+t.slides.map(function(sl,j){return '<button class="sub" data-i="'+(j+1)+'">'+esc(sl.title)+'</button>'}).join('')+'<button class="sub" data-i="'+(t.slides.length+1)+'">★ Lo más preguntado</button></div>';
+    }
+  });
+  h+='<button class="sit rep" data-rep="1"'+(REP?' aria-current="true"':'')+'><span class="script">★</span><span class="nm">Más repetidas</span></button>';
+  side.innerHTML=h;
+}
+function marcaLat(){
+  var c=side.querySelectorAll('.sub');
+  for(var j=0;j<c.length;j++){var on=(+c[j].dataset.i===I);if(on)c[j].setAttribute('aria-current','true');else c[j].removeAttribute('aria-current')}
+  var a=side.querySelector('.sub[aria-current]');
+  if(a&&a.scrollIntoView){var r=a.getBoundingClientRect(),sr=side.getBoundingClientRect();if(r.top<sr.top+30||r.bottom>sr.bottom-30)side.scrollTop+=r.top-sr.top-sr.height/3}
+}
+
+function seccion(d,k,n){
+  if(k===0)return '<section class="slide cover" data-i="0"><div class="mono">✦ '+esc(M.nombre)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h1>'+esc(d.name)+'</h1><p>'+esc(d.intro||'Baja por las diapositivas con lo que más cae en los exámenes. A la derecha, la fuente para que lo busques en contexto.')+'</p><div class="toc">'+
+      d.slides.map(function(s,j){return '<button data-i="'+(j+1)+'"><span class="script">('+pad(j+1)+')</span>'+esc(s.title)+'<span class="mono">'+((s.book&&s.book.length)?'libro ✓':'')+'</span></button>'}).join('')+
+      '<button data-i="'+(n-1)+'"><span class="script">★</span>Lo más preguntado</button></div></section>';
+  if(k===n-1)return '<section class="slide qtop" data-i="'+k+'"><div class="mono">✦ '+esc(d.tab||('Tema '+(T+1)))+' · última diapositiva</div><h2>Lo más preguntado</h2>'+
+      ((d.top&&d.top.length)?qcards(d.top):'<div class="qc mono">Sin preguntas repetidas en este tema.</div>')+'</section>';
+  var s=d.slides[k-1];
+  return '<section class="slide" data-i="'+k+'"><div class="mono">✦ Diapositiva '+(k+1)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h2>'+esc(s.title)+'</h2><div class="sbody'+(s.uno?' uno':'')+'">'+s.html+'</div>'+
+      ((s.q&&s.q.length)?'<div class="qs"><h3>✦ Lo que preguntan en los exámenes</h3>'+qcards(s.q)+'</div>':'')+'</section>';
 }
 
 function render(){
-  cabecera();
-  var h='',book=null,show=false;
+  lateral();
   if(REP){
     var all=[];D.forEach(function(t){(t.top||[]).forEach(function(q){all.push(Object.assign({tema:t.name},q))})});
     all.sort(function(a,b){return (b.rep||0)-(a.rep||0)});
-    $('cnt').textContent=all.length+' preguntas';$('chips').innerHTML='';
-    h='<section class="slide qtop"><div class="mono">✦ '+esc(M.nombre)+' · todas las materias del visor</div><h2>Lo más preguntado</h2>'+
+    $('cnt').textContent=all.length+' preguntas';
+    $('m').innerHTML='<section class="slide qtop"><div class="mono">✦ '+esc(M.nombre)+' · todas las materias del visor</div><h2>Lo más preguntado</h2>'+
       (all.length?qcards(all,true):'<div class="qc mono">Aún no hay preguntas repetidas cargadas.</div>')+'</section>';
-    $('m').innerHTML=h;panel(null,false);return;
+    panel(null,false);window.scrollTo(0,0);return;
   }
-  var d=D[T],n=total();
-  $('cnt').textContent=pad(I+1)+' / '+pad(n);
-  var ch='';for(var k=0;k<n;k++)ch+='<button class="chip" data-i="'+k+'"'+(k===I?' aria-current="true"':'')+'>'+(k===0?'★':k===n-1?'?':k)+'</button>';
-  $('chips').innerHTML=ch;
-  var c=$('chips').querySelector('[aria-current]');if(c&&c.scrollIntoView)c.scrollIntoView({inline:'center',block:'nearest'});
-  if(I===0){
-    h='<section class="slide cover"><div class="mono">✦ '+esc(M.nombre)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h1>'+esc(d.name)+'</h1><p>'+esc(d.intro||'Diapositiva a diapositiva, con lo que más cae en los exámenes. A la derecha, la fuente para que lo busques en contexto.')+'</p><div class="toc">'+
-      d.slides.map(function(s,k){return '<button data-i="'+(k+1)+'"><span class="script">('+pad(k+1)+')</span>'+esc(s.title)+'<span class="mono">'+((s.book&&s.book.length)?'libro ✓':'')+'</span></button>'}).join('')+
-      '<button data-i="'+(n-1)+'"><span class="script">★</span>Lo más preguntado</button></div></section>';
-  }else if(I===n-1){
-    h='<section class="slide qtop"><div class="mono">✦ '+esc(d.tab||('Tema '+(T+1)))+' · última diapositiva</div><h2>Lo más preguntado</h2>'+
-      ((d.top&&d.top.length)?qcards(d.top):'<div class="qc mono">Sin preguntas repetidas en este tema.</div>')+'</section>';
-  }else{
-    var s=d.slides[I-1];book=s.book||null;show=true;
-    h='<section class="slide"><div class="mono">✦ Diapositiva '+(I+1)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h2>'+esc(s.title)+'</h2><div class="sbody'+(s.uno?' uno':'')+'">'+s.html+'</div>'+
-      ((s.q&&s.q.length)?'<div class="qs"><h3>✦ Lo que preguntan en los exámenes</h3>'+qcards(s.q)+'</div>':'')+'</section>';
-  }
-  h+='<div class="nav"><button class="ghost" id="prev"'+(I?'':' disabled')+'>← Anterior</button><button class="pill" id="next"'+(I<n-1?'':' disabled')+'><span>Siguiente</span><span class="arr">→</span></button></div>';
+  var d=D[T],n=total(),h='';
+  for(var k=0;k<n;k++)h+=seccion(d,k,n);
   $('m').innerHTML=h;
-  panel(book,show,show&&!REP&&I>0&&I<n-1?d.slides[I-1].fuentes:null);
+  window.scrollTo(0,0);
+  if(I>0)irA(I,false);
+  act(I,true);
 }
+
+/* diapositiva activa al desplazarse: actualiza contador, menú, enlace y fuente */
+function act(k,ya){
+  if(REP)return;
+  var cambio=(k!==ACT);I=k;
+  var n=total();
+  $('cnt').textContent=pad(I+1)+' / '+pad(n);
+  marcaLat();
+  if(!cambio)return;ACT=k;
+  history.replaceState(null,'','#t'+(T+1)+'/'+I);
+  var idx=I<1?1:I>n-2?null:I; /* portada: fuente de la 1.ª; última: deja la que estaba */
+  if(idx===null)return;
+  var hacer=function(){var s=D[T].slides[idx-1];if(s)panel(s.book||null,true,s.fuentes||null)};
+  clearTimeout(pt);if(ya)hacer();else pt=setTimeout(hacer,260);
+}
+var tick=false;
+function alScroll(){
+  if(tick||REP)return;tick=true;
+  requestAnimationFrame(function(){
+    tick=false;var ss=$('m').querySelectorAll('.slide');if(!ss.length)return;
+    var linea=Math.max(hh(),0)+window.innerHeight*.28,k=0;
+    for(var j=0;j<ss.length;j++){if(ss[j].getBoundingClientRect().top<=linea)k=+ss[j].dataset.i;else break}
+    if(window.innerHeight+window.pageYOffset>=document.documentElement.scrollHeight-4)k=ss.length-1;
+    act(k,false);
+  });
+}
+window.addEventListener('scroll',alScroll,{passive:true});
 
 /* ---------- panel de la fuente ---------- */
 function panel(book,show,sf){
-  var b=$('book');
+  var b=$('book');PT++;
   var f=sf||(D[T]&&D[T].fuentes)||[];FU=f;
   if(!show){b.hidden=true;document.body.classList.remove('conlibro','open');b.classList.remove('open');$('tog').hidden=true;return}
   b.hidden=false;document.body.classList.add('conlibro');$('tog').hidden=false;
   if(book&&book.length){
-    $('bt').textContent=(book[0].fuente||'Cecil')+' · subrayado = lo de la diapositiva';
+    $('bt').textContent=(book[0].fuente||'Cecil')+' · subrayado = lo de la diapositiva · clic = zoom';
     $('bchips').innerHTML=book.length>1?book.map(function(x,k){return '<button class="chip" data-g="'+k+'">pág. '+x.pn+'</button>'}).join(''):'<span class="mono">pág. '+book[0].pn+'</span>';
-    $('bs').innerHTML=book.map(function(x,k){return '<figure id="g'+k+'"><figcaption>'+esc(x.fuente||'Cecil')+' · pág. '+x.pn+'</figcaption><img loading="lazy" src="'+x.img+'" alt="Página '+x.pn+' con lo subrayado"></figure>'}).join('');
+    $('bs').classList.remove('zoom');$('bs').innerHTML=book.map(function(x,k){return '<figure id="g'+k+'"><figcaption>'+esc(x.fuente||'Cecil')+' · pág. '+x.pn+'</figcaption><img loading="lazy" src="'+x.img+'" alt="Página '+x.pn+' con lo subrayado"></figure>'}).join('');
     $('bs').scrollTop=0;return;
   }
   if(f.length){if(sf&&FU_nom){var j=f.map(function(x){return x.nom}).indexOf(FU_nom);PK=j>=0?j:0}pdfPanel(f);return}
@@ -100,13 +148,13 @@ function getDoc(f){
 }
 function pdfPanel(f){
   if(PK>=f.length)PK=0;FU=f;
-  $('bt').textContent='Notas · desde el tema';
+  $('bt').textContent='Notas · clic en la página = zoom';
   $('bchips').innerHTML=f.map(function(x,k){return '<button class="chip" data-pk="'+k+'"'+(k===PK?' aria-current="true"':'')+'>'+esc(x.nom)+'</button>'}).join('');
-  PG=f[PK].page||1;
+  PG=f[PK].page||1;$('bs').classList.remove('zoom');var mi=++PT;
   $('bs').innerHTML='<div class="mono" style="padding:20px">Cargando '+esc(f[PK].nom)+'…</div>';
   var k=PK,sc=$('bs');
   getDoc(f[k]).then(function(doc){
-    if(k!==PK||$('book').hidden)return;
+    if(k!==PK||mi!==PT||$('book').hidden)return;
     sc.innerHTML='';sc.scrollTop=0;
     var ini=PG;
     FU_nom=f[k].nom;pagina(doc,ini,sc,3,f[k]);
@@ -138,7 +186,7 @@ function pagina(doc,desde,sc,cuantas,f){
     var fig=document.createElement('figure');fig.innerHTML='<figcaption>'+esc(f.nom)+' · pág. '+p+'</figcaption>';
     var wr=document.createElement('div');wr.style.position='relative';var cv=document.createElement('canvas');wr.appendChild(cv);fig.appendChild(wr);sc.appendChild(fig);
     seq=seq.then(function(){return doc.getPage(p)}).then(function(pg){
-      var w=Math.max(300,sc.clientWidth-28),v0=pg.getViewport({scale:1}),sc2=(w/v0.width)*Math.min(window.devicePixelRatio||1,2),v=pg.getViewport({scale:sc2});
+      var w=Math.max(300,Math.min(sc.clientWidth,900)-28),v0=pg.getViewport({scale:1}),sc2=(w/v0.width)*2.2,v=pg.getViewport({scale:sc2});
       cv.width=v.width;cv.height=v.height;
       return pg.render({canvasContext:cv.getContext('2d'),viewport:v}).promise.then(function(){if(p===(f.page||1)&&f.tg&&f.tg.length)return marca(wr,pg,pg.getViewport({scale:sc2}),f.tg,sc)});
     });
@@ -149,22 +197,30 @@ function pagina(doc,desde,sc,cuantas,f){
   }
 }
 
+function zoom(e,el){
+  var sc=$('bs'),fig=el.closest('figure'),r=fig.getBoundingClientRect();
+  var fx=(e.clientX-r.left)/r.width,fy=(e.clientY-r.top)/r.height;
+  sc.style.scrollBehavior='auto';sc.classList.toggle('zoom');
+  var r2=fig.getBoundingClientRect();
+  sc.scrollLeft+=r2.left+fx*r2.width-e.clientX;sc.scrollTop+=r2.top+fy*r2.height-e.clientY;
+  sc.style.scrollBehavior='';
+}
 document.addEventListener('click',function(e){
+  var z=e.target.closest('.bs canvas,.bs img');if(z)return zoom(e,z);
   var t=e.target.closest('button');if(!t)return;
-  if(t.dataset.rep){REP=true;history.replaceState(null,'','#rep');render();window.scrollTo(0,0);return}
-  if(t.classList.contains('tab')&&t.dataset.t!=null)return go(+t.dataset.t,0);
-  if(t.dataset.i!=null)return go(T,+t.dataset.i);
-  if(t.id==='prev')return go(T,I-1);
-  if(t.id==='next')return go(T,I+1);
+  if(t.dataset.rep){REP=true;history.replaceState(null,'','#rep');render();side.classList.remove('open');return}
+  if(t.dataset.t!=null){side.classList.remove('open');return go(+t.dataset.t,0)}
+  if(t.dataset.i!=null){side.classList.remove('open');return go(T,+t.dataset.i)}
+  if(t.id==='ttog'){side.classList.toggle('open');return}
   if(t.dataset.g!=null){var f=$('g'+t.dataset.g);if(f)f.scrollIntoView({behavior:'smooth',block:'start'});return}
   if(t.dataset.pk!=null){PK=+t.dataset.pk;pdfPanel(FU);return}
   if(t.id==='tog'){$('book').classList.add('open');document.body.classList.add('open')}
   if(t.id==='bx'){$('book').classList.remove('open');document.body.classList.remove('open')}
 });
 document.addEventListener('keydown',function(e){
-  if(REP)return;
-  if(e.key==='ArrowRight')go(T,I+1);else if(e.key==='ArrowLeft')go(T,I-1);
+  if(REP||e.target.closest('input,textarea,.bs'))return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'&&false){go(T,I+1)}else if(e.key==='ArrowLeft'){go(T,I-1)}
 });
-window.addEventListener('hashchange',function(){lee();render()});
+window.addEventListener('hashchange',function(){lee();ACT=-1;render()});
 lee();render();
 })();
