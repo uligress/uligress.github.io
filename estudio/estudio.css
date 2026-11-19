@@ -221,3 +221,21 @@ body.nomin.lat main.vista{padding-left:24px}
   body.nomin .side{display:flex}
   .sbox{max-height:none;padding:18px}
 }
+
+/* ===== clase v3: sin scroll en la diapositiva (se ajusta a la pantalla), preguntas en ventana ===== */
+@media (min-width:1001px){
+  body.lat{overflow:hidden}
+  body.lat main.vista{position:fixed;left:0;right:0;top:var(--ht,70px);bottom:0;padding-top:4px;padding-bottom:14px;display:flex;flex-direction:column}
+  .sbox{flex:1;min-height:0;max-height:none;overflow:hidden}
+  .sbox.sc{overflow-y:auto}
+  .side{top:calc(var(--ht,70px) + 4px)}
+  body.lat .nav{margin:12px 0 0}
+}
+.sfit{width:100%}
+.nav .pill{height:44px;font-size:14px;margin-left:10px}
+.nav .pill .arr{width:32px;height:32px}
+.modal{position:fixed;inset:0;z-index:80;background:rgba(5,8,12,.72);backdrop-filter:blur(6px);display:grid;place-items:center;padding:20px}
+.modal[hidden]{display:none}
+.modal .mp{width:min(820px,100%);max-height:88dvh;overflow-y:auto;background:var(--night-2);border:1px solid var(--hair);border-radius:22px;padding:20px 22px}
+.modal .mh{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;position:sticky;top:-20px;background:var(--night-2);padding:6px 0}
+.modal .mh .mono{color:var(--warm)}

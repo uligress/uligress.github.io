@@ -22,7 +22,7 @@ var PT=0,ACT=-1,pt=null;
 function sec(i){return $('m').querySelector('.slide[data-i="'+i+'"]')}
 function hh(){var h=document.querySelector('header.top');return h?h.getBoundingClientRect().bottom:0}
 function irA(i,suave){var el=sec(i);if(!el)return;var y=el.getBoundingClientRect().top+window.pageYOffset-Math.max(hh(),0)-14;window.scrollTo({top:Math.max(0,y),behavior:suave?'smooth':'auto'})}
-function go(t,i){REP=false;T=t;I=Math.max(0,Math.min(i,D[t].slides.length+1));history.replaceState(null,'','#t'+(T+1)+'/'+I);render();window.scrollTo(0,0)}
+function go(t,i){cierraQ();REP=false;T=t;I=Math.max(0,Math.min(i,D[t].slides.length+1));history.replaceState(null,'','#t'+(T+1)+'/'+I);render();window.scrollTo(0,0)}
 document.body.classList.add('lat');
 var side=document.createElement('nav');side.className='side';side.id='side';side.setAttribute('aria-label','Temas');
 var mainEl=$('m');mainEl.parentNode.insertBefore(side,mainEl);
@@ -76,16 +76,37 @@ function render(){
   }
   var d=D[T],n=total(),s=(I>0&&I<n-1)?d.slides[I-1]:null;
   $('cnt').textContent=pad(I+1)+' / '+pad(n);
-  var h='<div class="sbox">'+seccion(d,I,n)+'</div>'+
-    '<div class="nav"><button class="ghost" id="prev"'+(I?'':' disabled')+'>◁</button><span class="mono">'+(I+1)+' / '+n+'</span><button class="ghost" id="next"'+(I<n-1?'':' disabled')+'>▷</button></div>';
-  if(s&&s.q&&s.q.length)h+='<div class="qs"><h3>✦ Preguntas</h3>'+qcards(s.q)+'</div>';
-  $('m').innerHTML=h;
+  var nq=(s&&s.q&&s.q.length)||0;
+  var h='<div class="sbox"><div class="sfit">'+seccion(d,I,n)+'</div></div>'+
+    '<div class="nav"><button class="ghost" id="prev"'+(I?'':' disabled')+'>◁</button><span class="mono">'+(I+1)+' / '+n+'</span><button class="ghost" id="next"'+(I<n-1?'':' disabled')+'>▷</button>'+
+    (nq?'<button class="pill" id="qbtn"><span>Preguntas ('+nq+')</span><span class="arr">?</span></button>':'')+'</div>';
+  $('m').innerHTML=h;fit();
   var c=side.querySelector('[aria-current]');if(c&&c.scrollIntoView)c.scrollIntoView({block:'nearest'});
   var idx=I<1?1:I>n-2?null:I;
   if(idx!==null){var sl=d.slides[idx-1];if(sl)panel(sl.book||null,true,sl.fuentes||null)}
   else if(I===0&&d.slides[0])panel(d.slides[0].book||null,true,d.slides[0].fuentes||null);
 }
 
+function fit(){
+  var bx=$('m').querySelector('.sbox'),f=bx&&bx.querySelector('.sfit');if(!f)return;
+  f.style.zoom=1;bx.classList.remove('sc');
+  var ht=hh();document.documentElement.style.setProperty('--ht',Math.max(ht,0)+'px');
+  if(window.innerWidth<=1000)return;
+  var cs=getComputedStyle(bx),av=bx.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom),z=1;
+  for(var i=0;i<8;i++){
+    var h=f.getBoundingClientRect().height;if(h<=av+1)break;
+    z=Math.max(.38,z*av/h*.985);f.style.zoom=z;if(z<=.38){bx.classList.add('sc');break}
+  }
+}
+window.addEventListener('resize',fit);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+function preguntas(){
+  var d=D[T],sl=d.slides[I-1];if(!sl||!sl.q)return;
+  var m=$('qm');if(!m){m=document.createElement('div');m.id='qm';m.className='modal';document.body.appendChild(m)}
+  m.innerHTML='<div class="mp" role="dialog" aria-modal="true"><div class="mh"><span class="mono">✦ Lo que preguntan en los exámenes · '+esc(sl.title)+'</span><button class="ghost" id="qx">Cerrar</button></div>'+qcards(sl.q)+'</div>';
+  m.hidden=false;
+}
+function cierraQ(){var m=$('qm');if(m)m.hidden=true}
 /* ---------- panel de la fuente ---------- */
 function panel(book,show,sf){
   var b=$('book');PT++;
@@ -176,9 +197,12 @@ function zoom(e,el){
   sc.style.scrollBehavior='';
 }
 document.addEventListener('click',function(e){
+  if(e.target.id==='qm'){cierraQ();return}
   var z=e.target.closest('.bs canvas,.bs img');if(z)return zoom(e,z);
   var t=e.target.closest('button');if(!t)return;
   if(t.dataset.rep){REP=true;history.replaceState(null,'','#rep');render();side.classList.remove('open');return}
+  if(t.id==='qbtn')return preguntas();
+  if(t.id==='qx')return cierraQ();
   if(t.id==='prev')return go(T,I-1);
   if(t.id==='next')return go(T,I+1);
   if(t.id==='mintog'){OCULTA=!document.body.classList.contains('nomin');ponMin();try{localStorage.setItem('clase-min',OCULTA?'0':'1')}catch(e){}return}
@@ -190,6 +214,7 @@ document.addEventListener('click',function(e){
   if(t.id==='bx'){$('book').classList.remove('open');document.body.classList.remove('open')}
 });
 document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){cierraQ();return}
   if(REP||e.target.closest('input,textarea,.bs'))return;
   if(e.key==='ArrowRight'||e.key==='PageDown'&&false){go(T,I+1)}else if(e.key==='ArrowLeft'){go(T,I-1)}
 });
