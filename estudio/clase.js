@@ -205,7 +205,7 @@ function visor(doc,sc,f,k,mi){
 function pdfPanel(f){
   if(PK>=f.length)PK=0;FU=f;
   $('bt').textContent='Notas · clic = zoom · toca un concepto de la diapositiva';
-  $('bchips').innerHTML=f.map(function(x,k){return '<button class="chip" data-pk="'+k+'"'+(k===PK?' aria-current="true"':'')+'>'+esc(x.nom)+'</button>'}).join('');
+  $('bchips').innerHTML=f.map(function(x,k){var rep=f.filter(function(y){return y.nom===x.nom}).length>1;return '<button class="chip" data-pk="'+k+'"'+(k===PK?' aria-current="true"':'')+'>'+esc(x.nom)+(rep?' · pág. '+x.page:'')+'</button>'}).join('');
   $('book').classList.toggle('nohead',f.length<2);PG=f[PK].page||1;$('bs').classList.remove('zoom');var mi=++PT;V=null;navBar(false);
   $('bs').innerHTML='<div class="mono" style="padding:20px">Cargando '+esc(f[PK].nom)+'…</div>';
   var k=PK,sc=$('bs');

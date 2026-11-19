@@ -360,3 +360,11 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 /* clase: frase de contexto */
 .sbody .lead{margin:2px 0 8px;color:var(--ash);font-size:.92em;font-style:italic}
 .thsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ash);padding:12px 8px 4px;opacity:.8}
+
+/* v25: sin texto de ayuda, selector de página abajo al centro, chips a la izquierda */
+.bh #bt{display:none}
+.bh #bchips{flex:1}
+.bh .bc{margin-left:auto}
+.bnav{top:auto;right:auto;bottom:16px;left:50%;transform:translateX(-50%);padding:5px 8px;gap:8px}
+.bnav .bmsg{margin-left:4px}
+.book .bs{padding-bottom:70px}
