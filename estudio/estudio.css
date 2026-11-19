@@ -153,4 +153,7 @@ body.conlibro main.vista{padding-right:calc(var(--pw) + 48px)}
 }
 @media (max-width:820px){.top{position:static}}
 @media (max-width:820px){.top{position:static}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.bs .hl{animation:late 2.6s ease-in-out infinite!important}}
+
+.bs .hl{position:absolute;background:rgba(255,138,0,.62);mix-blend-mode:multiply;border-radius:2px;pointer-events:none;animation:late 2.6s ease-in-out infinite}
+@keyframes late{0%,100%{opacity:1}50%{opacity:.28}}
