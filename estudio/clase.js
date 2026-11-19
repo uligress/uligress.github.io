@@ -22,15 +22,11 @@ var PT=0,ACT=-1,pt=null;
 function sec(i){return $('m').querySelector('.slide[data-i="'+i+'"]')}
 function hh(){var h=document.querySelector('header.top');return h?h.getBoundingClientRect().bottom:0}
 function irA(i,suave){var el=sec(i);if(!el)return;var y=el.getBoundingClientRect().top+window.pageYOffset-Math.max(hh(),0)-14;window.scrollTo({top:Math.max(0,y),behavior:suave?'smooth':'auto'})}
-function go(t,i){
-  REP=false;i=Math.max(0,Math.min(i,D[t].slides.length+1));
-  if(t!==T||!sec(0)){T=t;I=i;ACT=-1;render();return}
-  irA(i,true);
-}
+function go(t,i){REP=false;T=t;I=Math.max(0,Math.min(i,D[t].slides.length+1));history.replaceState(null,'','#t'+(T+1)+'/'+I);render();window.scrollTo(0,0)}
 document.body.classList.add('lat');
 var side=document.createElement('nav');side.className='side';side.id='side';side.setAttribute('aria-label','Temas');
 var mainEl=$('m');mainEl.parentNode.insertBefore(side,mainEl);
-var tt=document.createElement('button');tt.className='ttog';tt.id='ttog';tt.textContent='☰ Temas';document.body.appendChild(tt);
+var tt=document.createElement('button');tt.className='ttog';tt.id='ttog';tt.textContent='▤ Miniaturas';document.body.appendChild(tt);
 
 function qcards(arr,conTema){
   return arr.map(function(q){
@@ -41,23 +37,21 @@ function qcards(arr,conTema){
   }).join('');
 }
 
+var OCULTA=false;try{OCULTA=localStorage.getItem('clase-min')==='0'}catch(e){}
+function ponMin(){document.body.classList.toggle('nomin',OCULTA)}
+ponMin();
 function lateral(){
-  var h='<div class="sh mono">✦ '+esc(M.nombre)+'</div>';
-  D.forEach(function(t,k){
-    var on=!REP&&k===T;
-    h+='<button class="sit" data-t="'+k+'"'+(on?' aria-current="true"':'')+'><span class="script">('+pad(k+1)+')</span><span class="nm">'+esc(t.name||t.tab||('Tema '+(k+1)))+'</span></button>';
-    if(on){
-      h+='<div class="subs">'+t.slides.map(function(sl,j){return '<button class="sub" data-i="'+(j+1)+'">'+esc(sl.title)+'</button>'}).join('')+'<button class="sub" data-i="'+(t.slides.length+1)+'">★ Lo más preguntado</button></div>';
+  var h='';
+  if(!REP){
+    var d=D[T],n=total();
+    for(var k=0;k<n;k++){
+      var tit=k===0?'Portada':k===n-1?'Preguntas':d.slides[k-1].title;
+      h+='<button class="th" data-i="'+k+'"'+(k===I?' aria-current="true"':'')+'><span class="script">'+(k+1)+'</span><span class="tt">'+esc(tit)+'</span></button>';
     }
-  });
-  h+='<button class="sit rep" data-rep="1"'+(REP?' aria-current="true"':'')+'><span class="script">★</span><span class="nm">Más repetidas</span></button>';
+  }
   side.innerHTML=h;
-}
-function marcaLat(){
-  var c=side.querySelectorAll('.sub');
-  for(var j=0;j<c.length;j++){var on=(+c[j].dataset.i===I);if(on)c[j].setAttribute('aria-current','true');else c[j].removeAttribute('aria-current')}
-  var a=side.querySelector('.sub[aria-current]');
-  if(a&&a.scrollIntoView){var r=a.getBoundingClientRect(),sr=side.getBoundingClientRect();if(r.top<sr.top+30||r.bottom>sr.bottom-30)side.scrollTop+=r.top-sr.top-sr.height/3}
+  var o=D.map(function(t,k){return '<option value="'+k+'"'+(!REP&&k===T?' selected':'')+'>'+pad(k+1)+' · '+esc(t.name||t.tab||('Tema '+(k+1)))+'</option>'}).join('')+'<option value="rep"'+(REP?' selected':'')+'>★ Más repetidas</option>';
+  $('tabs').innerHTML='<select id="tsel" aria-label="Tema">'+o+'</select><button class="ghost" id="mintog" aria-label="Mostrar u ocultar miniaturas">▤ Miniaturas</button>';
 }
 
 function seccion(d,k,n){
@@ -67,8 +61,7 @@ function seccion(d,k,n){
   if(k===n-1)return '<section class="slide qtop" data-i="'+k+'"><div class="mono">✦ '+esc(d.tab||('Tema '+(T+1)))+' · última diapositiva</div><h2>Lo más preguntado</h2>'+
       ((d.top&&d.top.length)?qcards(d.top):'<div class="qc mono">Sin preguntas repetidas en este tema.</div>')+'</section>';
   var s=d.slides[k-1];
-  return '<section class="slide" data-i="'+k+'"><div class="mono">✦ Diapositiva '+(k+1)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h2>'+esc(s.title)+'</h2><div class="sbody'+(s.uno?' uno':'')+'">'+s.html+'</div>'+
-      ((s.q&&s.q.length)?'<div class="qs"><h3>✦ Lo que preguntan en los exámenes</h3>'+qcards(s.q)+'</div>':'')+'</section>';
+  return '<section class="slide" data-i="'+k+'"><div class="mono">✦ Diapositiva '+(k+1)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h2>'+esc(s.title)+'</h2><div class="sbody'+(s.uno?' uno':'')+'">'+s.html+'</div></section>';
 }
 
 function render(){
@@ -79,42 +72,19 @@ function render(){
     $('cnt').textContent=all.length+' preguntas';
     $('m').innerHTML='<section class="slide qtop"><div class="mono">✦ '+esc(M.nombre)+' · todas las materias del visor</div><h2>Lo más preguntado</h2>'+
       (all.length?qcards(all,true):'<div class="qc mono">Aún no hay preguntas repetidas cargadas.</div>')+'</section>';
-    panel(null,false);window.scrollTo(0,0);return;
+    panel(null,false);return;
   }
-  var d=D[T],n=total(),h='';
-  for(var k=0;k<n;k++)h+=seccion(d,k,n);
-  $('m').innerHTML=h;
-  window.scrollTo(0,0);
-  if(I>0)irA(I,false);
-  act(I,true);
-}
-
-/* diapositiva activa al desplazarse: actualiza contador, menú, enlace y fuente */
-function act(k,ya){
-  if(REP)return;
-  var cambio=(k!==ACT);I=k;
-  var n=total();
+  var d=D[T],n=total(),s=(I>0&&I<n-1)?d.slides[I-1]:null;
   $('cnt').textContent=pad(I+1)+' / '+pad(n);
-  marcaLat();
-  if(!cambio)return;ACT=k;
-  history.replaceState(null,'','#t'+(T+1)+'/'+I);
-  var idx=I<1?1:I>n-2?null:I; /* portada: fuente de la 1.ª; última: deja la que estaba */
-  if(idx===null)return;
-  var hacer=function(){var s=D[T].slides[idx-1];if(s)panel(s.book||null,true,s.fuentes||null)};
-  clearTimeout(pt);if(ya)hacer();else pt=setTimeout(hacer,260);
+  var h='<div class="sbox">'+seccion(d,I,n)+'</div>'+
+    '<div class="nav"><button class="ghost" id="prev"'+(I?'':' disabled')+'>◁</button><span class="mono">'+(I+1)+' / '+n+'</span><button class="ghost" id="next"'+(I<n-1?'':' disabled')+'>▷</button></div>';
+  if(s&&s.q&&s.q.length)h+='<div class="qs"><h3>✦ Preguntas</h3>'+qcards(s.q)+'</div>';
+  $('m').innerHTML=h;
+  var c=side.querySelector('[aria-current]');if(c&&c.scrollIntoView)c.scrollIntoView({block:'nearest'});
+  var idx=I<1?1:I>n-2?null:I;
+  if(idx!==null){var sl=d.slides[idx-1];if(sl)panel(sl.book||null,true,sl.fuentes||null)}
+  else if(I===0&&d.slides[0])panel(d.slides[0].book||null,true,d.slides[0].fuentes||null);
 }
-var tick=false;
-function alScroll(){
-  if(tick||REP)return;tick=true;
-  requestAnimationFrame(function(){
-    tick=false;var ss=$('m').querySelectorAll('.slide');if(!ss.length)return;
-    var linea=Math.max(hh(),0)+window.innerHeight*.28,k=0;
-    for(var j=0;j<ss.length;j++){if(ss[j].getBoundingClientRect().top<=linea)k=+ss[j].dataset.i;else break}
-    if(window.innerHeight+window.pageYOffset>=document.documentElement.scrollHeight-4)k=ss.length-1;
-    act(k,false);
-  });
-}
-window.addEventListener('scroll',alScroll,{passive:true});
 
 /* ---------- panel de la fuente ---------- */
 function panel(book,show,sf){
@@ -209,7 +179,9 @@ document.addEventListener('click',function(e){
   var z=e.target.closest('.bs canvas,.bs img');if(z)return zoom(e,z);
   var t=e.target.closest('button');if(!t)return;
   if(t.dataset.rep){REP=true;history.replaceState(null,'','#rep');render();side.classList.remove('open');return}
-  if(t.dataset.t!=null){side.classList.remove('open');return go(+t.dataset.t,0)}
+  if(t.id==='prev')return go(T,I-1);
+  if(t.id==='next')return go(T,I+1);
+  if(t.id==='mintog'){OCULTA=!document.body.classList.contains('nomin');ponMin();try{localStorage.setItem('clase-min',OCULTA?'0':'1')}catch(e){}return}
   if(t.dataset.i!=null){side.classList.remove('open');return go(T,+t.dataset.i)}
   if(t.id==='ttog'){side.classList.toggle('open');return}
   if(t.dataset.g!=null){var f=$('g'+t.dataset.g);if(f)f.scrollIntoView({behavior:'smooth',block:'start'});return}
@@ -221,6 +193,7 @@ document.addEventListener('keydown',function(e){
   if(REP||e.target.closest('input,textarea,.bs'))return;
   if(e.key==='ArrowRight'||e.key==='PageDown'&&false){go(T,I+1)}else if(e.key==='ArrowLeft'){go(T,I-1)}
 });
-window.addEventListener('hashchange',function(){lee();ACT=-1;render()});
+document.addEventListener('change',function(e){if(e.target.id!=='tsel')return;var v=e.target.value;if(v==='rep'){REP=true;history.replaceState(null,'','#rep');render();window.scrollTo(0,0)}else go(+v,0)});
+window.addEventListener('hashchange',function(){lee();render()});
 lee();render();
 })();
