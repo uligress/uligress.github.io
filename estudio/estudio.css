@@ -181,7 +181,7 @@ body.lat .sbody{column-count:1}
 .bs figure{flex:none;width:100%}
 .bs canvas,.bs img{cursor:zoom-in}
 .bs.zoom{overflow:auto;align-items:flex-start}
-.bs.zoom figure{width:230%}
+.bs.zoom figure{width:var(--zw,230%)}
 .bs.zoom canvas,.bs.zoom img{cursor:zoom-out}
 @media (max-width:1000px){
   body.lat main.vista{padding-left:24px}
@@ -371,3 +371,5 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 
 /* v26: el amarillo previo nunca parpadea */
 .bs .hl,.bs .hl.x{animation:none!important;opacity:1}
+
+.bs{overscroll-behavior:contain;touch-action:pan-x pan-y}
