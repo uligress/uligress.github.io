@@ -271,9 +271,26 @@ function region(line,s,conc){
 function normPag(p){
   var V0=V;if(V0.tx[p])return V0.tx[p];
   return V0.tx[p]=V0.doc.getPage(p).then(function(pg){return pg.getTextContent().then(function(tc){
-    var s='';tc.items.forEach(function(it){for(var c=0;c<it.str.length;c++)s+=pn(it.str[c])});return {pg:pg,s:s}})});
+    var s='',w=[],se=[];tc.items.forEach(function(it){var cur='',st=0,pv='';function fl(){if(cur){w.push({t:cur,a:st,b:s.length-1});pv=cur;cur=''}}
+      for(var c=0;c<it.str.length;c++){var ch=it.str[c];if(/\s/.test(ch)){fl();continue}var n=pn(ch);
+        if(!n){if((ch==='.'||ch==='?'||ch==='!')&&(c+1>=it.str.length||/\s/.test(it.str[c+1]))){var pw=cur||pv;if(s.length&&pw.length>=3&&!/^(cap|fig|tab|pag|etc|aprox|dr|dra)$/.test(pw))se.push(s.length-1)}continue}
+        if(!cur)st=s.length;cur+=n;s+=n}fl()});return {pg:pg,s:s,w:w,se:se}})});
 }
 function aviso(t){var m=$('bmsg');if(!m)return;m.textContent=t;clearTimeout(aviso.t);aviso.t=setTimeout(function(){m.textContent=''},3500)}
+var STOP={ella:1,esta:1,este:1,para:1,como:1,pero:1,donde:1,cuando:1,solo:1,sobre:1,entre:1,desde:1,hasta:1,tiene:1,puede:1,cada:1,esto:1,estos:1,otro:1,otra:1,mas:1,muy:1,tambien:1};
+/* parafraseo: ventana de ~30 palabras del libro con más raíces (5 letras) de la frase */
+function expande(o,a,b){var se=o.se||[],a2=0,b2=o.s.length-1,i;
+  for(i=0;i<se.length;i++){if(se[i]<a-1)a2=se[i]+1;else break}
+  for(i=0;i<se.length;i++){if(se[i]>=b){b2=se[i];break}}
+  return {a:a2,b:Math.min(b2,b+500)}}
+function kwRegion(line,o){
+  var q={};line.split(/\s+/).forEach(function(x){var n=pn(x);if(n.length>=4&&!STOP[n])q[n.slice(0,5)]=1});
+  var qs=Object.keys(q);if(qs.length<2||!o.w)return null;var need=Math.max(2,Math.ceil(qs.length*.6)),best=null,w=o.w;
+  for(var i=0;i<w.length;i++){if(!q[w[i].t.slice(0,5)])continue;var seen={},cnt=0,last=i;
+    for(var j=i;j<w.length&&j<i+30;j++){var k=w[j].t.slice(0,5);if(q[k]&&!seen[k]){seen[k]=1;cnt++;last=j}}
+    if(cnt>=need&&(!best||cnt>best.sc||(cnt===best.sc&&last-i<best.len)))best={a:w[i].a,b:w[last].b,sc:cnt,len:last-i}}
+  return best;
+}
 function variantes(txt){
   var w=txt.replace(/\s+/g,' ').trim().split(' '),vars=[];
   for(var L=w.length;L>=1;L--)for(var i=0;i+L<=w.length;i++){var t=w.slice(i,i+L).join(' '),n=pn(t);if(L>=2&&n.length>=14)vars.push([t,n,L])}
@@ -302,11 +319,11 @@ function concepto(txt,modo,ctx,ex){
   if(!V||$('book').hidden)return;var V0=V,tk=++HT,w=txt.replace(/\s+/g,' ').trim().split(' ');
   if(!w.length||pn(txt).length<3)return;
   var cls=modo==='c'?'hf':'hs';
-  function pon(p,o,v){
+  function pon(p,o,v){var ex2;
     if(V!==V0||tk!==HT)return;
     quitaMarcas('.hs');if(modo==='c')quitaMarcas('.hf');
     var wr=V0.figs[p].querySelector('.pw');
-    (v.rg?marcaRango(wr,o.pg,o.pg.getViewport({scale:1}),Math.max(0,v.rg.a-6),v.rg.b+70,cls):marca(wr,o.pg,o.pg.getViewport({scale:1}),[v[0]],cls)).then(function(fr){
+    (v.rg&&(ex2=expande(o,v.rg.a,v.rg.b))?marcaRango(wr,o.pg,o.pg.getViewport({scale:1}),ex2.a,ex2.b,cls):marca(wr,o.pg,o.pg.getViewport({scale:1}),[v[0]],cls)).then(function(fr){
       if(V!==V0||tk!==HT){wr.querySelectorAll('.'+cls).forEach(function(e){if(cls==='hs')e.remove()});return}
       wr.querySelectorAll('.'+cls).forEach(function(e){if(ex)e.classList.add('x')});
       if(fr===null)return false;
@@ -323,6 +340,7 @@ function concepto(txt,modo,ctx,ex){
   Promise.all(pgs.map(function(p){return normPag(p).then(function(o){return {p:p,o:o,r:region(line,o.s,ex?line:txt)}})})).then(function(L){
     if(V!==V0||tk!==HT)return;
     var b=null;L.forEach(function(x){if(x.r&&(!b||x.r.sc>b.r.sc))b=x});
+    if(!b&&ex)L.forEach(function(x){var r=kwRegion(txt,x.o);if(r&&(!b||r.sc>b.r.sc))b={p:x.p,o:x.o,r:r}});
     if(b){var v={rg:b.r};V0.cc['L|'+line]={p:b.p,v:v};pon(b.p,b.o,v);return}
     var c0=pgs[0]||1,lej=[];for(var d=2;d<=20;d++){[c0+d,c0-d].forEach(function(q){if(q>=1&&q<=V0.n&&pgs.indexOf(q)<0)lej.push(q)})}
     var li=0;(function amp(){
