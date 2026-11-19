@@ -357,3 +357,6 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 /* v17: sin línea inferior en el clic */
 .bs .hf,.bs .hf.x{border-bottom:0!important}
 .sbody .ex.sel,.sbody .sel{text-decoration-thickness:3px}
+/* clase: frase de contexto */
+.sbody .lead{margin:2px 0 8px;color:var(--ash);font-size:.92em;font-style:italic}
+.thsec{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ash);padding:12px 8px 4px;opacity:.8}

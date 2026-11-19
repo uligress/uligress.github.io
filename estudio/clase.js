@@ -46,6 +46,7 @@ function lateral(){
     var d=D[T],n=total();
     for(var k=1;k<n;k++){
       var tit=k===0?'Portada':k===n-1?'Preguntas':d.slides[k-1].title;
+      if(k>0&&k<n-1&&d.slides[k-1].sec)h+='<div class="thsec mono">'+esc(d.slides[k-1].sec)+'</div>';
       h+='<button class="th" data-i="'+k+'"'+(k===I?' aria-current="true"':'')+'><span class="script">'+k+'</span><span class="tt">'+esc(tit)+'</span></button>';
     }
   }
