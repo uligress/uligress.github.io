@@ -5,7 +5,7 @@
 var M=window.MATERIA, D=window.CLASE.temas;
 var $=function(i){return document.getElementById(i)};
 var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
-var T=0, I=0, REP=false;
+var T=0, I=1, REP=false;
 var CDN='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
 var FU_nom='',pdfLib=null, docs={}, PK=0, PG=0, FU=null;
 
@@ -16,13 +16,13 @@ function lee(){
   var h=location.hash;
   if(h==='#rep'){REP=true;return}
   var m=h.match(/t(\d+)\/(\d+)/);
-  if(m&&D[+m[1]-1]){T=+m[1]-1;I=+m[2]}
+  if(m&&D[+m[1]-1]){T=+m[1]-1;I=Math.max(1,+m[2])}
 }
 var PT=0,ACT=-1,pt=null;
 function sec(i){return $('m').querySelector('.slide[data-i="'+i+'"]')}
 function hh(){var h=document.querySelector('header.top');return h?h.getBoundingClientRect().bottom:0}
 function irA(i,suave){var el=sec(i);if(!el)return;var y=el.getBoundingClientRect().top+window.pageYOffset-Math.max(hh(),0)-14;window.scrollTo({top:Math.max(0,y),behavior:suave?'smooth':'auto'})}
-function go(t,i){cierraQ();REP=false;T=t;I=Math.max(0,Math.min(i,D[t].slides.length+1));history.replaceState(null,'','#t'+(T+1)+'/'+I);render();window.scrollTo(0,0)}
+function go(t,i){cierraQ();REP=false;T=t;I=Math.max(1,Math.min(i,D[t].slides.length+1));history.replaceState(null,'','#t'+(T+1)+'/'+I);render();window.scrollTo(0,0)}
 document.body.classList.add('lat');
 var side=document.createElement('nav');side.className='side';side.id='side';side.setAttribute('aria-label','Temas');
 var mainEl=$('m');mainEl.parentNode.insertBefore(side,mainEl);
@@ -44,9 +44,9 @@ function lateral(){
   var h='';
   if(!REP){
     var d=D[T],n=total();
-    for(var k=0;k<n;k++){
+    for(var k=1;k<n;k++){
       var tit=k===0?'Portada':k===n-1?'Preguntas':d.slides[k-1].title;
-      h+='<button class="th" data-i="'+k+'"'+(k===I?' aria-current="true"':'')+'><span class="script">'+(k+1)+'</span><span class="tt">'+esc(tit)+'</span></button>';
+      h+='<button class="th" data-i="'+k+'"'+(k===I?' aria-current="true"':'')+'><span class="script">'+k+'</span><span class="tt">'+esc(tit)+'</span></button>';
     }
   }
   side.innerHTML=h;
@@ -75,10 +75,10 @@ function render(){
     panel(null,false);return;
   }
   var d=D[T],n=total(),s=(I>0&&I<n-1)?d.slides[I-1]:null;
-  $('cnt').textContent=pad(I+1)+' / '+pad(n);
+  $('cnt').textContent=pad(I)+' / '+pad(n-1);
   var nq=(s&&s.q&&s.q.length)||0;
   var h='<div class="sbox"><div class="sfit">'+seccion(d,I,n)+'</div></div>'+
-    '<div class="nav"><button class="ghost" id="prev"'+(I?'':' disabled')+'>◁</button><span class="mono">'+(I+1)+' / '+n+'</span><button class="ghost" id="next"'+(I<n-1?'':' disabled')+'>▷</button>'+
+    '<div class="nav"><button class="ghost" id="prev"'+(I>1?'':' disabled')+'>◁</button><span class="mono">'+I+' / '+(n-1)+'</span><button class="ghost" id="next"'+(I<n-1?'':' disabled')+'>▷</button>'+
     (nq?'<button class="pill" id="qbtn"><span>Preguntas ('+nq+')</span><span class="arr">?</span></button>':'')+'</div>';
   $('m').innerHTML=h;fit();
   var c=side.querySelector('[aria-current]');if(c&&c.scrollIntoView)c.scrollIntoView({block:'nearest'});
@@ -214,6 +214,14 @@ function pdfPanel(f){
   },function(){sc.innerHTML='<div class="nolib"><b>No pude abrir el PDF</b>Revisa tu conexión y vuelve a intentar.</div>'});
 }
 function pn(x){return x.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g,'')}
+var _mc=null;
+function medida(it,tc,txt){
+  if(!_mc)_mc=document.createElement('canvas').getContext('2d');
+  var st=tc.styles&&tc.styles[it.fontName],fam=(st&&st.fontFamily)||'serif';
+  _mc.font='100px '+(/sans-serif/.test(fam)&&!/serif,/.test(fam)?'Helvetica, sans-serif':'Georgia, "Times New Roman", serif');
+  return _mc.measureText(txt).width;
+}
+function tramo(it,tc,a,b){var t=it.str,tot=medida(it,tc,t)||1,x0=medida(it,tc,t.slice(0,a))/tot,x1=medida(it,tc,t.slice(0,b+1))/tot;return [x0,x1-x0]}
 /* une las cajas por línea y rellena el hueco entre líneas: una sola forma ajustada al texto */
 function fusiona(h,cls,bx,vp){
   if(!bx.length)return null;
@@ -224,9 +232,10 @@ function fusiona(h,cls,bx,vp){
       var m=null;for(var i=L.length-1;i>=0&&i>L.length-6;i--){var o=L[i];if(Math.abs(o.y-b.y)<b.h*.5&&b.x-(o.x+o.w)<b.h*1.6&&b.x>=o.x-b.h){m=o;break}}
       if(m){var r2=Math.max(m.x+m.w,b.x+b.w);m.x=Math.min(m.x,b.x);m.w=r2-m.x;m.h=Math.max(m.h,b.h)}
       else L.push({x:b.x,y:b.y,w:b.w,h:b.h})}});
-  L.forEach(function(a){var best=null;L.forEach(function(b){if(b===a)return;var dy=b.y-a.y;
+  var ex=[];L.forEach(function(a){var best=null;L.forEach(function(b){if(b===a)return;var dy=b.y-a.y;
     if(dy>a.h*.4&&dy<a.h*2&&b.x<a.x+a.w&&b.x+b.w>a.x&&(!best||dy<best.y-a.y))best=b});
-    if(best&&best.y-a.y>a.h)a.h=best.y-a.y});
+    var g=best?best.y-(a.y+a.h):0;if(best&&g>0)ex.push([a,best,g/2])});
+  ex.forEach(function(e){e[0].h+=e[2];e[1].y-=e[2];e[1].h+=e[2]});
   var primero=null;
   L.forEach(function(a){var d=document.createElement('div');d.className=cls;
     d.style.cssText='left:'+(100*a.x/vp.width)+'%;top:'+(100*a.y/vp.height)+'%;width:'+(100*a.w/vp.width)+'%;height:'+(100*a.h/vp.height)+'%';
@@ -242,8 +251,8 @@ function marca(h,pg,vp,tgs,cls){
       for(var i=a;i<a+tn.length;i++){var k=map[i][0],c=map[i][1],s=seg[k]||(seg[k]=[c,c]);if(c<s[0])s[0]=c;if(c>s[1])s[1]=c}
       Object.keys(seg).forEach(function(k){
         var it=tc.items[k],L=it.str.length||1,tr=U.transform(vp.transform,it.transform),alto=Math.hypot(tr[2],tr[3]),ancho=it.width*vp.scale;
-        var x=tr[4]+ancho*seg[k][0]/L,w=ancho*(seg[k][1]+1-seg[k][0])/L,y=tr[5]-alto*.8;
-        bx.push({x:x,y:y,w:w,h:alto*.95});
+        var tq=tramo(it,tc,seg[k][0],seg[k][1]),x=tr[4]+ancho*tq[0],w=ancho*tq[1],y=tr[5]-alto*.82;
+        bx.push({x:x,y:y,w:w,h:alto*1.04});
       });
     });
     return fusiona(h,cls,bx,vp);
@@ -258,8 +267,8 @@ function marcaRango(h,pg,vp,a,b,cls){
     for(var i=a;i<=b&&i<map.length;i++){var k=map[i][0],c=map[i][1],s=seg[k]||(seg[k]=[c,c]);if(c<s[0])s[0]=c;if(c>s[1])s[1]=c}
     Object.keys(seg).forEach(function(k){
       var it=tc.items[k],L=it.str.length||1,tr=U.transform(vp.transform,it.transform),alto=Math.hypot(tr[2],tr[3]),ancho=it.width*vp.scale;
-      var x=tr[4]+ancho*seg[k][0]/L,w=ancho*(seg[k][1]+1-seg[k][0])/L,y=tr[5]-alto*.8;
-      bx.push({x:x,y:y,w:w,h:alto*.95});
+      var tq=tramo(it,tc,seg[k][0],seg[k][1]),x=tr[4]+ancho*tq[0],w=ancho*tq[1],y=tr[5]-alto*.82;
+      bx.push({x:x,y:y,w:w,h:alto*1.04});
     });
     return fusiona(h,cls,bx,vp);
   });
