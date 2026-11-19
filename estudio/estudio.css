@@ -336,3 +336,6 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 .bs .hs{background:rgba(255,122,26,.42);box-shadow:0 0 0 1px rgba(255,122,26,.5);animation:parp 2.2s ease-in-out infinite}
 .bs .hf{background:rgba(255,122,26,.38);box-shadow:0 0 0 1px rgba(255,122,26,.55)}
 @media (prefers-reduced-motion:reduce){.bs .hs{animation:parp 2.2s ease-in-out infinite!important}}
+/* v14: marcas más delgadas */
+.bs .hs,.bs .hf{border-radius:1px;box-shadow:none;background:rgba(255,122,26,.36)}
+.bs .hf{background:rgba(255,122,26,.32);border-bottom:1.5px solid rgba(255,122,26,.7)}
