@@ -346,3 +346,10 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 @keyframes parp2{0%,100%{opacity:1}50%{opacity:.35}}
 .bs .hf{background:rgba(255,106,0,.7);border-bottom:2px solid rgba(230,90,0,.95)}
 @media (prefers-reduced-motion:reduce){.bs .hs{animation:parp2 1.8s ease-in-out infinite!important}}
+
+/* v16: rojo = preguntable de examen; clic deja el amarillo visible (relleno suave + subrayado) */
+.sbody .ex{text-decoration-color:#ff3b3b}
+.sbody .ex:hover,.sbody .ex.sel{text-decoration-color:#ff2020!important}
+.bs .hf{background:rgba(255,106,0,.26);border-bottom:2.5px solid rgba(230,90,0,.95);mix-blend-mode:multiply}
+.bs .hs.x{background:rgba(255,40,40,.5)}
+.bs .hf.x{background:rgba(255,40,40,.28);border-bottom-color:rgba(220,20,20,.95)}
