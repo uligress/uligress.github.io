@@ -327,6 +327,7 @@ function concepto(txt,modo,ctx,ex){
       if(V!==V0||tk!==HT){wr.querySelectorAll('.'+cls).forEach(function(e){if(cls==='hs')e.remove()});return}
       wr.querySelectorAll('.'+cls).forEach(function(e){if(ex)e.classList.add('x')});
       if(fr===null)return false;
+      if(modo!=='c')return;
       verPag(p);dibuja(p);var sc=$('bs'),r=wr.getBoundingClientRect(),sr=sc.getBoundingClientRect();
       sc.scrollTop=Math.max(0,sc.scrollTop+(r.top-sr.top)+fr*r.height-sc.clientHeight/3);actual();
     });
