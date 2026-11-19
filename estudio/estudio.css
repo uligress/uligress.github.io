@@ -368,3 +368,6 @@ body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
 .bnav{top:auto;right:auto;bottom:16px;left:50%;transform:translateX(-50%);padding:5px 8px;gap:8px}
 .bnav .bmsg{margin-left:4px}
 .book .bs{padding-bottom:70px}
+
+/* v26: el amarillo previo nunca parpadea */
+.bs .hl,.bs .hl.x{animation:none!important;opacity:1}
