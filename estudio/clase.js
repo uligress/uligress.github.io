@@ -92,11 +92,12 @@ function fit(){
   f.style.zoom=1;bx.classList.remove('sc');
   var ht=hh();document.documentElement.style.setProperty('--ht',Math.max(ht,0)+'px');
   if(window.innerWidth<=1000)return;
-  var cs=getComputedStyle(bx),av=bx.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom),z=1;
-  for(var i=0;i<8;i++){
-    var h=f.getBoundingClientRect().height;if(h<=av+1)break;
-    z=Math.max(.38,z*av/h*.985);f.style.zoom=z;if(z<=.38){bx.classList.add('sc');break}
-  }
+  var cs=getComputedStyle(bx),av=bx.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  var lo=.38,hi=1.6;
+  f.style.zoom=lo;
+  if(f.getBoundingClientRect().height>av+1){bx.classList.add('sc');return}
+  for(var i=0;i<9;i++){var m=(lo+hi)/2;f.style.zoom=m;if(f.getBoundingClientRect().height<=av-2)lo=m;else hi=m}
+  f.style.zoom=lo;
 }
 window.addEventListener('resize',fit);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);

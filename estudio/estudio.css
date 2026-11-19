@@ -239,3 +239,24 @@ body.nomin.lat main.vista{padding-left:24px}
 .modal .mp{width:min(820px,100%);max-height:88dvh;overflow-y:auto;background:var(--night-2);border:1px solid var(--hair);border-radius:22px;padding:20px 22px}
 .modal .mh{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px;position:sticky;top:-20px;background:var(--night-2);padding:6px 0}
 .modal .mh .mono{color:var(--warm)}
+
+/* ===== clase v4: menos espacio muerto -> letra más grande ===== */
+@media (min-width:1001px){
+  :root{--pw:min(37vw,560px);--sw:128px}
+  body.lat main.vista{padding-left:calc(var(--sw) + 34px);padding-right:calc(var(--pw) + 34px)!important}
+  body.nomin.lat main.vista{padding-left:20px}
+  body.lat .top{padding:8px 20px 8px;gap:10px}
+  body.lat #tabs{width:auto!important;margin-left:auto}
+  #tsel,#mintog{height:36px}
+  .side{left:12px}
+  .book{top:12px;bottom:12px;right:12px}
+  .sbox{padding:14px 18px;border-radius:16px}
+  body.lat .sbox .slide>.mono{margin-bottom:4px;font-size:12px}
+  body.lat .sbox .slide h2{font-size:clamp(26px,2.6vw,40px);margin:0 0 10px}
+  body.lat .sbox .cover h1{font-size:clamp(30px,3.4vw,52px);margin:6px 0 8px}
+  body.lat .sbox .cover p{margin:0 0 12px}
+  .sbox .toc button{padding:8px 4px;font-size:17px}
+  .sbox .sbody li{margin:5px 0}
+  .sbox .sbody .cd{margin-bottom:10px;padding:10px 14px}
+  body.lat .nav{margin:8px 0 0}
+}
