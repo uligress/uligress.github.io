@@ -305,3 +305,15 @@ body.nomin.lat main.vista{padding-left:24px}
 .book .bs .pw,.book .bs canvas{border-radius:6px}
 .book.nohead .bh{display:none}
 @media (max-width:1000px){.book.nohead .bh{display:flex}}
+/* v9: páginas a la izquierda, Preguntas a la derecha en naranja */
+body.lat .nav{justify-content:flex-start;gap:12px;width:100%}
+.nav .pill{margin-left:auto;background:#ff7a1a;color:#1a0c00;border-color:#ff7a1a;font-weight:600}
+.nav .pill .arr{background:#1a0c00;color:#ff9a4d}
+.nav .pill:hover{background:#ff8f3d}
+.modal .mp{border-color:rgba(255,122,26,.6);box-shadow:0 0 0 1px rgba(255,122,26,.25),0 24px 80px rgba(255,90,0,.18);background:linear-gradient(180deg,#1b110a,#0b0f14 40%)}
+.modal .mh{background:#1b110a;border-bottom:1px solid rgba(255,122,26,.35)}
+.modal .mh .mono{color:#ff9a4d}
+.modal .mh .ghost{border-color:rgba(255,122,26,.6);color:#ff9a4d}
+.modal .qc{border-color:rgba(255,122,26,.3);background:rgba(255,122,26,.05)}
+.modal .qc .x{background:#ff7a1a;color:#1a0c00}
+.modal .qc summary{color:#ff9a4d}
