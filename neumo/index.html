@@ -27,10 +27,10 @@
 <a class="mode" href="../geria/">Geria →</a></header>
 <iframe id="fr" title="Neumología" allow="fullscreen"></iframe>
 <script>
-(function(){var R={mapa:'mapa/',clase:'clase/?v=37',rep:'clase/?v=33#rep',final:'final/',final2:'final2/'},fr=document.getElementById('fr'),cur='';
+(function(){var R={mapa:'mapa/',clase:'clase/?v=38',rep:'clase/?v=33#rep',final:'final/',final2:'final2/'},fr=document.getElementById('fr'),cur='';
 function go(){var h=location.hash.slice(1)||'clase',p=h.split('/'),k=p[0];if(!R[k]){k='clase';p=['clase']}
-var src=R[k];if(k==='clase'&&p.length>1)src='clase/?v=37#'+p.slice(1).join('/');
+var src=R[k];if(k==='clase'&&p.length>1)src='clase/?v=38#'+p.slice(1).join('/');
 document.querySelectorAll('.mode[data-k]').forEach(function(a){a.dataset.k===k?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
 if(cur!==k||k==='clase'){fr.src=src;cur=k}}
 window.addEventListener('hashchange',go);go();})();
-</script></body></html>
+</script><script src="../estudio/comentarios.js?v=1"></script></body></html>
