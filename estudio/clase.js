@@ -55,13 +55,13 @@ function lateral(){
 }
 
 function seccion(d,k,n){
-  if(k===0)return '<section class="slide cover" data-i="0"><div class="mono">✦ '+esc(M.nombre)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h1>'+esc(d.name)+'</h1><p>'+esc(d.intro||'Baja por las diapositivas con lo que más cae en los exámenes. A la derecha, la fuente para que lo busques en contexto.')+'</p><div class="toc">'+
+  if(k===0)return '<section class="slide cover" data-i="0"><h1>'+esc(d.name)+'</h1><p>'+esc(d.intro||'Baja por las diapositivas con lo que más cae en los exámenes. A la derecha, la fuente para que lo busques en contexto.')+'</p><div class="toc">'+
       d.slides.map(function(s,j){return '<button data-i="'+(j+1)+'"><span class="script">('+pad(j+1)+')</span>'+esc(s.title)+'<span class="mono">'+((s.book&&s.book.length)?'libro ✓':'')+'</span></button>'}).join('')+
       '<button data-i="'+(n-1)+'"><span class="script">★</span>Lo más preguntado</button></div></section>';
-  if(k===n-1)return '<section class="slide qtop" data-i="'+k+'"><div class="mono">✦ '+esc(d.tab||('Tema '+(T+1)))+' · última diapositiva</div><h2>Lo más preguntado</h2>'+
+  if(k===n-1)return '<section class="slide qtop" data-i="'+k+'"><h2>Lo más preguntado</h2>'+
       ((d.top&&d.top.length)?qcards(d.top):'<div class="qc mono">Sin preguntas repetidas en este tema.</div>')+'</section>';
   var s=d.slides[k-1];
-  return '<section class="slide" data-i="'+k+'"><div class="mono">✦ Diapositiva '+(k+1)+' · '+esc(d.tab||('Tema '+(T+1)))+'</div><h2>'+esc(s.title)+'</h2><div class="sbody'+(s.uno?' uno':'')+'">'+s.html+'</div></section>';
+  return '<section class="slide" data-i="'+k+'"><h2>'+esc(s.title)+'</h2><div class="sbody'+(s.uno?' uno':'')+'">'+s.html+'</div></section>';
 }
 
 function render(){
