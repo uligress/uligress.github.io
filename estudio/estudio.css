@@ -279,3 +279,18 @@ body.nomin.lat main.vista{padding-left:24px}
 @media (prefers-reduced-motion:reduce){.bs .hs{animation:parp .8s ease-in-out infinite!important}}
 .sbody b,.sbody strong,.sbody .ex,.sbody .m,.sbody .m2{cursor:pointer}
 .sbody .ex:hover,.sbody b:hover{text-decoration:underline;text-decoration-color:#ff7000;text-decoration-thickness:2px}
+
+/* v7 boceto: controles arriba-izquierda, mismo espacio, hover parpadea / clic fija */
+.bs .hf{position:absolute;background:rgba(255,112,0,.78);mix-blend-mode:multiply;border-radius:3px;pointer-events:none;box-shadow:0 0 0 2px rgba(255,112,0,.95)}
+.sbody .sel{text-decoration:underline!important;text-decoration-color:#ff7000!important;text-decoration-thickness:3px!important;text-underline-offset:4px;text-decoration-skip-ink:none}
+.sbody b:hover,.sbody .ex:hover,.sbody .m:hover,.sbody .m2:hover{text-decoration:underline;text-decoration-color:#ff7000;text-decoration-thickness:3px;text-underline-offset:4px}
+@media (min-width:1001px){
+  :root{--sw:150px}
+  body.lat #tabs{position:fixed;z-index:31;left:12px;top:calc(var(--ht,56px) + 4px);width:var(--sw)!important;margin:0!important;display:flex;gap:6px;align-items:center;overflow:visible}
+  body.lat #tsel{flex:1;min-width:0;width:auto;height:40px;padding:0 24px 0 10px;font-size:13px;text-overflow:ellipsis}
+  body.lat #mintog{flex:none}
+  .side{top:calc(var(--ht,56px) + 52px);bottom:12px}
+  .book{top:calc(var(--ht,56px) + 4px);bottom:12px}
+  body.lat main.vista{padding-bottom:12px}
+  body.nomin.lat main.vista{padding-left:20px}
+}
