@@ -54,32 +54,37 @@ h1{color:var(--acc)}
 .pdf .x{border-radius:999px;color:#fff}
 .pnom{flex:0 1 auto;border-radius:999px;padding:7px 18px;min-width:180px}
 .pnom b{font-size:14px}.pnom span{font-size:11px}
-.pstage{padding:26px 0 12px}
-.pscroll{background:none;border:0;box-shadow:none;padding:0 0 18px;margin:0 46px;scrollbar-width:none}
+.pstage{padding:64px 0 12px}
+.pscroll{background:none;border:0;box-shadow:none;padding:0 0 18px;margin:0 12px 0 80px;scrollbar-width:none}
 .pscroll::-webkit-scrollbar{display:none}
 .pg{background:none;border-radius:22px;margin:0 auto 22px;box-shadow:0 22px 60px rgba(0,0,0,.55),0 2px 8px rgba(0,0,0,.35)}
 .pg .n{display:none}
-.pbk{top:44px;bottom:auto;width:calc(100% - 150px);height:auto;aspect-ratio:1/var(--r,1.414);max-height:calc(100% - 80px);left:50%;border-radius:22px;overflow:hidden;background:none;
+.pbk{top:82px;bottom:auto;width:calc(100% - 116px);height:auto;aspect-ratio:1/var(--r,1.414);max-height:calc(100% - 118px);left:50%;border-radius:22px;overflow:hidden;background:none;
   box-shadow:0 14px 40px rgba(0,0,0,.5);transition:transform .45s var(--ease),filter .3s}
 .pbk::before{display:none}
 .pbk canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;filter:blur(2.2px);opacity:.92}
 .pbk::after{content:"";position:absolute;inset:0;background:rgba(10,12,18,.28);transition:background .3s}
 .pbk span{z-index:2;top:12px;writing-mode:horizontal-tb;padding:5px 10px;border-radius:999px;font-size:10.5px;
   background:rgba(20,22,28,.55);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15)}
-.pbk{transform-origin:50% 115%}
-.pbk.izq{transform:translateX(-50%) rotate(-5deg);z-index:1}.pbk.izq span{left:12px}
-.pbk.der{transform:translateX(-50%) rotate(5deg);z-index:1}.pbk.der span{right:12px;left:auto}
-.pbk.d3{transform:translateX(-50%) rotate(9deg);z-index:0}.pbk.d3 span{top:auto;bottom:12px;right:12px}
-.pbk.izq:hover{transform:translateX(-50%) rotate(-6.5deg)}
-.pbk.der:hover{transform:translateX(-50%) rotate(6.5deg)}
+/* abanico de cartas: todas se abren hacia la izquierda desde la esquina de abajo; la nota del frente queda derecha */
+.pbk{transform-origin:0 100%}
+.pbk span{left:8px!important;right:auto!important;top:12px!important;bottom:auto!important;writing-mode:vertical-rl;transform:rotate(180deg);padding:10px 5px}
+.pbk.izq{transform:translateX(-50%) rotate(-2.5deg);z-index:2}
+.pbk.der{transform:translateX(-50%) rotate(-5deg);z-index:1}
+.pbk.d3{transform:translateX(-50%) rotate(-7.5deg);z-index:0}
+.pbk.izq:hover{transform:translateX(-50%) rotate(-3.3deg)}
+.pbk.der:hover{transform:translateX(-50%) rotate(-5.8deg)}
+.pbk.d3:hover{transform:translateX(-50%) rotate(-8.3deg)}
 .pbk:hover::after{background:rgba(10,12,18,.08)}
 @media (max-width:899px){
-  .pbk{height:calc(100% - 70px)}
-  .pscroll{margin:0 26px}
-  .pbk.izq{transform:translateX(-50%) rotate(-4deg)}.pbk.der{transform:translateX(-50%) rotate(4deg)}.pbk.d3{transform:translateX(-50%) rotate(8deg)}
+  .pbk{width:calc(100% - 90px)}
+  .pstage{padding-top:46px}.pbk{top:64px}
+  .pscroll{margin:0 10px 0 56px}
+  .pdf .pbk,.pdf .pbk.izq,.pdf .pbk.der{left:calc(50% + 23px)!important}
+  .pbk.izq{transform:translateX(-50%) rotate(-2deg)}.pbk.der{transform:translateX(-50%) rotate(-4deg)}.pbk.d3{transform:translateX(-50%) rotate(-6deg)}
 }
 @media (min-width:1500px){
   .wrap{max-width:1440px}
   .map{grid-template-columns:repeat(4,minmax(0,1fr))}
 }
-.pdf .pbk,.pdf .pbk.izq,.pdf .pbk.der{left:50%;right:auto}
+.pdf .pbk,.pdf .pbk.izq,.pdf .pbk.der{left:calc(50% + 34px);right:auto}
