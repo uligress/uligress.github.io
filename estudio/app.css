@@ -12,3 +12,45 @@ body.reading main{max-width:none;padding:24px 28px 64px}body.reading .breadcrumb
 @media(max-width:1100px) and (min-width:901px){body.reading nav.mainnav{width:170px;padding:24px 8px}body.reading main{margin-left:170px;padding:24px 18px}.study-layout{gap:14px}.study-main .card{padding:16px}.book-heading .badge{display:none}.book-controls{padding:0 10px 8px}.book-toolbar{padding:12px 10px 8px}.book-heading{padding:14px 10px 0}.book-status{padding:0 10px 8px}}
 @media(max-width:900px){body.reading main{margin-left:0;padding:24px 18px 110px}.study-layout{gap:16px}.book-pane{top:90px;max-height:calc(100dvh - 180px)}.reader-viewer{height:calc(100dvh - 420px)}}
 @media(max-width:759px){.study-layout{grid-template-columns:minmax(0,1fr);gap:22px}.book-pane{position:relative;top:auto;max-height:none}.reader-viewer{height:62dvh;min-height:320px}.book-heading .badge{display:inline-block}.study-main .card{padding:20px}.book-controls{gap:7px}.study-main .toolbar{margin-top:0}.study-main .examgrid{max-height:130px}body.reading main{padding:24px 18px 110px}}
+
+/* Unificado (19-nov): clase, práctica y examen caben en una pantalla, igual en todas las materias. El scroll queda solo dentro de la tarjeta o del libro. */
+@media(min-width:901px){
+body.reading{overflow:hidden}
+body.reading header{padding:8px 20px}
+body.reading .brand{font-size:17px}body.reading .brand em{font-size:24px}
+body.reading nav.mainnav{top:57px;width:64px;padding:12px 6px;gap:6px;align-items:center}
+body.reading nav.mainnav a{padding:10px 0;width:100%;justify-content:center;font-size:0}
+body.reading nav.mainnav a .navnum{font-size:14px;line-height:24px}
+body.reading nav.mainnav .help{display:none}
+body.reading main{margin-left:64px;height:calc(100dvh - 58px);overflow:hidden;padding:12px 16px}
+body.reading main>footer,body.reading .feedback-entry{display:none}
+body.reading .study-layout{height:100%;align-items:stretch;gap:14px;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
+body.reading .study-main{display:flex;flex-direction:column;min-height:0;height:100%;gap:8px}
+body.reading .thead{display:flex;align-items:center;flex-wrap:wrap;gap:4px 12px;flex:none}
+body.reading .thead .breadcrumb{margin:0;font-size:13px}
+body.reading .thead .eyebrow{display:none}
+body.reading .thead h1{font-size:19px!important;margin:0;letter-spacing:-.03em;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.reading .thead .subnav{margin:0;flex-basis:100%;gap:6px}
+body.reading .thead .subnav .button{padding:5px 13px;font-size:13px}
+body.reading .study-main>.toolbar{margin:0;flex:none}
+body.reading .study-main .toolbar label{flex-direction:row;display:flex;align-items:center;gap:10px}
+body.reading .study-main .toolbar select{padding:7px 12px;flex:1}
+body.reading .slide-card{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding:18px 24px}
+body.reading .slide-card .eyebrow{margin-bottom:4px;flex:none}
+body.reading .slide-card h2{font-size:clamp(26px,2.6vw,40px);margin:0 0 8px;flex:none;line-height:1.1}
+body.reading .slide-card .slidecontent{flex:1;min-height:0;overflow:auto;line-height:1.5}
+body.reading .slide-card details.review{flex:none}
+body.reading .slide-controls{margin:0;flex:none}
+body.reading .study-main>details.review{margin:0;flex:none;font-size:14px}
+body.reading .study-main>details.review[open]{max-height:30dvh;overflow:auto}
+body.reading .study-main>.reader{flex:1;min-height:0;display:flex;flex-direction:column;max-width:none}
+body.reading .study-main>.reader>.card{flex:1;min-height:0;overflow:auto}
+body.reading .study-main>.row.between{flex:none}
+body.reading .study-main>.card.reader{overflow:auto;flex:1;min-height:0}
+body.reading .study-main .examgrid{margin:6px 0;max-height:78px}
+body.reading .study-main .options{margin:14px 0 8px;gap:8px}
+body.reading #book-slot{min-height:0;height:100%}
+body.reading .book-pane{position:static;height:100%;max-height:none}
+body.reading .reader-viewer{height:auto;flex:1;min-height:0}
+}
+@media(min-width:1700px){body.reading .study-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
