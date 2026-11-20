@@ -7,6 +7,7 @@ for(const [id,key]of [['geria','GERIA'],['neumo','NEUMO'],['reuma','REUMA']]){
  for(const t of data.topics){assert.ok(t.slides.length);for(const q of t.questions){assert.ok(q.answer);assert.ok(q.refs.length);assert.equal(q.topic,t.n)}}
  const sourceIds=new Set(questions.map(q=>q.id));assert.equal(sourceIds.size,questions.length,'IDs únicos dentro del banco');
  for(const e of data.exams)for(const q of e.questions){if(q.o){assert.ok(Number.isInteger(q.k));assert.ok(q.k>=0&&q.k<q.o.length)}}
+ for(const entry of [...data.topics.flatMap(t=>[...t.slides,...t.questions]),...data.exams.flatMap(e=>e.questions)]){assert.ok(entry.refs?.length,'Cada diapositiva o pregunta necesita libro en paralelo');for(const ref of entry.refs){assert.ok(data.books.some(b=>b.url===ref.url));assert.ok(Number.isInteger(ref.page)&&ref.page>0);assert.ok(Array.isArray(ref.quotes));assert.ok(['linked','text','context'].includes(ref.basis));}}
  for(const b of data.books){assert.ok(fs.statSync(path.join(root,b.url)).size>1000,`Falta fuente ${b.url}`)}
  console.log(`OK ${id}: ${data.topics.length} temas, ${questions.length} preguntas preservadas, ${data.exams.length} exámenes, ${data.books.length} fuentes`);
 }
