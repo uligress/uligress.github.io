@@ -1,0 +1,13 @@
+/* Resaltado concepto → libro: pasar el cursor = naranja parpadeante; clic = naranja fijo */
+.pdfsheet{position:relative}
+.pdfsheet .hs,.pdfsheet .hf{position:absolute;pointer-events:none;mix-blend-mode:multiply;border-radius:2px}
+.pdfsheet .hs{background:rgba(255,122,26,.62);animation:parp2 1.8s ease-in-out infinite}
+.pdfsheet .hf{background:rgba(255,106,0,.55)}
+@keyframes parp2{0%,100%{opacity:1}50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.pdfsheet .hs{animation:parp2 1.8s ease-in-out infinite!important}}
+.slidecontent .dks .sub{font-family:inherit;font-size:inherit;letter-spacing:0;text-transform:none;margin:0;color:inherit}
+.deckcard .slidecontent{padding:0;overflow:auto;display:flex;justify-content:center;align-items:flex-start}
+.reader-note{font-size:12px;color:#ffc27a;margin:4px 14px 0;min-height:1em}
+@media(min-width:760px){body.reading .study-layout:has(.deckcard){grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}}
+.deckcard{padding:10px 12px}
+.deckcard .slide-top{margin-bottom:8px}
