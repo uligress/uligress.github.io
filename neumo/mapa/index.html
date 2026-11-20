@@ -555,6 +555,22 @@ function pZoomA(z,cx,cy){ if(!P.doc) return; z=Math.max(1,Math.min(4,z)); if(Mat
   sc.addEventListener('touchmove',function(e){ if(!T||e.touches.length!==2) return; e.preventDefault(); var m=dos(e); pide(T.z*m.d/T.d,m.x,m.y) },{passive:false});
   sc.addEventListener('touchend',function(e){ if(T&&e.touches.length<2) T=null });
 })();
+// en pantalla ancha la pregunta nunca hace scroll: si no cabe, se encoge hasta caber (el scroll queda solo en las notas)
+var FIT=0;
+function lFit(){
+  FIT=0; var b=document.querySelector('#lesson .lbody'), n=b&&b.firstElementChild; if(!n||$('lesson').hidden) return;
+  n.style.zoom=''; n.style.maxWidth=''; b.style.overflow='';
+  if(window.innerWidth<900) return;
+  var cs=getComputedStyle(b), alto=b.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom), ancho=b.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+  for(var z=1;z>=.5;z-=.04){
+    if(z<1){ n.style.zoom=z; n.style.maxWidth=Math.min(ancho,920)/z+'px' }
+    if(n.getBoundingClientRect().height<=alto){ b.style.overflow='hidden'; return }
+  }
+}
+function lFitYa(){ if(!FIT) FIT=setTimeout(lFit,30) }
+new MutationObserver(lFitYa).observe($('lesson'),{childList:true,subtree:true});
+new MutationObserver(lFitYa).observe(document.body,{attributes:true,attributeFilter:['class']});
+window.addEventListener('resize',lFitYa);
 // al cambiar de nota, la hoja del frente se va hacia atrás (al lado de donde quedará en la ruleta)
 function pManda(d){ var sc=$('pScr'), st=sc.parentNode, sb=sc.getBoundingClientRect(), g=null;
   if(!d||!window.matchMedia||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
