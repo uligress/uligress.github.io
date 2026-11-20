@@ -248,7 +248,7 @@ body.encl .ltop,body.encl .lbody,body.encl .lfoot{transition:padding-right .45s 
 @media (prefers-reduced-motion:reduce){*:not(.hl):not(.ol):not(.ghost):not(.pill):not(.lcl){animation:none!important;transition:none!important}.ghost,.pill,.lcl{transition:none!important}.ol{animation-name:olaq}}
 </style>
 <style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
-<link rel="stylesheet" href="/estudio/mapa.css?v=10">
+<link rel="stylesheet" href="/estudio/mapa.css?v=11">
 </head>
 <body>
 <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:16px"><a href="/interna2/" class="ghost" style="text-decoration:none;font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#fff">← Interna 2</a><span data-fb></span></div>
@@ -626,7 +626,7 @@ function pTxt(){ if(P.doc) $('pTxt').textContent='pág. '+pActual()+' / '+P.doc.
 function pNorm(x){return x.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g,'')}
 // subrayado amarillo: busca cada frase clave en el texto de la hoja y pinta encima de esos renglones
 function pMarca(h,pg,vp){
-  return pg.getTextContent().then(function(tc){
+  return pg.getTextContent().then(function(tc){ [].slice.call(h.querySelectorAll(".hl")).forEach(function(x){x.remove()});
     var norm='', map=[], U=window.pdfjsLib.Util, primero=null, hechos={}, x0=1, x1=0;
     tc.items.forEach(function(it,k){ for(var c=0;c<it.str.length;c++){ var n=pNorm(it.str[c]); for(var j=0;j<n.length;j++){norm+=n[j];map.push([k,c])} } });
     P.tg.forEach(function(t){
@@ -666,7 +666,7 @@ function pDibuja(h){
 }
 // acerca solo la hoja al concepto subrayado: el renglón marcado llena el ancho del visor
 function pEnfoca(h,fy,x0,x1){ var sc=$('pScr'), n=+h.dataset.n, z=Math.max(1,Math.min(2.5,Math.floor(4*.92/Math.max(.25,x1-x0))/4));
-  if(z>P.z){ P.z=z; pMonta(n,false); h=pHojas()[n-1] }
+  if(z>P.z){ P.z=z; pTalla(); pRedibuja() }
   sc.scrollTop=Math.max(0,h.offsetTop+fy*h.offsetHeight-sc.clientHeight/3);
   sc.scrollLeft=Math.max(0,h.offsetLeft+(x0+x1)/2*h.offsetWidth-sc.clientWidth/2); pTxt() }
 function pLimpia(h){ [].slice.call(h.querySelectorAll('canvas,.hl')).forEach(function(x){x.remove()}) }
@@ -693,12 +693,12 @@ function pPone(k){
   P.k=k; P.doc=null; P.obj=c.p||1; P.tg=c.tg||[]; P.z=1;
   if(P.io) P.io.disconnect();
   sc.classList.remove('gira','gizq','gder'); void sc.offsetWidth; sc.classList.add(P.dir<0?'gizq':P.dir>0?'gder':'gira'); P.pd=P.dir; P.dir=0;
-  if(sc.querySelector('.pg')) pManda(P.pd);
+  
   sc.innerHTML='<div class="mono" style="padding:30px 8px">Cargando '+SRC[k].nom+'…</div>'; $('pTxt').textContent='';
   $('pNom').textContent=SRC[k].nom;
   var r=$('pRank'); r.className='mono'+(P.rank&&c.ok&&i===0?' top':'');
   r.textContent=!P.rank?'Inicio del tema · pág. '+P.obj:(c.ok?'#'+(i+1)+' de confiabilidad'+(i===0?' · la más relacionada con la '+(P.dia?'diapositiva':'pregunta'):''):(P.dia?'No trae lo de esta diapositiva':'No trae esta respuesta')+' · inicio del tema');
-  pAtras(i,P.pd);
+
   pLib(k).then(function(d){ if($('pdf').hidden||P.k!==k) return; P.doc=d; P.r=SRC[k].r; pMonta(P.obj,true) },function(){
     if(P.k===k) sc.innerHTML='<div class="mono" style="padding:30px 8px">No se pudo abrir el PDF. Revisa la conexión y vuelve a intentar.</div>';
   });
@@ -747,11 +747,22 @@ function pAuto(it){ if(window.innerWidth>=900&&!SIN(it)) pDe(it.id) } // en pant
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
 function pZoom(d){ pZoomA(P.z+d) }
 // zoom con los botones + / − (conserva el punto que estás viendo)
-function pZoomA(z,cx,cy){ if(!P.doc) return; z=Math.max(1,Math.min(4,Math.round(z*4)/4)); if(z===P.z) return;
+function pTalla(){ var w=pAncho(), h=Math.round(w*P.r)+'px'; w+='px'; pHojas().forEach(function(x){ x.style.width=w; x.style.height=h }) }
+function pRedibuja(){ clearTimeout(P.zt); P.zt=setTimeout(function(){ pHojas().forEach(function(h){ if(h.querySelector('canvas')){ h._m=null; pDibuja(h) } }); pTxt() },220) }
+function pZoomA(z,cx,cy){ if(!P.doc) return; z=Math.max(1,Math.min(4,z)); if(Math.abs(z-P.z)<.001) return;
   var sc=$('pScr'), b=sc.getBoundingClientRect(); if(cx==null){ cx=b.left+b.width/2; cy=b.top+b.height/2 }
-  var ox=cx-b.left, oy=cy-b.top, fx=(sc.scrollLeft+ox)/sc.scrollWidth, fy=(sc.scrollTop+oy)/sc.scrollHeight;
-  P.z=z; pMonta(pActual(),false); sc.scrollLeft=fx*sc.scrollWidth-ox; sc.scrollTop=fy*sc.scrollHeight-oy; pTxt() }
-function pVista(r,o){ var sc=$('pScr'); if(r===1){ sc.style.transform=''; sc.style.transformOrigin=''; return } sc.style.transformOrigin=o; sc.style.transform='scale('+r+')' }
+  var ox=cx-b.left, oy=cy-b.top, x=(sc.scrollLeft+ox)/P.z, y=(sc.scrollTop+oy)/P.z;
+  P.z=z; pTalla(); sc.scrollLeft=x*z-ox; sc.scrollTop=y*z-oy; pRedibuja() }
+(function(){ var sc=$('pScr'), T=null, raf=0, q=null;
+  function va(){ raf=0; if(q){ var t=q; q=null; pZoomA(t[0],t[1],t[2]) } }
+  function pide(z,x,y){ q=[z,x,y]; if(!raf) raf=requestAnimationFrame(va) }
+  sc.addEventListener('wheel',function(e){ if(!(e.ctrlKey||e.metaKey)||!P.doc) return; e.preventDefault();
+    var base=q?q[0]:P.z; pide(base*Math.exp(-Math.max(-25,Math.min(25,e.deltaY))*.01),e.clientX,e.clientY) },{passive:false});
+  function dos(e){ var a=e.touches[0],c=e.touches[1]; return {d:Math.hypot(a.clientX-c.clientX,a.clientY-c.clientY)||1,x:(a.clientX+c.clientX)/2,y:(a.clientY+c.clientY)/2} }
+  sc.addEventListener('touchstart',function(e){ if(e.touches.length===2&&P.doc){ var m=dos(e); T={d:m.d,z:P.z} } },{passive:true});
+  sc.addEventListener('touchmove',function(e){ if(!T||e.touches.length!==2) return; e.preventDefault(); var m=dos(e); pide(T.z*m.d/T.d,m.x,m.y) },{passive:false});
+  sc.addEventListener('touchend',function(e){ if(T&&e.touches.length<2) T=null });
+})();
 // al cambiar de nota, la hoja del frente se va hacia atrás (al lado de donde quedará en la ruleta)
 function pManda(d){ var sc=$('pScr'), st=sc.parentNode, sb=sc.getBoundingClientRect(), g=null;
   if(!d||!window.matchMedia||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
@@ -778,7 +789,7 @@ new MutationObserver(lFitYa).observe($('lesson'),{childList:true,subtree:true});
 new MutationObserver(lFitYa).observe(document.body,{attributes:true,attributeFilter:['class']});
 window.addEventListener('resize',lFitYa);
 $('pX').onclick=pCierra; $('pAnt').onclick=function(){pGira(-1)}; $('pSig').onclick=function(){pGira(1)};
-$('pAtr').onclick=function(e){ var b=e.target.closest('.pbk'); if(!b) return; P.dir=+b.dataset.d<0?-1:1; pPone(b.dataset.k) }; $('pMas').onclick=function(){pZoom(.5)}; $('pMen').onclick=function(){pZoom(-.5)};
+$('pAtr').onclick=function(e){ var b=e.target.closest('.pbk'); if(!b) return; P.dir=+b.dataset.d<0?-1:1; pPone(b.dataset.k) }; $('pMas').onclick=function(){pZoom(.25)}; $('pMen').onclick=function(){pZoom(-.25)};
 $('pScr').addEventListener('scroll',function(){ if(!P.raf) P.raf=requestAnimationFrame(function(){P.raf=0;pTxt()}) });
 window.addEventListener('resize',function(){ if(!$('pdf').hidden&&P.doc){ pMonta(pActual(),false); pMide() } });
 document.addEventListener('click',function(e){var b=e.target.closest('.pdfb'); if(!b) return; if(b.dataset.dia==='c'&&C) pDia(C.t.n,C.k,'c'); else if(b.dataset.dia==='f') pDia(F.n,F.k,'f'); else if(b.dataset.id) pDe(b.dataset.id); else pTema(+b.dataset.tn)});
