@@ -272,8 +272,8 @@ body.pinned .viewport { overflow: visible; }
 .footer-cols a:not(.send):hover { opacity: .6; }
 .footer-k { margin: 0 0 6px; color: var(--ash); font-size: 13px; }
 .footer-end { justify-content: flex-start; }
-.footer-logo { display: block; width: 100%; margin: clamp(30px, 6vh, 60px) 0 10px; color: #23272e; }
-.footer-legal { display: flex; justify-content: space-between; margin: 0; color: var(--ash); }
+.footer-logo { display: block; width: min(120px, 40%); margin: 56px auto 40px; color: #23272e; }
+.footer-legal { display: flex; justify-content: center; gap: 24px; margin: 0; color: var(--ash); }
 
 /* Lightbox */
 .lightbox {
