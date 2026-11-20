@@ -213,18 +213,9 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 <style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
 </head>
 <body>
-<header><div class="wrap">
-  <a class="logo" href="/" style="color:inherit;text-decoration:none">neumo<span class="script">mapa</span></a>
-  <div class="stats mono"><a href="/neumo/hub/#examenes/final" style="color:#c084fc;border:1px solid #7c3aed;border-radius:99px;padding:4px 12px;margin-right:6px">Último final →</a><a href="/neumo/hub/#examenes/final2" style="color:#fb7185;text-decoration:none;border:1px solid #be123c;border-radius:99px;padding:4px 12px">Final 2 →</a><span>racha <b id="sRacha">0</b> d</span><span><b id="sXp">0</b> xp</span></div>
-</div></header>
 <main class="wrap">
-  <section class="hero">
-    <div class="tag">✦ Examen de Neumología · lunes 7 dic 2026</div>
-    <h1>Un concepto, <span class="script">una</span> pregunta</h1>
-    <p>Cada lección explica primero el concepto y luego te pone la pregunta de examen que lo evalúa. Lo que fallas vuelve hasta que lo dominas.</p>
-    <div class="bar"><i id="gBar" style="width:0"></i></div>
-    <div class="mono" style="margin-top:10px"><span id="gTxt"></span></div>
-  </section>
+  <h1 style="margin:40px 0 8px;font-size:clamp(40px,7vw,72px);font-weight:600;letter-spacing:-.03em">neumo</h1>
+  <div hidden><b id="sRacha"></b><b id="sXp"></b><i id="gBar"></i><span id="gTxt"></span></div>
   <section class="map" id="map"></section>
 </main>
 <div class="foot"><div class="wrap">
