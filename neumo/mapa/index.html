@@ -211,7 +211,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .nt.pdfb{display:inline-block}
 </style>
 <style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
-<link rel="stylesheet" href="/estudio/mapa.css?v=6">
+<link rel="stylesheet" href="/estudio/mapa.css?v=7">
 </head>
 <body>
 <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:16px"><a href="/interna2/" class="ghost" style="text-decoration:none;font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#fff">← Interna 2</a><span data-fb></span></div>
@@ -229,12 +229,12 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 <div class="pdf" id="pdf" hidden>
   <div class="ptop"><button class="x" id="pX" aria-label="Cerrar el PDF">✕</button><span class="mono" id="pTxt"></span>
     <button class="x" id="pMen" aria-label="Alejar">−</button><button class="x" id="pMas" aria-label="Acercar">+</button></div>
+  <div class="pnom"><b id="pNom"></b><span class="mono" id="pRank"></span></div>
   <div class="pstage">
     <button class="pbk izq" id="pB1"></button><button class="pbk der" id="pB2"></button><button class="pbk der d3" id="pB3"></button>
     <div class="pscroll" id="pScr"></div>
   </div>
   <div class="pfoot"><button class="x" id="pAnt" aria-label="Notas anteriores">←</button>
-    <div class="pnom"><b id="pNom"></b><span class="mono" id="pRank"></span></div>
     <button class="x" id="pSig" aria-label="Notas siguientes">→</button></div>
 </div>
 <script src="data.js?v=1e1f692a"></script>
@@ -493,17 +493,17 @@ function pPone(k){
   var c=P.ctx[k], i=P.ord.indexOf(k), sc=$('pScr');
   P.k=k; P.doc=null; P.obj=c.p||1; P.tg=c.tg||[]; P.z=1;
   if(P.io) P.io.disconnect();
-  sc.classList.remove('gira'); void sc.offsetWidth; sc.classList.add('gira');
+  sc.classList.remove('gira','gizq','gder'); void sc.offsetWidth; sc.classList.add(P.dir<0?'gizq':P.dir>0?'gder':'gira'); P.dir=0;
   sc.innerHTML='<div class="mono" style="padding:30px 8px">Cargando '+SRC[k].nom+'…</div>'; $('pTxt').textContent='';
   $('pNom').textContent=SRC[k].nom;
   var r=$('pRank'); r.className='mono'+(P.rank&&c.ok&&i===0?' top':'');
   r.textContent=!P.rank?'Inicio del tema · pág. '+P.obj:(c.ok?'#'+(i+1)+' de confiabilidad'+(i===0?' · la más relacionada con la '+('pregunta'):''):'No trae esta respuesta'+' · inicio del tema');
-  [['pB1',1],['pB2',2],['pB3',3]].forEach(function(x){ var o=P.ord[(i+x[1])%P.ord.length], b=$(x[0]); b.dataset.k=o; b.innerHTML='<span><b>'+SRC[o].nom+'</b>'+(P.rank?' · '+pRk(o):'')+'</span>'; pMini(b,o) });
+  [['pB1',1],['pB2',2],['pB3',-1]].forEach(function(x){ var n=P.ord.length, b=$(x[0]); b.style.display=(n<2||(x[1]===2&&n<4)||(x[1]<0&&n<3))?'none':''; var o=P.ord[(i+x[1]+n)%n]; b.dataset.k=o; b.innerHTML='<span><b>'+SRC[o].nom+'</b>'+(P.rank?' · '+pRk(o):'')+'</span>'; pMini(b,o) });
   pLib(k).then(function(d){ if($('pdf').hidden||P.k!==k) return; P.doc=d; P.r=SRC[k].r; pMonta(P.obj,true) },function(){
     if(P.k===k) sc.innerHTML='<div class="mono" style="padding:30px 8px">No se pudo abrir el PDF. Revisa la conexión y vuelve a intentar.</div>';
   });
 }
-function pGira(d){ var i=P.ord.indexOf(P.k); var n=P.ord.length; pPone(P.ord[(i+d+n)%n]) }
+function pGira(d){ P.dir=d; var i=P.ord.indexOf(P.k); var n=P.ord.length; pPone(P.ord[(i+d+n)%n]) }
 function pCtx(id){
   var m=(window.NM||{})[id]||{}, pp=m._p||{}, c={};
   KS.forEach(function(k){ c[k]=m[k]?{p:m[k][0],tg:m[k][1],ok:true}:{p:pp[k]||1,tg:[],ok:false} });
@@ -526,7 +526,7 @@ function pAuto(it){ if(window.innerWidth>=900&&pHay(it)) pDe(it.id) }
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
 function pZoom(d){ if(!P.doc) return; var z=Math.max(1,Math.min(3,P.z+d)); if(z===P.z) return; var a=pActual(); P.z=z; pMonta(a,false) }
 $('pX').onclick=pCierra; $('pAnt').onclick=function(){pGira(-1)}; $('pSig').onclick=function(){pGira(1)};
-$('pB1').onclick=$('pB2').onclick=$('pB3').onclick=function(){pPone(this.dataset.k)}; $('pMas').onclick=function(){pZoom(.5)}; $('pMen').onclick=function(){pZoom(-.5)};
+$('pB1').onclick=$('pB2').onclick=$('pB3').onclick=function(){P.dir=this.id==='pB3'?-1:1; pPone(this.dataset.k)}; $('pMas').onclick=function(){pZoom(.5)}; $('pMen').onclick=function(){pZoom(-.5)};
 $('pScr').addEventListener('scroll',function(){ if(!P.raf) P.raf=requestAnimationFrame(function(){P.raf=0;pTxt()}) });
 window.addEventListener('resize',function(){ if(!$('pdf').hidden&&P.doc) pMonta(pActual(),false) });
 document.addEventListener('click',function(e){var b=e.target.closest('.pdfb'); if(b&&b.dataset.id) pDe(b.dataset.id)});
