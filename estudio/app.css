@@ -129,3 +129,10 @@ body.reading .slidecontent li{margin:8px 0}
 body:has(#topic-list.tgrid) footer{display:none}
 #topic-list.tgrid{height:calc(100vh - 170px)}
 #topic-list.tgrid .card{padding:12px 14px}}
+/* tarjeta de tema entera clicable */
+#topic-list .topic{position:relative;cursor:pointer;transition:border-color .15s,background .15s}
+#topic-list .topic:hover{border-color:#8fc2f088;background:#8fc2f00d}
+#topic-list .topic .row{margin:0;min-height:0}
+#topic-list .topic .row a{position:static;font-size:0;padding:0;border:0;background:none;min-height:0;min-width:0;width:0;height:0;overflow:visible}
+#topic-list .topic .row a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+#topic-list .topic .row a:focus-visible::after{outline:2px solid #8fc2f0;outline-offset:-2px;border-radius:16px}
