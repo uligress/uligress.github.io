@@ -79,3 +79,17 @@ body.reading .slide-card h2{font-size:clamp(22px,2.2vw,32px);margin:0 0 4px}
 }
 
 @media(min-width:901px){body.reading .thead .subnav .button{white-space:nowrap}body.reading .slidecontent{line-height:1.4}body.reading .slidecontent li{margin:4px 0}}
+
+/* Alinear diapositiva y libro bajo una sola cabecera; libro sin encabezados que sobran */
+@media(min-width:901px){
+body.reading .study-layout:has(.thead){display:grid;grid-template-rows:auto minmax(0,1fr);row-gap:8px}
+body.reading .study-layout:has(.thead)>.study-main{display:contents}
+body.reading .study-layout:has(.thead) .thead{grid-column:1/-1;grid-row:1;flex-wrap:nowrap}
+body.reading .study-layout:has(.thead) .thead h1{max-width:none;flex:0 1 auto}
+body.reading .study-layout:has(.thead) .slide-card{grid-column:1;grid-row:2;min-height:0}
+body.reading .study-layout:has(.thead)>#book-slot{grid-column:2;grid-row:2;min-height:0}
+body.reading .book-heading,body.reading .book-status{display:none}
+body.reading .book-toolbar{padding:10px 12px 6px}
+body.reading .book-toolbar label{font-size:0;gap:0}
+body.reading .book-controls{padding:0 12px 8px}
+}
