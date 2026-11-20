@@ -63,3 +63,19 @@ body.reading .reader-viewer{height:auto;flex:1;min-height:0}
 #floatclass .slidecontent li::marker{color:#ff9a1f}
 .study-main [data-action="float-class"]{border-color:#ff9a1f88;color:#ff9a1f}
 .study-main .badge{color:#ff9a1f;border-color:#ff9a1f66;background:#ff9a1f12}
+
+/* Más espacio para la diapositiva: cabecera en una fila y navegación dentro de la tarjeta */
+@media(min-width:901px){
+body.reading .thead{flex-wrap:nowrap}
+body.reading .thead .breadcrumb{white-space:nowrap}
+body.reading .thead h1{flex:0 1 auto;max-width:34%}
+body.reading .thead .subnav{flex-basis:auto;flex-wrap:nowrap;margin-left:auto}
+body.reading .slide-card{padding:12px 22px 14px}
+body.reading .slide-top{display:flex;gap:8px;align-items:center;flex:none;margin-bottom:6px}
+body.reading .slide-top select{flex:1;min-width:0;padding:6px 10px;font-size:13px}
+body.reading .slide-top a,body.reading .slide-top .ghostbtn{padding:6px 14px;font-size:14px;white-space:nowrap}
+body.reading .slide-top .ghostbtn{opacity:.3;border:1px solid var(--line);border-radius:999px}
+body.reading .slide-card h2{font-size:clamp(22px,2.2vw,32px);margin:0 0 4px}
+}
+
+@media(min-width:901px){body.reading .thead .subnav .button{white-space:nowrap}body.reading .slidecontent{line-height:1.4}body.reading .slidecontent li{margin:4px 0}}
