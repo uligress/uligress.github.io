@@ -248,7 +248,7 @@ body.encl .ltop,body.encl .lbody,body.encl .lfoot{transition:padding-right .45s 
 @media (prefers-reduced-motion:reduce){*:not(.hl):not(.ol):not(.ghost):not(.pill):not(.lcl){animation:none!important;transition:none!important}.ghost,.pill,.lcl{transition:none!important}.ol{animation-name:olaq}}
 </style>
 <style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
-<link rel="stylesheet" href="/estudio/mapa.css?v=8">
+<link rel="stylesheet" href="/estudio/mapa.css?v=9">
 </head>
 <body>
 <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:16px"><a href="/interna2/" class="ghost" style="text-decoration:none;font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#fff">← Interna 2</a><span data-fb></span></div>
@@ -688,6 +688,7 @@ function pPone(k){
   P.k=k; P.doc=null; P.obj=c.p||1; P.tg=c.tg||[]; P.z=1;
   if(P.io) P.io.disconnect();
   sc.classList.remove('gira','gizq','gder'); void sc.offsetWidth; sc.classList.add(P.dir<0?'gizq':P.dir>0?'gder':'gira'); P.pd=P.dir; P.dir=0;
+  if(sc.querySelector('.pg')) pManda(P.pd);
   sc.innerHTML='<div class="mono" style="padding:30px 8px">Cargando '+SRC[k].nom+'…</div>'; $('pTxt').textContent='';
   $('pNom').textContent=SRC[k].nom;
   var r=$('pRank'); r.className='mono'+(P.rank&&c.ok&&i===0?' top':'');
@@ -739,7 +740,35 @@ function pDia(n,k,de){
 function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t&&!t.fin){ P.id=null; verPdf(pCtx(null,t),KS,false) } }
 function pAuto(it){ if(window.innerWidth>=900&&!SIN(it)) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
-function pZoom(d){ if(!P.doc) return; var z=Math.max(1,Math.min(3,P.z+d)); if(z===P.z) return; var a=pActual(); P.z=z; pMonta(a,false) }
+function pZoom(d){ pZoomA(P.z+d) }
+// zoom que conserva el punto que estás viendo (botones, pellizco, trackpad o doble toque)
+function pZoomA(z,cx,cy){ if(!P.doc) return; z=Math.max(1,Math.min(4,Math.round(z*4)/4)); if(z===P.z) return;
+  var sc=$('pScr'), b=sc.getBoundingClientRect(); if(cx==null){ cx=b.left+b.width/2; cy=b.top+b.height/2 }
+  var ox=cx-b.left, oy=cy-b.top, fx=(sc.scrollLeft+ox)/sc.scrollWidth, fy=(sc.scrollTop+oy)/sc.scrollHeight;
+  P.z=z; pMonta(pActual(),false); sc.scrollLeft=fx*sc.scrollWidth-ox; sc.scrollTop=fy*sc.scrollHeight-oy; pTxt() }
+function pVista(r,o){ var sc=$('pScr'); if(r===1){ sc.style.transform=''; sc.style.transformOrigin=''; return } sc.style.transformOrigin=o; sc.style.transform='scale('+r+')' }
+(function(){ var sc=$('pScr'), T=null, W=0, wt, ul=0, ux=0, uy=0, tt=0;
+  sc.addEventListener('wheel',function(e){ if(!(e.ctrlKey||e.metaKey)||!P.doc) return; e.preventDefault(); var b=sc.getBoundingClientRect();
+    W=(W||P.z)*Math.exp(-Math.max(-25,Math.min(25,e.deltaY))*.01); W=Math.max(1,Math.min(4,W)); pVista(W/P.z,(e.clientX-b.left)+'px '+(e.clientY-b.top)+'px');
+    clearTimeout(wt); wt=setTimeout(function(){ var z=W; W=0; pVista(1); pZoomA(z,e.clientX,e.clientY) },160) },{passive:false});
+  sc.addEventListener('touchstart',function(e){ if(e.touches.length===2&&P.doc){ var a=e.touches[0],c=e.touches[1], b=sc.getBoundingClientRect();
+    T={d:Math.hypot(a.clientX-c.clientX,a.clientY-c.clientY)||1,x:(a.clientX+c.clientX)/2,y:(a.clientY+c.clientY)/2,r:1}; T.o=(T.x-b.left)+'px '+(T.y-b.top)+'px' } },{passive:true});
+  sc.addEventListener('touchmove',function(e){ if(!T||e.touches.length!==2) return; e.preventDefault(); var a=e.touches[0],c=e.touches[1];
+    T.r=Math.max(1/P.z,Math.min(4/P.z,Math.hypot(a.clientX-c.clientX,a.clientY-c.clientY)/T.d)); pVista(T.r,T.o) },{passive:false});
+  sc.addEventListener('touchend',function(e){ if(T){ if(e.touches.length<2){ var t=T; T=null; pVista(1); pZoomA(P.z*t.r,t.x,t.y); tt=Date.now() } return }
+    if(e.touches.length||e.changedTouches.length!==1||Date.now()-tt<400) return; var p=e.changedTouches[0], n=Date.now();
+    if(n-ul<300&&Math.abs(p.clientX-ux)<30&&Math.abs(p.clientY-uy)<30){ e.preventDefault(); ul=0; tt=n; pZoomA(P.z>1?1:2,p.clientX,p.clientY) } else { ul=n; ux=p.clientX; uy=p.clientY } });
+  sc.addEventListener('dblclick',function(e){ if(Date.now()-tt<700) return; pZoomA(P.z>1?1:2,e.clientX,e.clientY) });
+})();
+// al cambiar de nota, la hoja del frente se va hacia atrás (al lado de donde quedará en la ruleta)
+function pManda(d){ var sc=$('pScr'), st=sc.parentNode, sb=sc.getBoundingClientRect(), g=null;
+  if(!d||!window.matchMedia||matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  pHojas().some(function(h){ var r=h.getBoundingClientRect(); if(r.bottom>sb.top+40){ g=h; return true } });
+  var c=g&&g.querySelector('canvas'); if(!c) return;
+  var r=g.getBoundingClientRect(), s0=st.getBoundingClientRect(), x=document.createElement('div'), cv=document.createElement('canvas');
+  x.className='pfan '+(d>0?'aizq':'ader'); x.style.cssText='left:'+(r.left-s0.left)+'px;top:'+(r.top-s0.top)+'px;width:'+r.width+'px;height:'+r.height+'px;clip-path:inset('+Math.max(0,sb.top-r.top)+'px 0 '+Math.max(0,r.bottom-sb.bottom)+'px 0 round 22px)';
+  cv.width=c.width; cv.height=c.height; try{ cv.getContext('2d').drawImage(c,0,0) }catch(_){ return } x.appendChild(cv); st.appendChild(x);
+  setTimeout(function(){ x.remove() },750) }
 // en pantalla ancha la pregunta nunca hace scroll: si no cabe, se encoge hasta caber (el scroll queda solo en las notas)
 var FIT=0;
 function lFit(){
