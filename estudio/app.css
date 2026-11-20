@@ -93,3 +93,12 @@ body.reading .book-toolbar{padding:10px 12px 6px}
 body.reading .book-toolbar label{font-size:0;gap:0}
 body.reading .book-controls{padding:0 12px 8px}
 }
+
+/* Modo exposición: lámina grande, letra legible a distancia */
+@media(min-width:901px){
+body.reading .study-layout:has(.thead){grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+body.reading .slide-card{padding:18px 32px 20px}
+body.reading .slide-card h2{font-size:clamp(30px,3vw,46px)}
+body.reading .slidecontent{line-height:1.45}
+body.reading .slidecontent li{margin:8px 0}
+}
