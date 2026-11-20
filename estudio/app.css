@@ -54,3 +54,12 @@ body.reading .book-pane{position:static;height:100%;max-height:none}
 body.reading .reader-viewer{height:auto;flex:1;min-height:0}
 }
 @media(min-width:1700px){body.reading .study-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+
+/* Naranja: clase flotante y etiqueta de repetidas (como en las páginas originales) */
+#floatclass{border-color:#ff9a1f99;background:#1a120af2;box-shadow:0 14px 70px #000c,0 0 0 1px #ff9a1f22}
+#floatclass .dragbar{border-bottom-color:#ff9a1f55}
+#floatclass .dragbar .meta,#floatclass h2{color:#ff9a1f}
+#floatclass .slidecontent b,#floatclass .slidecontent strong{color:#ffc27a}
+#floatclass .slidecontent li::marker{color:#ff9a1f}
+.study-main [data-action="float-class"]{border-color:#ff9a1f88;color:#ff9a1f}
+.study-main .badge{color:#ff9a1f;border-color:#ff9a1f66;background:#ff9a1f12}
