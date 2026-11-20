@@ -1,36 +1,3 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex"><meta name="theme-color" content="#05080c">
-<title>Geriatría · estudio</title>
-<link rel="icon" type="image/png" sizes="32x32" href="../assets/icon-32.png?v=2">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../estudio/estudio.css?v=4">
-<style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
-</head><body>
-
-<style>html,body{height:100%;overflow:hidden}body{display:flex;flex-direction:column}
-.shell-top{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--hair);background:var(--night)}
-.shell-top .modes{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;flex:1}
-.mode{flex:0 0 auto;padding:8px 16px;border-radius:999px;border:1px solid var(--hair);color:var(--ash);font-size:14px;font-weight:500;text-decoration:none;letter-spacing:-.01em}
-.mode[aria-current=page]{background:#fff;color:#05080c;border-color:#fff}
-.mode.f1{color:#c084fc;border-color:#7c3aed}.mode.f2{color:#fb7185;border-color:#be123c}
-.mode.f1[aria-current=page],.mode.f2[aria-current=page]{background:transparent}
-.mode.f1[aria-current=page]{box-shadow:inset 0 0 0 1px #c084fc}.mode.f2[aria-current=page]{box-shadow:inset 0 0 0 1px #fb7185}
-#fr{flex:1 1 auto;width:100%;border:0;background:var(--night)}
-@media(max-width:640px){.shell-top{padding:10px 12px;gap:8px}.shell-top .logo{display:none}}</style>
-<header class="shell-top"><a class="logo" href="../" title="uligress.me">Geria<span class="script">estudio</span></a>
-<nav class="modes" id="modes">
-<a class="mode" data-k="mapa" href="#mapa">Mapa</a><a class="mode" data-k="clase" href="#clase">Clase</a><a class="mode" data-k="rep" href="#rep">Más repetidas</a>
-<a class="mode f1" data-k="final" href="#final">Último final</a><a class="mode f2" data-k="final2" href="#final2">Final 2</a></nav>
-<a class="mode" href="../neumo/">Neumo →</a></header>
-<iframe id="fr" title="Geriatría" allow="fullscreen"></iframe>
-<script>
-(function(){var R={mapa:'mapa/',clase:'clase/?v=38',rep:'clase/?v=33#rep',final:'final/',final2:'final2/'},fr=document.getElementById('fr'),cur='';
-function go(){var h=location.hash.slice(1)||'clase',p=h.split('/'),k=p[0];if(!R[k]){k='clase';p=['clase']}
-var src=R[k];if(k==='clase'&&p.length>1)src='clase/?v=38#'+p.slice(1).join('/');
-document.querySelectorAll('.mode[data-k]').forEach(function(a){a.dataset.k===k?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
-if(cur!==k||k==='clase'){fr.src=src;cur=k}}
-window.addEventListener('hashchange',go);go();})();
-</script><script src="../estudio/comentarios.js?v=2"></script></body></html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><title>Geriatría · Estudio</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Great+Vibes&display=swap" rel="stylesheet"><link rel="stylesheet" href="/estudio/app.css?v=1"><script src="/estudio/app.js?v=1" defer></script><script src="/estudio/comentarios.js?v=3" defer></script></head>
+<body data-course="geria"><a href="#content" class="sr-only">Saltar al contenido</a><header><a class="brand" href="/interna2/">uligress<em>estudio</em></a><label><span>Materia</span><select id="course" aria-label="Cambiar materia"><option value="geria">Geriatría</option><option value="neumo">Neumología</option><option value="reuma">Reumatología</option></select></label></header><nav class="mainnav" aria-label="Menú principal"><a href="#temas" data-nav="temas"><span class="navnum">01</span>Temas</a><a href="#practicar" data-nav="practicar"><span class="navnum">02</span>Practicar</a><a href="#examenes" data-nav="examenes"><span class="navnum">03</span>Exámenes</a><a href="#progreso" data-nav="progreso"><span class="navnum">04</span>Progreso</a><p class="help">Lee la clase, practica y comprueba tu avance.<br><br>Guardado en este navegador.</p></nav><main id="content" tabindex="-1"><p>Cargando Geriatría…</p></main><aside id="floatclass" hidden aria-label="Clase de apoyo"></aside><dialog id="sources" aria-labelledby="source-title"></dialog><dialog id="confirm" aria-labelledby="confirm-title"></dialog><div id="announcer" class="sr-only" role="status" aria-live="polite"></div></body></html>
