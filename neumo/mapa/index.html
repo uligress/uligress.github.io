@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" data-m="neumo">
 <head>
 <meta charset="utf-8">
 <meta name="robots" content="noindex">
@@ -211,6 +211,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .nt.pdfb{display:inline-block}
 </style>
 <style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
+<link rel="stylesheet" href="/estudio/mapa.css?v=1">
 </head>
 <body>
 <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:16px"><a href="/interna2/" class="ghost" style="text-decoration:none;font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#fff">← Interna 2</a><span data-fb></span></div>
@@ -338,7 +339,7 @@ function marco(cuerpo,pie){
 }
 function caso(it){return it.c?'<div class="caso"><div class="mono">✦ Caso clínico</div>'+esc(it.c)+'</div>':''}
 function notas(it){
-  return (pHay(it)?'<button class="ghost pdfb" data-id="'+it.id+'">'+esc(pEtq(it))+'</button>':'')+(it.d?'<div class="nt d">⚠ Dudosa · '+esc(it.d)+'</div>':'')+(it.dd?'<div class="nt dd">Clave deducida · '+esc(it.dd)+'</div>':'');
+  return (pHay(it)?'<button class="ghost pdfb" data-id="'+it.id+'">'+esc(pEtq(it))+'</button>':'')+(it.d?'<div class="nt d">⚠ Dudosa · '+esc(it.d)+'</div>':'')+(it.dd?'<div class="nt dd">Clave deducida · '+esc(it.dd)+'</div>':'')+(it.ex?'<div class="nt ex">'+esc(it.ex)+'</div>':'');
 }
 function fuente(it){return '<div class="mono src">'+(it.rep>1?'<span>Repetida '+it.rep+' veces</span> · ':'')+esc(D.fuente)+'</div>'}
 function sig(){

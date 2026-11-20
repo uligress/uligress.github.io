@@ -1,0 +1,43 @@
+/* Mapas de preguntas (Geria, Neumo, Reuma, Nefro): color difuminado por materia y diseño ancho en computadora.
+   La materia va en <html data-m="...">. */
+:root{--acc:#ffffff;--acc2:#aaa9ad}
+html[data-m=neumo]{--acc:#3b82f6;--acc2:#22d3ee}
+html[data-m=reuma]{--acc:#facc15;--acc2:#fb923c}
+html[data-m=geria]{--acc:#f472b6;--acc2:#c084fc}
+html[data-m=nefro]{--acc:#22c55e;--acc2:#2dd4bf}
+
+/* difuminado: dos manchas de color arriba que se desvanecen al negro */
+body,.lesson{
+  background:
+    radial-gradient(ellipse 75% 55% at 12% -8%,color-mix(in srgb,var(--acc) 34%,transparent),transparent 72%),
+    radial-gradient(ellipse 60% 50% at 96% 4%,color-mix(in srgb,var(--acc2) 22%,transparent),transparent 70%),
+    radial-gradient(ellipse 90% 40% at 50% 108%,color-mix(in srgb,var(--acc) 12%,transparent),transparent 70%),
+    var(--night);
+  background-attachment:fixed;
+}
+html{background:var(--night)}
+h1{color:var(--acc)}
+.node .prg{stroke:var(--acc)}
+.step.now .node{background:var(--acc);border-color:var(--acc)}
+.step.now .node .num{color:var(--night)}
+.foot{background:linear-gradient(0deg,var(--night) 55%,transparent)}
+.ltop .bar i,.hero .bar i{background:var(--acc)}
+.nt.ex{border:1px solid var(--hair);color:var(--ash);font-size:14px;line-height:1.45}
+
+/* computadora: los temas en cuadrícula en vez de una sola columna */
+@media (min-width:1000px){
+  .wrap{max-width:1240px}
+  .map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 32px;padding:20px 0 110px}
+  .step,.step.r{flex-direction:row;text-align:left;height:116px;padding:0!important}
+  .node{width:80px;height:80px}
+  .node svg{width:90px;height:90px}
+  .info h2{font-size:18px}
+  /* preguntas: más ancho y opciones en dos columnas mientras no está abierto el apunte */
+  body:not(.conpdf) .lbody .in,body:not(.conpdf) .lfoot .in{max-width:1000px}
+  body:not(.conpdf) .lbody div:has(> .opt + .opt):not(.match){display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  body:not(.conpdf) .lbody div:has(> .opt + .opt):not(.match) > .opt{margin:0;height:100%}
+}
+@media (min-width:1500px){
+  .wrap{max-width:1440px}
+  .map{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
