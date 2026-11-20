@@ -102,3 +102,17 @@ body.reading .slide-card h2{font-size:clamp(30px,3vw,46px)}
 body.reading .slidecontent{line-height:1.45}
 body.reading .slidecontent li{margin:8px 0}
 }
+@media(min-width:901px){
+.slidecontent .sub{font-family:'Geist Mono',monospace;font-size:.62em;letter-spacing:.02em;color:var(--blue);margin:-2px 0 10px;text-transform:uppercase}
+.slidecontent .cols.pf{display:grid;gap:10px;grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 10px}
+.slidecontent .cols.pf.c1{grid-template-columns:1fr}
+.slidecontent .cols.pf.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.slidecontent .cols.pf .cd{margin:0;padding:10px 14px}
+.slidecontent .cols.pf .cd .k{display:block;font-size:.55em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.slidecontent .cols.pf .cd ul{margin:0;padding-left:16px}
+.slidecontent .cols.pf .cd li{margin:3px 0;color:#e7e9ee}
+.slidecontent .arr{color:var(--yellow);font-weight:700}
+.slidecontent table.pft{display:table;width:100%;font-size:.8em;margin:6px 0}
+.slidecontent table.pft th{color:var(--blue);font-weight:650;font-size:.85em;text-transform:uppercase;letter-spacing:.04em}
+}
+@media(max-width:900px){.slidecontent .cols.pf{display:grid;gap:10px;grid-template-columns:1fr}.slidecontent .sub{font-family:'Geist Mono',monospace;font-size:12px;color:var(--blue);text-transform:uppercase;margin-bottom:8px}}
