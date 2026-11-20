@@ -1,6 +1,6 @@
 /* Resaltado concepto → libro: pasar el cursor = naranja parpadeante; clic = naranja fijo */
 .pdfsheet{position:relative}
-.pdfsheet .hs,.pdfsheet .hf{position:absolute;pointer-events:none;mix-blend-mode:multiply;border-radius:2px}
+.pdfsheet .hy,.pdfsheet .hs,.pdfsheet .hf{position:absolute;pointer-events:none;mix-blend-mode:multiply;border-radius:2px}
 .pdfsheet .hs{background:rgba(255,122,26,.62);animation:parp2 1.8s ease-in-out infinite}
 .pdfsheet .hf{background:rgba(255,106,0,.55)}
 @keyframes parp2{0%,100%{opacity:1}50%{opacity:.3}}
@@ -11,3 +11,4 @@
 @media(min-width:760px){body.reading .study-layout:has(.deckcard){grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}}
 .deckcard{padding:10px 12px}
 .deckcard .slide-top{margin-bottom:8px}
+.pdfsheet .hy{background:rgba(255,222,0,.6)}
