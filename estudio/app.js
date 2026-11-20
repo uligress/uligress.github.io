@@ -109,6 +109,7 @@ async function renderPDF(){
 }
 let activeBook=null,bookVersion=0;
 const bookStates=new Map();
+const bookResize=new ResizeObserver(()=>{const current=activeBook;if(!current?.node.isConnected)return;const width=current.node.querySelector('#reader-viewer').clientWidth;if(width>100&&Math.abs(width-current.width)>4){current.width=width;drawBook()}});
 function refsForQuestion(q){const current=all.find(x=>x.id===q.id)||D.exams.flatMap(e=>e.questions).find(x=>x.id===q.id)||all.find(x=>clean(x.q)===clean(q.q));return current?.refs||q.refs||D.books.map(b=>({...b,page:1,quotes:[],basis:'context'}))}
 function mountBook(refs,context){
  const slot=$('book-slot');if(!slot)return;
@@ -118,7 +119,7 @@ function mountBook(refs,context){
  let state=bookStates.get(context);
  if(!state){let index=refs.findIndex(r=>r.key===U.bookKey&&(r.exact||r.quotes?.length));if(index<0)index=0;state={index,page:refs[index].page||1,zoom:1};bookStates.set(context,state)}
  const node=document.createElement('section');node.className='book-pane';node.innerHTML=`<div class="book-heading"><div><span class="eyebrow">Material original</span><h2>Libro abierto</h2></div><span class="badge">Subrayado vinculado</span></div><div class="book-toolbar"><label>Libro<select id="reader-book" aria-label="Libro de consulta">${refs.map((r,i)=>`<option value="${i}" ${i===state.index?'selected':''}>${esc(r.name)}</option>`).join('')}</select></label><a id="reader-original" class="button" target="_blank" rel="noopener">Abrir PDF ↗</a></div><div class="book-controls"><button data-reader="prev" aria-label="Página anterior del libro">←</button><label>Pág. PDF <input id="reader-page" type="number" min="1" inputmode="numeric" aria-label="Página del libro" value="${state.page}"></label><span id="reader-total" class="meta"></span><button data-reader="next" aria-label="Página siguiente del libro">→</button><button data-reader="minus" aria-label="Alejar libro">−</button><button data-reader="plus" aria-label="Acercar libro">+</button><button data-reader="reset" aria-label="Volver al subrayado">↺</button></div><p id="reader-status" class="book-status" role="status">Abriendo la página vinculada…</p><div id="reader-viewer" class="reader-viewer"></div><details class="book-quotes"><summary>Fragmentos localizados</summary><div id="reader-quotes"></div></details>`;
- activeBook={node,context,refs,state};slot.append(node);
+ bookResize.disconnect();activeBook={node,context,refs,state};slot.append(node);activeBook.width=$('reader-viewer').clientWidth;bookResize.observe($('reader-viewer'));
  $('reader-book').onchange=e=>{state.index=+e.target.value;state.page=refs[state.index].page||1;state.zoom=1;U.bookKey=refs[state.index].key;save();drawBook()};
  $('reader-page').onchange=e=>{state.page=Math.max(1,Number(e.target.value)||1);drawBook()};
  node.querySelectorAll('[data-reader]').forEach(b=>b.onclick=()=>{const a=b.dataset.reader;if(a==='prev')state.page--;if(a==='next')state.page++;if(a==='minus')state.zoom=Math.max(.75,state.zoom-.25);if(a==='plus')state.zoom=Math.min(2.5,state.zoom+.25);if(a==='reset'){state.page=refs[state.index].page||1;state.zoom=1}drawBook()});
