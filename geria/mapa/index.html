@@ -248,7 +248,7 @@ body.encl .ltop,body.encl .lbody,body.encl .lfoot{transition:padding-right .45s 
 @media (prefers-reduced-motion:reduce){*:not(.hl):not(.ol):not(.ghost):not(.pill):not(.lcl){animation:none!important;transition:none!important}.ghost,.pill,.lcl{transition:none!important}.ol{animation-name:olaq}}
 </style>
 <style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
-<link rel="stylesheet" href="/estudio/mapa.css?v=9">
+<link rel="stylesheet" href="/estudio/mapa.css?v=10">
 </head>
 <body>
 <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:16px"><a href="/interna2/" class="ghost" style="text-decoration:none;font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#fff">← Interna 2</a><span data-fb></span></div>
@@ -611,7 +611,7 @@ function pLib(k){
   }).catch(function(e){S.carga=null;throw e});
   return S.carga;
 }
-function pAncho(){var s=$('pScr');return Math.round(Math.min(s.clientWidth-24,900,(s.clientHeight-28)/(P.r||1.414))*P.z)}
+function pAncho(){var s=$('pScr');return Math.round(Math.min(s.clientWidth-24,900)*P.z)}
 // miniatura real de la otra nota (su página de la respuesta) para la hoja borrosa de atrás
 function pMini(b,o){ var c=P.ctx[o]||{}; pLib(o).then(function(d){ if(b.dataset.k!==o) return; b.style.setProperty('--r',SRC[o].r||1.414);
   return d.getPage(Math.min(c.p||1,d.numPages)).then(function(pg){ if(b.dataset.k!==o) return; var v=pg.getViewport({scale:1}), vp=pg.getViewport({scale:360/v.width}), cv=document.createElement('canvas');
@@ -627,7 +627,7 @@ function pNorm(x){return x.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]/g,
 // subrayado amarillo: busca cada frase clave en el texto de la hoja y pinta encima de esos renglones
 function pMarca(h,pg,vp){
   return pg.getTextContent().then(function(tc){
-    var norm='', map=[], U=window.pdfjsLib.Util, primero=null, hechos={};
+    var norm='', map=[], U=window.pdfjsLib.Util, primero=null, hechos={}, x0=1, x1=0;
     tc.items.forEach(function(it,k){ for(var c=0;c<it.str.length;c++){ var n=pNorm(it.str[c]); for(var j=0;j<n.length;j++){norm+=n[j];map.push([k,c])} } });
     P.tg.forEach(function(t){
       var tn=pNorm(t), a=tn?norm.indexOf(tn):-1; if(a<0) return;
@@ -645,10 +645,10 @@ function pMarca(h,pg,vp){
         var x=tr[4]+ancho*seg[k][0]/L, w=ancho*(seg[k][1]+1-seg[k][0])/L, y=tr[5]-alto*.92;
         var d=document.createElement('div'); d.className='hl';
         d.style.cssText='left:'+(100*x/vp.width)+'%;top:'+(100*y/vp.height)+'%;width:'+(100*w/vp.width)+'%;height:'+(100*alto*1.2/vp.height)+'%';
-        h.appendChild(d); var f=y/vp.height; if(primero===null||f<primero) primero=f;
+        h.appendChild(d); var f=y/vp.height; if(primero===null||f<primero) primero=f; x0=Math.min(x0,x/vp.width); x1=Math.max(x1,(x+w)/vp.width);
       });
     });
-    if(primero!==null&&!P.foco){ P.foco=true; var sc=$('pScr'); sc.scrollTop=Math.max(0,h.offsetTop+primero*h.offsetHeight-sc.clientHeight/4) }
+    if(primero!==null&&!P.foco){ P.foco=true; pEnfoca(h,primero,x0,x1) }
   });
 }
 function pDibuja(h){
@@ -664,6 +664,11 @@ function pDibuja(h){
     });
   });
 }
+// acerca solo la hoja al concepto subrayado: el renglón marcado llena el ancho del visor
+function pEnfoca(h,fy,x0,x1){ var sc=$('pScr'), n=+h.dataset.n, z=Math.max(1,Math.min(2.5,Math.floor(4*.92/Math.max(.25,x1-x0))/4));
+  if(z>P.z){ P.z=z; pMonta(n,false); h=pHojas()[n-1] }
+  sc.scrollTop=Math.max(0,h.offsetTop+fy*h.offsetHeight-sc.clientHeight/3);
+  sc.scrollLeft=Math.max(0,h.offsetLeft+(x0+x1)/2*h.offsetWidth-sc.clientWidth/2); pTxt() }
 function pLimpia(h){ [].slice.call(h.querySelectorAll('canvas,.hl')).forEach(function(x){x.remove()}) }
 function pMonta(p,foco){
   var sc=$('pScr'), w=pAncho(), n=P.doc.numPages, h='';
@@ -704,7 +709,7 @@ function pAtras(i,m){ var n=P.ord.length, a=$('pAtr'), ds=[1,-1,2,-2,3,-3].slice
   a.innerHTML=ds.map(function(d){ var o=P.ord[(i+d+n*3)%n], s=d<0?-1:1;
     return '<button class="pbk '+(s<0?'izq':'der')+'" data-d="'+d+'" data-k="'+o+'" style="--s:'+s+';--a:'+(s*d)+';--k:'+(1+(s*d-1)*.55)+';--m:'+(m||0)+';z-index:'+(1-s*d)+'" aria-label="'+(s<0?'Nota anterior':'Nota siguiente')+': '+SRC[o].nom+'"><span><b>'+SRC[o].nom+'</b>'+(P.rank?' · '+pRk(o):'')+'</span></button>' }).join('');
   [].forEach.call(a.children,function(b){ pMini(b,b.dataset.k) }); pMide() }
-function pMide(){ var s=$('pScr'), st=s.parentNode, r=(SRC[P.k]&&SRC[P.k].r)||1.414, g=P.z===1&&s.querySelector('.pg'), w=g?g.offsetWidth:Math.round(Math.min(s.clientWidth-24,900,(s.clientHeight-28)/r)), h=g?g.offsetHeight:Math.round(w*r);
+function pMide(){ var s=$('pScr'), st=s.parentNode, r=(SRC[P.k]&&SRC[P.k].r)||1.414, g=P.z===1&&s.querySelector('.pg'), w=g?g.offsetWidth:Math.round(Math.min(s.clientWidth-24,900)), h=g?g.offsetHeight:Math.round(w*r);
   st.style.setProperty('--bw',w+'px'); st.style.setProperty('--bh',h+'px'); st.style.setProperty('--bt',s.offsetTop+'px') }
 function pCtx(it,t){
   var m=(it&&it.m)||{}, t0=it&&it.t0, pm=t0?{b:t0[1],a:t0[2],d:t0[3]}:(t.pm||{}); // t0 = inicio del tema en cada apunte (exámenes finales)
@@ -741,25 +746,12 @@ function pTema(n){ var t=D.temas.filter(function(x){return x.n===n})[0]; if(t&&!
 function pAuto(it){ if(window.innerWidth>=900&&!SIN(it)) pDe(it.id) } // en pantalla ancha aparece sola al ver la respuesta
 function pCierra(){ if($('pdf').hidden) return; $('pdf').hidden=true; document.body.classList.remove('conpdf'); if(P.io) P.io.disconnect(); $('pScr').innerHTML='' }
 function pZoom(d){ pZoomA(P.z+d) }
-// zoom que conserva el punto que estás viendo (botones, pellizco, trackpad o doble toque)
+// zoom con los botones + / − (conserva el punto que estás viendo)
 function pZoomA(z,cx,cy){ if(!P.doc) return; z=Math.max(1,Math.min(4,Math.round(z*4)/4)); if(z===P.z) return;
   var sc=$('pScr'), b=sc.getBoundingClientRect(); if(cx==null){ cx=b.left+b.width/2; cy=b.top+b.height/2 }
   var ox=cx-b.left, oy=cy-b.top, fx=(sc.scrollLeft+ox)/sc.scrollWidth, fy=(sc.scrollTop+oy)/sc.scrollHeight;
   P.z=z; pMonta(pActual(),false); sc.scrollLeft=fx*sc.scrollWidth-ox; sc.scrollTop=fy*sc.scrollHeight-oy; pTxt() }
 function pVista(r,o){ var sc=$('pScr'); if(r===1){ sc.style.transform=''; sc.style.transformOrigin=''; return } sc.style.transformOrigin=o; sc.style.transform='scale('+r+')' }
-(function(){ var sc=$('pScr'), T=null, W=0, wt, ul=0, ux=0, uy=0, tt=0;
-  sc.addEventListener('wheel',function(e){ if(!(e.ctrlKey||e.metaKey)||!P.doc) return; e.preventDefault(); var b=sc.getBoundingClientRect();
-    W=(W||P.z)*Math.exp(-Math.max(-25,Math.min(25,e.deltaY))*.01); W=Math.max(1,Math.min(4,W)); pVista(W/P.z,(e.clientX-b.left)+'px '+(e.clientY-b.top)+'px');
-    clearTimeout(wt); wt=setTimeout(function(){ var z=W; W=0; pVista(1); pZoomA(z,e.clientX,e.clientY) },160) },{passive:false});
-  sc.addEventListener('touchstart',function(e){ if(e.touches.length===2&&P.doc){ var a=e.touches[0],c=e.touches[1], b=sc.getBoundingClientRect();
-    T={d:Math.hypot(a.clientX-c.clientX,a.clientY-c.clientY)||1,x:(a.clientX+c.clientX)/2,y:(a.clientY+c.clientY)/2,r:1}; T.o=(T.x-b.left)+'px '+(T.y-b.top)+'px' } },{passive:true});
-  sc.addEventListener('touchmove',function(e){ if(!T||e.touches.length!==2) return; e.preventDefault(); var a=e.touches[0],c=e.touches[1];
-    T.r=Math.max(1/P.z,Math.min(4/P.z,Math.hypot(a.clientX-c.clientX,a.clientY-c.clientY)/T.d)); pVista(T.r,T.o) },{passive:false});
-  sc.addEventListener('touchend',function(e){ if(T){ if(e.touches.length<2){ var t=T; T=null; pVista(1); pZoomA(P.z*t.r,t.x,t.y); tt=Date.now() } return }
-    if(e.touches.length||e.changedTouches.length!==1||Date.now()-tt<400) return; var p=e.changedTouches[0], n=Date.now();
-    if(n-ul<300&&Math.abs(p.clientX-ux)<30&&Math.abs(p.clientY-uy)<30){ e.preventDefault(); ul=0; tt=n; pZoomA(P.z>1?1:2,p.clientX,p.clientY) } else { ul=n; ux=p.clientX; uy=p.clientY } });
-  sc.addEventListener('dblclick',function(e){ if(Date.now()-tt<700) return; pZoomA(P.z>1?1:2,e.clientX,e.clientY) });
-})();
 // al cambiar de nota, la hoja del frente se va hacia atrás (al lado de donde quedará en la ruleta)
 function pManda(d){ var sc=$('pScr'), st=sc.parentNode, sb=sc.getBoundingClientRect(), g=null;
   if(!d||!window.matchMedia||matchMedia('(prefers-reduced-motion:reduce)').matches) return;

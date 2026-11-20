@@ -101,3 +101,4 @@ h1{color:var(--acc)}
 @keyframes aizq{0%{transform:none;z-index:3}42%{transform:translateX(-62%) rotate(-13deg) scale(.93);z-index:3;filter:none}43%{z-index:0}100%{transform:translateX(-9px) rotate(-4.6deg) scale(1);z-index:0;opacity:0;filter:blur(2px) brightness(.7)}}
 @keyframes ader{0%{transform:none;z-index:3}42%{transform:translateX(62%) rotate(13deg) scale(.93);z-index:3;filter:none}43%{z-index:0}100%{transform:translateX(9px) rotate(4.6deg) scale(1);z-index:0;opacity:0;filter:blur(2px) brightness(.7)}}
 .pscroll{touch-action:pan-x pan-y;transition:none}
+@media (min-width:900px){.pdf{width:min(56vw,900px)!important}body.conpdf .ltop,body.conpdf .lbody,body.conpdf .lfoot{padding-right:calc(min(56vw,900px) + 36px)!important}.pscroll{margin:0 48px}}
