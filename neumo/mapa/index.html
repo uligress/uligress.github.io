@@ -211,7 +211,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
 .nt.pdfb{display:inline-block}
 </style>
 <style>html.emb header .logo,html.emb header .stats a,html.emb .top .logo,html.emb .top .crumbs:not(.cnt){display:none!important}</style><script>try{if(parent!==window)document.documentElement.classList.add("emb")}catch(e){}</script>
-<link rel="stylesheet" href="/estudio/mapa.css?v=1">
+<link rel="stylesheet" href="/estudio/mapa.css?v=3">
 </head>
 <body>
 <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:16px"><a href="/interna2/" class="ghost" style="text-decoration:none;font-family:var(--mono);font-size:12px;padding:7px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);color:#fff">← Interna 2</a><span data-fb></span></div>
@@ -237,7 +237,7 @@ header .wrap{display:flex;align-items:center;justify-content:space-between;gap:1
     <div class="pnom"><b id="pNom"></b><span class="mono" id="pRank"></span></div>
     <button class="x" id="pSig" aria-label="Notas siguientes">→</button></div>
 </div>
-<script src="data.js?v=1"></script>
+<script src="data.js?v=1e1f692a"></script>
 <script src="ruleta-data.js?v=2"></script>
 <script>
 (function(){
@@ -337,9 +337,9 @@ function marco(cuerpo,pie){
   $('lX').onclick=cierra;
   $('lesson').querySelector('.lbody').scrollTop=0;
 }
-function caso(it){return it.c?'<div class="caso"><div class="mono">✦ Caso clínico</div>'+esc(it.c)+'</div>':''}
+function caso(it){return it.c?'<div class="caso"><div class="mono">✦ Caso clínico</div>'+neg(it.cb||it.c)+'</div>':(it.cn?'<div class="caso"><div class="mono">✦ Caso clínico</div><i>'+esc(it.cn)+'</i></div>':'')}
 function notas(it){
-  return (pHay(it)?'<button class="ghost pdfb" data-id="'+it.id+'">'+esc(pEtq(it))+'</button>':'')+(it.d?'<div class="nt d">⚠ Dudosa · '+esc(it.d)+'</div>':'')+(it.dd?'<div class="nt dd">Clave deducida · '+esc(it.dd)+'</div>':'')+(it.ex?'<div class="nt ex">'+esc(it.ex)+'</div>':'');
+  return (pHay(it)?'<button class="ghost pdfb" data-id="'+it.id+'">'+esc(pEtq(it))+'</button>':'')+(it.d?'<div class="nt d">⚠ Dudosa · '+esc(it.d)+'</div>':'')+(it.dd?'<div class="nt dd">Clave deducida · '+esc(it.dd)+'</div>':'')+(it.qd&&it.qd!==it.q?'<div class="orig"><span class="mono">Así venía en el examen</span>«'+esc(it.q)+'»</div>':'')+((it.e||it.ex||it.no)?'<div class="nt ex">'+neg(it.e||it.ex||'')+(it.no?'<span class="no"><b>Las otras no:</b> '+neg(it.no)+'</span>':'')+(it.rev?'<span class="no">⚠ Revisar clave · '+esc(it.rev)+'</span>':'')+'</div>':'')+(it.rc?'<div class="nt dd">'+(it.rc==1?'Opciones tomadas de otro examen (la original era de respuesta abierta)':'Pregunta de respuesta abierta: los distractores los escribió Duke')+'</div>':'');
 }
 function fuente(it){return '<div class="mono src">'+(it.rep>1?'<span>Repetida '+it.rep+' veces</span> · ':'')+esc(D.fuente)+'</div>'}
 function sig(){
@@ -360,7 +360,7 @@ function con(c){
 function mc(c){
   pPrev(c.it);var it=c.it,ops=baraja(it.o.map(function(o,i){return{o:o,i:i}})),sel=-1,visto=false;
   if(it.o.some(function(o){return /\b[a-e] y [a-e]\b/i.test(o)||/anteriores|^todas las/i.test(o)}))ops.sort(function(a,b){return a.i-b.i});
-  marco('<div class="kind">✦ Elige la respuesta</div>'+caso(it)+'<div class="q">'+esc(it.q)+'</div>'+
+  marco('<div class="kind">✦ Elige la respuesta</div>'+caso(it)+'<div class="q">'+esc(it.qd||it.q)+'</div>'+
     ops.map(function(o,j){return'<button class="opt" data-j="'+j+'"><span class="l">'+'abcde'[j]+'</span><span>'+esc(o.o)+'</span></button>'}).join('')+'<div id="fb"></div>',
     '<span class="verdict" id="vd"></span><button class="pill" id="go" disabled><span>Comprobar</span><span class="arr">→</span></button>');
   var bs=[].slice.call(document.querySelectorAll('#lesson .opt'));
@@ -377,7 +377,7 @@ function mc(c){
 }
 function rec(c){
   var it=c.it;pPrev(it);
-  marco('<div class="kind">✦ Tarjeta de repaso · responde de memoria</div>'+caso(it)+'<div class="q">'+esc(it.q)+'</div><div id="fb"></div>',
+  marco('<div class="kind">✦ Tarjeta de repaso · responde de memoria</div>'+caso(it)+'<div class="q">'+esc(it.qd||it.q)+'</div><div id="fb"></div>',
     '<span class="mono">Dila en voz alta antes de verla</span><button class="pill" id="go"><span>Ver respuesta</span><span class="arr">→</span></button>');
   $('go').onclick=function(){
     $('fb').innerHTML='<div class="ans">'+esc(it.a)+'</div>'+notas(it)+fuente(it);pAuto(it);
@@ -417,7 +417,11 @@ function pLib(k){
   }).catch(function(e){S.carga=null;throw e});
   return S.carga;
 }
-function pAncho(){return Math.round(Math.min($('pScr').clientWidth-24,900)*P.z)}
+function pAncho(){var s=$('pScr');return Math.round(Math.min(s.clientWidth-24,900,(s.clientHeight-28)/(P.r||1.414))*P.z)}
+// miniatura real de la otra nota (su página de la respuesta) para la hoja borrosa de atrás
+function pMini(b,o){ var c=P.ctx[o]||{}; pLib(o).then(function(d){ if(b.dataset.k!==o) return; b.style.setProperty('--r',SRC[o].r||1.414);
+  return d.getPage(Math.min(c.p||1,d.numPages)).then(function(pg){ if(b.dataset.k!==o) return; var v=pg.getViewport({scale:1}), vp=pg.getViewport({scale:360/v.width}), cv=document.createElement('canvas');
+    cv.width=Math.round(vp.width); cv.height=Math.round(vp.height); return pg.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise.then(function(){ if(b.dataset.k!==o) return; var x=b.querySelector('canvas'); if(x) x.remove(); b.insertBefore(cv,b.firstChild) }) }) }).catch(function(){}) }
 function pHojas(){return [].slice.call($('pScr').querySelectorAll('.pg'))}
 function pActual(){
   var sc=$('pScr'), m=sc.scrollTop+sc.clientHeight/3, n=1;
@@ -494,7 +498,7 @@ function pPone(k){
   $('pNom').textContent=SRC[k].nom;
   var r=$('pRank'); r.className='mono'+(P.rank&&c.ok&&i===0?' top':'');
   r.textContent=!P.rank?'Inicio del tema · pág. '+P.obj:(c.ok?'#'+(i+1)+' de confiabilidad'+(i===0?' · la más relacionada con la '+('pregunta'):''):'No trae esta respuesta'+' · inicio del tema');
-  [['pB1',1],['pB2',2],['pB3',3]].forEach(function(x){ var o=P.ord[(i+x[1])%P.ord.length], b=$(x[0]); b.dataset.k=o; b.innerHTML='<span><b>'+SRC[o].nom+'</b>'+(P.rank?' · '+pRk(o):'')+'</span>' });
+  [['pB1',1],['pB2',2],['pB3',3]].forEach(function(x){ var o=P.ord[(i+x[1])%P.ord.length], b=$(x[0]); b.dataset.k=o; b.innerHTML='<span><b>'+SRC[o].nom+'</b>'+(P.rank?' · '+pRk(o):'')+'</span>'; pMini(b,o) });
   pLib(k).then(function(d){ if($('pdf').hidden||P.k!==k) return; P.doc=d; P.r=SRC[k].r; pMonta(P.obj,true) },function(){
     if(P.k===k) sc.innerHTML='<div class="mono" style="padding:30px 8px">No se pudo abrir el PDF. Revisa la conexión y vuelve a intentar.</div>';
   });
